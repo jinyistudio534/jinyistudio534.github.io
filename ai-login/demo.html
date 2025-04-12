@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Login Component Demo with Handler</title>
+</head>
+<body>
+    <div id="login-container"></div>
+    <button onclick="showLogin()">顯示登入表單</button>
+
+    <script src="login.js"></script>
+    <script>
+        // 自訂事件處理函數
+        function myLoginHandler(data) {
+            if (data.action === 'ok') {
+                console.log('Login attempt:', {
+                    username: data.username,
+                    password: data.password
+                });
+                if (data.username === 'admin' && data.password === '1234') {
+                    alert('歡迎管理者登入！');
+                    loginComp.hide();
+                } else {
+                    alert('登入失敗，請檢查帳號密碼');
+                }
+            } else {
+                console.log('Login cancelled');
+                alert('您已取消登入');
+                loginComp.hide();
+            }
+        }
+
+        // 初始化元件
+        const loginContainer = document.getElementById('login-container');
+        const loginComp = new LoginComponent(myLoginHandler);
+        loginContainer.appendChild(loginComp);
+
+        // 全域顯示函數
+        function showLogin() {
+            loginComp.show();
+        }
+    </script>
+</body>
+</html>
