@@ -1,0 +1,22 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100vh;
+  overflow: hidden;
+}
+
+.d-flex {
+  height: 100vh;
+  width: 100vw;
+}
+
+ai-side-menu {
+  border-right: 1px solid #ddd;
+  background-color: #fff;
+}
+
+#content {
+  flex-grow: 1;
+  height: 100vh;
+  overflow-y: auto;
+}
