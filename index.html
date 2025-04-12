@@ -1,0 +1,60 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>自適應4x2內凸按鈕網格</title>
+    <style>
+        .container {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr); /* 2列 */
+            grid-template-rows: repeat(4, 1fr); /* 4行 */
+            gap: 10px; /* 按鈕間距 */
+            width: 80%; /* 母容器寬度，佔據視窗的80% */
+            max-width: 400px; /* 最大寬度限制，適合2列 */
+            margin: 20px auto; /* 居中 */
+            aspect-ratio: 1 / 2; /* 高度是寬度的兩倍，適應4行2列 */
+        }
+
+        .button {
+            width: 100%; /* 填滿網格單元 */
+            aspect-ratio: 1 / 1; /* 確保正方形 */
+            background-color: #3498db; /* 按鈕背景色 */
+            color: white; /* 文字顏色 */
+            border: none; /* 移除邊框 */
+            border-radius: 5px; /* 圓角 */
+            cursor: pointer; /* 滑鼠懸停時顯示手型 */
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: clamp(12px, 2vw, 14px); /* 自適應字型大小 */
+            /* 內凸效果 */
+            box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.3), /* 內陰影，模擬凹陷 */
+                        inset -3px -3px 5px rgba(255, 255, 255, 0.3); /* 內高光，增強立體感 */
+        }
+
+        .button:hover {
+            background-color: #2980b9; /* 懸停時背景色變暗 */
+            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.4), /* 懸停時內陰影稍減 */
+                        inset -2px -2px 4px rgba(255, 255, 255, 0.4);
+        }
+
+        .button:active {
+            box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.5), /* 點擊時更深的凹陷效果 */
+                        inset -4px -4px 6px rgba(255, 255, 255, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <button class="button">按鈕1</button>
+        <button class="button">按鈕2</button>
+        <button class="button">按鈕3</button>
+        <button class="button">按鈕4</button>
+        <button class="button">按鈕5</button>
+        <button class="button">按鈕6</button>
+        <button class="button">按鈕7</button>
+        <button class="button">按鈕8</button>
+    </div>
+</body>
+</html>
