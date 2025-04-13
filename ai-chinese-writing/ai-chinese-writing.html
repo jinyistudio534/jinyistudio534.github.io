@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <title>AI Chinese Writing Demo</title>
+    <link rel="stylesheet" href="ai-chinese-writing.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 20px;
+            height: 100vh;
+            box-sizing: border-box;
+            display: flex;
+            gap: 20px;
+        }
+    </style>
+</head>
+<body>
+    <!-- Inline elements example -->
+    <ai-chinese-writing line-spacing="30">
+        <chinese-writing color="black" size="100" spacing="end">默然回首</chinese-writing>
+        <chinese-writing color="blue" size="80" spacing="30">往事如煙</chinese-writing>
+        <chinese-writing color="green" size="120" spacing="center">時光荏苒</chinese-writing>
+    </ai-chinese-writing>
+
+    <!-- Element for programmatic src -->
+    <ai-chinese-writing id="dynamic-writing" line-spacing="20"></ai-chinese-writing>
+
+    <script src="ai-chinese-writing.js"></script>
+    <script>
+        // Programmatic src setting example
+        document.addEventListener('DOMContentLoaded', () => {
+            const dynamicWriting = document.getElementById('dynamic-writing');
+            
+            // Example 1: Set src directly
+            dynamicWriting.setAttribute('src', 'writing-data.json');
+
+            // Example 2: Dynamic data with timeout (uncomment to test)
+            /*
+            setTimeout(() => {
+                dynamicWriting.setAttribute('src', 'different-data.json');
+            }, 3000);
+            */
+        });
+    </script>
+</body>
+</html>

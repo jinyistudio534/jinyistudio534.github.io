@@ -1,0 +1,14 @@
+[
+  {
+      "text": "春風得意",
+      "color": "red",
+      "size": "100",
+      "spacing": "30"
+  },
+  {
+      "text": "馬蹄疾",
+      "color": "purple",
+      "size": "80",
+      "spacing": "end"
+  }
+]
