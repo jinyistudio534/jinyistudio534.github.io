@@ -6,6 +6,8 @@
     <title>金益工作室</title>
     <!-- 引入 Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+    <!-- 引入 Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
         body {
             margin: 0;
@@ -20,6 +22,7 @@
         .container {
             position: relative;
             display: flex;
+            flex-direction: column; /* 垂直排列文字和圖標 */
             justify-content: center;
             align-items: center;
             z-index: 1;
@@ -31,11 +34,11 @@
             color: #333;
             text-align: center;
             white-space: nowrap;
-            padding: 10px;
+            padding: 10px; /* 四邊空白 10px */
             box-sizing: content-box;
             z-index: 2;
             animation: heartbeat 1.5s ease-in-out infinite; /* 心跳動畫 */
-            cursor: pointer; /* 顯示可點擊游標 */
+            cursor: pointer; /* 可點擊游標 */
         }
 
         /* 心跳動畫 */
@@ -55,6 +58,29 @@
             100% {
                 transform: scale(1);
             }
+        }
+
+        .github-icon {
+            width: 48px; /* 調整為 48px */
+            height: 48px;
+            background-color: #ffffff; /* 白色背景 */
+            border-radius: 50%; /* 圓形 */
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px; /* 與文字間距 */
+            cursor: pointer; /* 可點擊游標 */
+            z-index: 2;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影 */
+        }
+
+        .github-icon:hover {
+            transform: scale(1.1); /* 懸停放大 */
+        }
+
+        .github-icon .fa-square-github {
+            font-size: 32px; /* 調整圖標大小適配 48px 容器 */
+            color: #333; /* 深色圖標 */
         }
 
         .button {
@@ -106,6 +132,9 @@
 <body>
     <div class="container">
         <div class="main-text">金益工作室</div>
+        <div class="github-icon">
+            <i class="fa-brands fa-square-github"></i>
+        </div>
     </div>
     <script>
         const colors = [
@@ -125,6 +154,12 @@
         const mainText = document.querySelector('.main-text');
         mainText.addEventListener('click', () => {
             window.location.href = 'https://linktr.ee/jinyistudio'; // 同一標籤頁打開
+        });
+
+        // 為 GitHub 圖標添加點擊事件
+        const githubIcon = document.querySelector('.github-icon');
+        githubIcon.addEventListener('click', () => {
+            window.location.href = 'https://github.com/jinyistudio534/jinyistudio534.github.io/tree/main'; // 同一標籤頁打開
         });
 
         // 檢查並讀取 button.json
@@ -170,9 +205,14 @@
             clearButtons(); // 清除現有按鈕
 
             const textElement = document.querySelector('.main-text');
+            const githubIcon = document.querySelector('.github-icon');
             const textRect = textElement.getBoundingClientRect();
-            const textWidth = textRect.width + 20; // 包含左右各10px空白
-            const textHeight = textRect.height + 20; // 包含上下各10px空白
+            const githubRect = githubIcon.getBoundingClientRect();
+
+            // 統一四邊空白為 10px，並修正上下空白過大的問題
+            const padding = 10; // 四邊空白 10px
+            const textWidth = textRect.width + 2 * padding; // 左右各 10px
+            const textHeight = textRect.height + githubRect.height + 5 + padding; // 上下空白調整
 
             // 計算按鈕數量，確保四邊空白平均且只顯示完整按鈕
             const cols = Math.floor(window.innerWidth / buttonSize);
@@ -180,7 +220,7 @@
             const marginX = (window.innerWidth - cols * buttonSize) / 2; // 左右空白平均
             const marginY = (window.innerHeight - rows * buttonSize) / 2; // 上下空白平均
 
-            // 文字區域的按鈕範圍（考慮10px空白）
+            // 文字+圖標區域的按鈕範圍
             const textLeft = (window.innerWidth - textWidth) / 2;
             const textTop = (window.innerHeight - textHeight) / 2;
             const textColStart = Math.floor((textLeft - marginX) / buttonSize);
@@ -193,7 +233,7 @@
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue; // 跳過文字區域
+                        continue; // 跳過文字+圖標區域
                     }
                     buttonPositions.push({ row, col });
                 }
@@ -218,7 +258,7 @@
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue; // 跳過文字區域
+                        continue; // 跳過文字+圖標區域
                     }
                     const x = marginX + col * buttonSize;
                     const y = marginY + row * buttonSize;
