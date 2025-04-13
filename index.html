@@ -3,58 +3,226 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>自適應4x2內凸按鈕網格</title>
+    <title>金益工作室</title>
+    <!-- 引入 Material Icons -->
+    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <style>
+        body {
+            margin: 0;
+            height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #f0f0f0;
+            overflow: hidden;
+        }
+
         .container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr); /* 2列 */
-            grid-template-rows: repeat(4, 1fr); /* 4行 */
-            gap: 10px; /* 按鈕間距 */
-            width: 80%; /* 母容器寬度，佔據視窗的80% */
-            max-width: 400px; /* 最大寬度限制，適合2列 */
-            margin: 20px auto; /* 居中 */
-            aspect-ratio: 1 / 2; /* 高度是寬度的兩倍，適應4行2列 */
+            position: relative;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
+        }
+
+        .main-text {
+            font-size: 80px;
+            font-weight: bold;
+            color: #333;
+            text-align: center;
+            white-space: nowrap;
+            padding: 10px;
+            box-sizing: content-box;
+            z-index: 2;
         }
 
         .button {
-            width: 100%; /* 填滿網格單元 */
-            aspect-ratio: 1 / 1; /* 確保正方形 */
-            background-color: #3498db; /* 按鈕背景色 */
-            color: white; /* 文字顏色 */
-            border: none; /* 移除邊框 */
-            border-radius: 5px; /* 圓角 */
-            cursor: pointer; /* 滑鼠懸停時顯示手型 */
+            position: absolute;
+            width: 108px;
+            height: 108px;
             display: flex;
-            align-items: center;
             justify-content: center;
-            font-size: clamp(12px, 2vw, 14px); /* 自適應字型大小 */
-            /* 內凸效果 */
-            box-shadow: inset 3px 3px 5px rgba(0, 0, 0, 0.3), /* 內陰影，模擬凹陷 */
-                        inset -3px -3px 5px rgba(255, 255, 255, 0.3); /* 內高光，增強立體感 */
+            align-items: center;
+            text-align: center;
+            color: white;
+            font-size: 64px; /* 圖標大小 64px */
+            border: none;
+            cursor: pointer;
+            transition: transform 0.2s;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+            z-index: 0;
+        }
+
+        .button.caption {
+            font-size: 16px; /* 文字按鈕的字體大小 */
+            font-weight: bold;
+            line-height: 1.5;
+            white-space: pre-wrap; /* 支援換行 */
         }
 
         .button:hover {
-            background-color: #2980b9; /* 懸停時背景色變暗 */
-            box-shadow: inset 2px 2px 4px rgba(0, 0, 0, 0.4), /* 懸停時內陰影稍減 */
-                        inset -2px -2px 4px rgba(255, 255, 255, 0.4);
+            transform: scale(1.1);
         }
 
-        .button:active {
-            box-shadow: inset 4px 4px 6px rgba(0, 0, 0, 0.5), /* 點擊時更深的凹陷效果 */
-                        inset -4px -4px 6px rgba(255, 255, 255, 0.2);
-        }
+        /* 按鈕顏色與對應的文字顏色（確保反差） */
+        .btn-color-1 { background-color: #ff4d4d; } /* 紅 */
+        .btn-color-1.caption { color: #ffffff; } /* 白色文字 */
+        .btn-color-2 { background-color: #4da8ff; } /* 藍 */
+        .btn-color-2.caption { color: #ffffff; } /* 白色文字 */
+        .btn-color-3 { background-color: #4dff4d; } /* 綠 */
+        .btn-color-3.caption { color: #000000; } /* 黑色文字 */
+        .btn-color-4 { background-color: #ffcc4d; } /* 黃 */
+        .btn-color-4.caption { color: #000000; } /* 黑色文字 */
+        .btn-color-5 { background-color: #ff4dff; } /* 粉紅 */
+        .btn-color-5.caption { color: #ffffff; } /* 白色文字 */
+        .btn-color-6 { background-color: #4dffff; } /* 青 */
+        .btn-color-6.caption { color: #000000; } /* 黑色文字 */
+        .btn-color-7 { background-color: #ff944d; } /* 橙 */
+        .btn-color-7.caption { color: #000000; } /* 黑色文字 */
+        .btn-color-8 { background-color: #944dff; } /* 紫 */
+        .btn-color-8.caption { color: #ffffff; } /* 白色文字 */
     </style>
 </head>
 <body>
     <div class="container">
-        <button class="button">按鈕1</button>
-        <button class="button">按鈕2</button>
-        <button class="button">按鈕3</button>
-        <button class="button">按鈕4</button>
-        <button class="button">按鈕5</button>
-        <button class="button">按鈕6</button>
-        <button class="button">按鈕7</button>
-        <button class="button">按鈕8</button>
+        <div class="main-text">金益工作室</div>
     </div>
+    <script>
+        const colors = [
+            'btn-color-1', 'btn-color-2', 'btn-color-3', 'btn-color-4',
+            'btn-color-5', 'btn-color-6', 'btn-color-7', 'btn-color-8'
+        ];
+        const defaultIcons = [
+            'home', 'star', 'favorite', 'settings',
+            'person', 'lock', 'cloud', 'camera_alt',
+            'music_note', 'phone', 'email', 'lightbulb'
+        ]; // 預設圖標
+        const buttonSize = 108; // 按鈕大小 108px
+        let buttonData = []; // 儲存 JSON 資料
+
+        // 檢查並讀取 button.json
+        async function loadButtonData() {
+            try {
+                const response = await fetch('./button.json');
+                if (response.ok) {
+                    buttonData = await response.json();
+                    console.log('成功載入 button.json:', buttonData);
+                } else {
+                    buttonData = [];
+                    console.log('button.json 不存在，使用預設圖標');
+                }
+            } catch (error) {
+                buttonData = [];
+                console.log('無法讀取 button.json，使用預設圖標', error);
+            }
+        }
+
+        function createButton(x, y, colorClass, content, url = null) {
+            const button = document.createElement('button');
+            button.className = `button ${colorClass}`;
+            if (url) {
+                button.classList.add('caption'); // 文字按鈕使用不同樣式
+                button.addEventListener('click', () => {
+                    window.location.href = url; // 點擊後在同一標籤頁打開 URL
+                });
+            }
+            button.style.left = `${x}px`;
+            button.style.top = `${y}px`;
+            // 處理換行符號 \n
+            button.innerHTML = content.replace(/\n/g, '<br>');
+            document.body.appendChild(button);
+        }
+
+        function clearButtons() {
+            const buttons = document.querySelectorAll('.button');
+            buttons.forEach(button => button.remove());
+        }
+
+        function drawButtons() {
+            clearButtons(); // 清除現有按鈕
+
+            const textElement = document.querySelector('.main-text');
+            const textRect = textElement.getBoundingClientRect();
+            const textWidth = textRect.width + 20; // 包含左右各10px空白
+            const textHeight = textRect.height + 20; // 包含上下各10px空白
+
+            // 計算按鈕數量，確保四邊空白平均且只顯示完整按鈕
+            const cols = Math.floor(window.innerWidth / buttonSize);
+            const rows = Math.floor(window.innerHeight / buttonSize);
+            const marginX = (window.innerWidth - cols * buttonSize) / 2; // 左右空白平均
+            const marginY = (window.innerHeight - rows * buttonSize) / 2; // 上下空白平均
+
+            // 文字區域的按鈕範圍（考慮10px空白）
+            const textLeft = (window.innerWidth - textWidth) / 2;
+            const textTop = (window.innerHeight - textHeight) / 2;
+            const textColStart = Math.floor((textLeft - marginX) / buttonSize);
+            const textColEnd = Math.ceil((textLeft - marginX + textWidth) / buttonSize);
+            const textRowStart = Math.floor((textTop - marginY) / buttonSize);
+            const textRowEnd = Math.ceil((textTop - marginY + textHeight) / buttonSize);
+
+            // 收集所有可用的按鈕位置
+            const buttonPositions = [];
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
+                        continue; // 跳過文字區域
+                    }
+                    buttonPositions.push({ row, col });
+                }
+            }
+
+            // 隨機選擇按鈕位置給 JSON 按鈕
+            const selectedIndices = [];
+            if (buttonData.length > 0) {
+                const maxButtons = Math.min(buttonData.length, buttonPositions.length);
+                // 打亂位置陣列以確保隨機性
+                for (let i = buttonPositions.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [buttonPositions[i], buttonPositions[j]] = [buttonPositions[j], buttonPositions[i]];
+                }
+                for (let i = 0; i < maxButtons; i++) {
+                    selectedIndices.push(buttonPositions[i]);
+                }
+            }
+
+            // 生成按鈕
+            let jsonIndex = 0;
+            for (let row = 0; row < rows; row++) {
+                for (let col = 0; col < cols; col++) {
+                    if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
+                        continue; // 跳過文字區域
+                    }
+                    const x = marginX + col * buttonSize;
+                    const y = marginY + row * buttonSize;
+                    const color = colors[(row * cols + col) % colors.length];
+
+                    // 檢查是否為 JSON 指定的按鈕
+                    const isJsonButton = selectedIndices.some(
+                        pos => pos.row === row && pos.col === col
+                    );
+                    if (isJsonButton && jsonIndex < buttonData.length) {
+                        const { caption, url } = buttonData[jsonIndex];
+                        createButton(x, y, color, caption, url);
+                        jsonIndex++;
+                    } else {
+                        const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
+                        createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                    }
+                }
+            }
+        }
+
+        // 初始化
+        async function init() {
+            await loadButtonData(); // 載入 JSON 資料
+            drawButtons(); // 初始繪製
+            window.addEventListener('resize', async () => {
+                await loadButtonData(); // 重新載入 JSON 確保資料一致
+                drawButtons();
+            });
+        }
+
+        init();
+    </script>
 </body>
 </html>
