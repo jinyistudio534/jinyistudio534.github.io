@@ -1,6 +1,11 @@
 [
     {
         "caption":"登入",
+        "size":24,
         "url":"https://jinyistudio534.github.io/ai-login/demo.html"
+    },
+    {
+        "caption":"縮放\n選單",
+        "ur":"https://jinyistudio534.github.io/ai-side-menu/ai-side-menu.html"
     }
 ]
