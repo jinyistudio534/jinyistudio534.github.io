@@ -5,11 +5,10 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="google-site-verification" content="dl147xRdelb6UnUGShljpSNbXy3j0BTa2_nIIpDi8gk" />
     <title>金益工作室</title>
-    <!-- 引入 Material Icons -->
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <!-- 引入 Font Awesome -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
+        /* 前次提供的 CSS 樣式，無變更 */
         body {
             margin: 0;
             height: 100vh;
@@ -19,71 +18,53 @@
             background-color: #f0f0f0;
             overflow: hidden;
         }
-
         .container {
             position: relative;
             display: flex;
-            flex-direction: column; /* 垂直排列文字和圖標 */
+            flex-direction: column;
             justify-content: center;
             align-items: center;
             z-index: 1;
         }
-
         .main-text {
             font-size: 80px;
             font-weight: bold;
             color: #333;
             text-align: center;
             white-space: nowrap;
-            padding: 10px; /* 四邊空白 10px */
+            padding: 10px;
             box-sizing: content-box;
             z-index: 2;
-            animation: heartbeat 1.5s ease-in-out infinite; /* 心跳動畫 */
-            cursor: pointer; /* 可點擊游標 */
+            animation: heartbeat 1.5s ease-in-out infinite;
+            cursor: pointer;
         }
-
-        /* 心跳動畫 */
         @keyframes heartbeat {
-            0% {
-                transform: scale(1);
-            }
-            25% {
-                transform: scale(1.1);
-            }
-            50% {
-                transform: scale(1);
-            }
-            75% {
-                transform: scale(1.05);
-            }
-            100% {
-                transform: scale(1);
-            }
+            0% { transform: scale(1); }
+            25% { transform: scale(1.1); }
+            50% { transform: scale(1); }
+            75% { transform: scale(1.05); }
+            100% { transform: scale(1); }
         }
-
         .github-icon {
-            width: 48px; /* 調整為 48px */
+            width: 48px;
             height: 48px;
-            background-color: #ffffff; /* 白色背景 */
-            border-radius: 50%; /* 圓形 */
+            background-color: #ffffff;
+            border-radius: 50%;
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 5px; /* 與文字間距 */
-            cursor: pointer; /* 可點擊游標 */
+            margin-top: 5px;
+            cursor: pointer;
             z-index: 2;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2); /* 陰影 */
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-
         .github-icon:hover {
-            transform: scale(1.1); /* 懸停放大 */
+            transform: scale(1.1);
         }
-
         .github-icon .fa-square-github {
-            font-size: 32px; /* 調整圖標大小適配 48px 容器 */
-            color: #333; /* 深色圖標 */
+            font-size: 32px;
+            color: #333;
         }
-
         .button {
             position: absolute;
             width: 108px;
@@ -93,41 +74,77 @@
             align-items: center;
             text-align: center;
             color: white;
-            font-size: 64px; /* 圖標大小 64px */
+            font-size: 64px;
             border: none;
             cursor: pointer;
             transition: transform 0.2s;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
             z-index: 0;
         }
-
         .button.caption {
             font-weight: bold;
             line-height: 1.5;
-            white-space: pre-wrap; /* 支援換行 */
+            white-space: pre-wrap;
         }
-
         .button:hover {
             transform: scale(1.1);
         }
-
-        /* 按鈕顏色與對應的文字顏色（確保反差） */
-        .btn-color-1 { background-color: #ff4d4d; } /* 紅 */
-        .btn-color-1.caption { color: #ffffff; } /* 白色文字 */
-        .btn-color-2 { background-color: #4da8ff; } /* 藍 */
-        .btn-color-2.caption { color: #ffffff; } /* 白色文字 */
-        .btn-color-3 { background-color: #4dff4d; } /* 綠 */
-        .btn-color-3.caption { color: #000000; } /* 黑色文字 */
-        .btn-color-4 { background-color: #ffcc4d; } /* 黃 */
-        .btn-color-4.caption { color: #000000; } /* 黑色文字 */
-        .btn-color-5 { background-color: #ff4dff; } /* 粉紅 */
-        .btn-color-5.caption { color: #ffffff; } /* 白色文字 */
-        .btn-color-6 { background-color: #4dffff; } /* 青 */
-        .btn-color-6.caption { color: #000000; } /* 黑色文字 */
-        .btn-color-7 { background-color: #ff944d; } /* 橙 */
-        .btn-color-7.caption { color: #000000; } /* 黑色文字 */
-        .btn-color-8 { background-color: #944dff; } /* 紫 */
-        .btn-color-8.caption { color: #ffffff; } /* 白色文字 */
+        .btn-color-1 { background-color: #ff4d4d; }
+        .btn-color-1.caption { color: #ffffff; }
+        .btn-color-2 { background-color: #4da8ff; }
+        .btn-color-2.caption { color: #ffffff; }
+        .btn-color-3 { background-color: #4dff4d; }
+        .btn-color-3.caption { color: #000000; }
+        .btn-color-4 { background-color: #ffcc4d; }
+        .btn-color-4.caption { color: #000000; }
+        .btn-color-5 { background-color: #ff4dff; }
+        .btn-color-5.caption { color: #ffffff; }
+        .btn-color-6 { background-color: #4dffff; }
+        .btn-color-6.caption { color: #000000; }
+        .btn-color-7 { background-color: #ff944d; }
+        .btn-color-7.caption { color: #000000; }
+        .btn-color-8 { background-color: #944dff; }
+        .btn-color-8.caption { color: #ffffff; }
+        .overlay {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+        }
+        .youtube-popup {
+            display: none;
+            position: fixed;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background-color: #fff;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
+            z-index: 1001;
+        }
+        .youtube-popup iframe {
+            width: 560px;
+            height: 315px;
+        }
+        .close-button {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            font-size: 20px;
+            color: #333;
+            cursor: pointer;
+        }
+        @media (max-width: 600px) {
+            .youtube-popup iframe {
+                width: 300px;
+                height: 169px;
+            }
+        }
     </style>
     <script type="application/ld+json">
         {
@@ -142,7 +159,7 @@
                 "https://linktr.ee/jinyistudio"
             ]
         }
-        </script>
+    </script>
 </head>
 <body>
     <div class="container">
@@ -150,6 +167,11 @@
         <div class="github-icon">
             <i class="fa-brands fa-square-github"></i>
         </div>
+    </div>
+    <div class="overlay" id="overlay"></div>
+    <div class="youtube-popup" id="youtubePopup">
+        <span class="close-button" id="closeButton">×</span>
+        <iframe src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
     </div>
     <script>
         const colors = [
@@ -160,24 +182,33 @@
             'home', 'star', 'favorite', 'settings',
             'person', 'lock', 'cloud', 'camera_alt',
             'music_note', 'phone', 'email', 'lightbulb'
-        ]; // 預設圖標
-        const buttonSize = 108; // 按鈕大小 108px
-        const defaultTextSize = 16; // 預設文字大小 16px
-        let buttonData = []; // 儲存 JSON 資料
+        ];
+        const buttonSize = 108;
+        const defaultTextSize = 16;
+        let buttonData = [];
+        // 韓國啦啦隊影片 ID（請替換為真實 ID，或設為 []）
+        const youtubeVideoIds = [
+            '5tSkyMDzxXk',
+            'WLIM-64FBXQ',
+            '9p_W5XBbPSI',
+            'F8p8BQeNoGA',
+            'lIc00UaO2uc'
+            // 可調整數量，或設為 [] 不啟用 YouTube 功能
+        ];
 
         // 為中間文字添加點擊事件
         const mainText = document.querySelector('.main-text');
         mainText.addEventListener('click', () => {
-            window.location.href = 'https://linktr.ee/jinyistudio'; // 同一標籤頁打開
+            window.location.href = 'https://linktr.ee/jinyistudio';
         });
 
         // 為 GitHub 圖標添加點擊事件
         const githubIcon = document.querySelector('.github-icon');
         githubIcon.addEventListener('click', () => {
-            window.location.href = 'https://github.com/jinyistudio534/jinyistudio534.github.io/tree/main'; // 同一標籤頁打開
+            window.location.href = 'https://github.com/jinyistudio534/jinyistudio534.github.io/tree/main';
         });
 
-        // 檢查並讀取 button.json
+        // 載入 button.json
         async function loadButtonData() {
             try {
                 const response = await fetch('./button.json');
@@ -194,21 +225,25 @@
             }
         }
 
+        // 創建按鈕並返回按鈕類型
         function createButton(x, y, colorClass, content, url = null, textSize = defaultTextSize) {
             const button = document.createElement('button');
             button.className = `button ${colorClass}`;
             if (url) {
-                button.classList.add('caption'); // 文字按鈕使用不同樣式
-                button.style.fontSize = `${textSize}px`; // 設置文字大小
+                button.classList.add('caption');
+                button.style.fontSize = `${textSize}px`;
                 button.addEventListener('click', () => {
-                    window.location.href = url; // 點擊後在同一標籤頁打開 URL
+                    window.location.href = url;
                 });
+                button.dataset.type = 'json';
+            } else {
+                button.dataset.type = 'default';
             }
             button.style.left = `${x}px`;
             button.style.top = `${y}px`;
-            // 處理換行符號 \n
             button.innerHTML = content.replace(/\n/g, '<br>');
             document.body.appendChild(button);
+            return button;
         }
 
         function clearButtons() {
@@ -216,26 +251,46 @@
             buttons.forEach(button => button.remove());
         }
 
+        // 顯示 YouTube 彈窗
+        function showYouTubePopup() {
+            const randomVideoId = youtubeVideoIds[Math.floor(Math.random() * youtubeVideoIds.length)];
+            const iframe = document.querySelector('#youtubePopup iframe');
+            iframe.src = `https://www.youtube.com/embed/${randomVideoId}?autoplay=1`;
+            document.getElementById('overlay').style.display = 'block';
+            document.getElementById('youtubePopup').style.display = 'block';
+        }
+
+        // 關閉彈窗
+        document.getElementById('closeButton').addEventListener('click', () => {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('youtubePopup').style.display = 'none';
+            document.querySelector('#youtubePopup iframe').src = '';
+        });
+
+        // 點擊遮罩關閉彈窗
+        document.getElementById('overlay').addEventListener('click', () => {
+            document.getElementById('overlay').style.display = 'none';
+            document.getElementById('youtubePopup').style.display = 'none';
+            document.querySelector('#youtubePopup iframe').src = '';
+        });
+
         function drawButtons() {
-            clearButtons(); // 清除現有按鈕
+            clearButtons();
 
             const textElement = document.querySelector('.main-text');
             const githubIcon = document.querySelector('.github-icon');
             const textRect = textElement.getBoundingClientRect();
             const githubRect = githubIcon.getBoundingClientRect();
 
-            // 統一四邊空白為 10px，並修正上下空白過大的問題
-            const padding = 10; // 四邊空白 10px
-            const textWidth = textRect.width + 2 * padding; // 左右各 10px
-            const textHeight = textRect.height + githubRect.height + 5 + padding; // 上下空白調整
+            const padding = 10;
+            const textWidth = textRect.width + 2 * padding;
+            const textHeight = textRect.height + githubRect.height + 5 + padding;
 
-            // 計算按鈕數量，確保四邊空白平均且只顯示完整按鈕
             const cols = Math.floor(window.innerWidth / buttonSize);
             const rows = Math.floor(window.innerHeight / buttonSize);
-            const marginX = (window.innerWidth - cols * buttonSize) / 2; // 左右空白平均
-            const marginY = (window.innerHeight - rows * buttonSize) / 2; // 上下空白平均
+            const marginX = (window.innerWidth - cols * buttonSize) / 2;
+            const marginY = (window.innerHeight - rows * buttonSize) / 2;
 
-            // 文字+圖標區域的按鈕範圍
             const textLeft = (window.innerWidth - textWidth) / 2;
             const textTop = (window.innerHeight - textHeight) / 2;
             const textColStart = Math.floor((textLeft - marginX) / buttonSize);
@@ -243,22 +298,19 @@
             const textRowStart = Math.floor((textTop - marginY) / buttonSize);
             const textRowEnd = Math.ceil((textTop - marginY + textHeight) / buttonSize);
 
-            // 收集所有可用的按鈕位置
             const buttonPositions = [];
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue; // 跳過文字+圖標區域
+                        continue;
                     }
                     buttonPositions.push({ row, col });
                 }
             }
 
-            // 隨機選擇按鈕位置給 JSON 按鈕
             const selectedIndices = [];
             if (buttonData.length > 0) {
                 const maxButtons = Math.min(buttonData.length, buttonPositions.length);
-                // 打亂位置陣列以確保隨機性
                 for (let i = buttonPositions.length - 1; i > 0; i--) {
                     const j = Math.floor(Math.random() * (i + 1));
                     [buttonPositions[i], buttonPositions[j]] = [buttonPositions[j], buttonPositions[i]];
@@ -268,45 +320,58 @@
                 }
             }
 
-            // 生成按鈕
+            const defaultButtons = [];
             let jsonIndex = 0;
             for (let row = 0; row < rows; row++) {
                 for (let col = 0; col < cols; col++) {
                     if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue; // 跳過文字+圖標區域
+                        continue;
                     }
                     const x = marginX + col * buttonSize;
                     const y = marginY + row * buttonSize;
                     const color = colors[(row * cols + col) % colors.length];
 
-                    // 檢查是否為 JSON 指定的按鈕
                     const isJsonButton = selectedIndices.some(
                         pos => pos.row === row && pos.col === col
                     );
+                    let button;
                     if (isJsonButton && jsonIndex < buttonData.length) {
                         const { caption, url, size } = buttonData[jsonIndex];
-                        const textSize = size || defaultTextSize; // 使用 size 或預設值
-                        createButton(x, y, color, caption, url, textSize);
+                        const textSize = size || defaultTextSize;
+                        button = createButton(x, y, color, caption, url, textSize);
                         jsonIndex++;
                     } else {
                         const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
-                        createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                        button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                        defaultButtons.push(button);
                     }
+                }
+            }
+
+            // 根據 youtubeVideoIds 長度選預設按鈕
+            if (youtubeVideoIds.length > 0) {
+                const maxYoutubeButtons = Math.min(youtubeVideoIds.length, defaultButtons.length);
+                for (let i = defaultButtons.length - 1; i > 0; i--) {
+                    const j = Math.floor(Math.random() * (i + 1));
+                    [defaultButtons[i], defaultButtons[j]] = [defaultButtons[j], defaultButtons[i]];
+                }
+                for (let i = 0; i < maxYoutubeButtons; i++) {
+                    defaultButtons[i].addEventListener('click', showYouTubePopup);
                 }
             }
         }
 
-        // 初始化
         async function init() {
-            await loadButtonData(); // 載入 JSON 資料
-            drawButtons(); // 初始繪製
+            await loadButtonData();
+            drawButtons();
             window.addEventListener('resize', async () => {
-                await loadButtonData(); // 重新載入 JSON 確保資料一致
+                await loadButtonData();
                 drawButtons();
             });
         }
 
         init();
     </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92f9c598a9a7bf6e',t:'MTc0NDUzNDgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
