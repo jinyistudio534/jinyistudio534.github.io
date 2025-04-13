@@ -34,6 +34,27 @@
             padding: 10px;
             box-sizing: content-box;
             z-index: 2;
+            animation: heartbeat 1.5s ease-in-out infinite; /* 心跳動畫 */
+            cursor: pointer; /* 顯示可點擊游標 */
+        }
+
+        /* 心跳動畫 */
+        @keyframes heartbeat {
+            0% {
+                transform: scale(1);
+            }
+            25% {
+                transform: scale(1.1);
+            }
+            50% {
+                transform: scale(1);
+            }
+            75% {
+                transform: scale(1.05);
+            }
+            100% {
+                transform: scale(1);
+            }
         }
 
         .button {
@@ -54,7 +75,6 @@
         }
 
         .button.caption {
-            font-size: 16px; /* 文字按鈕的字體大小 */
             font-weight: bold;
             line-height: 1.5;
             white-space: pre-wrap; /* 支援換行 */
@@ -98,7 +118,14 @@
             'music_note', 'phone', 'email', 'lightbulb'
         ]; // 預設圖標
         const buttonSize = 108; // 按鈕大小 108px
+        const defaultTextSize = 16; // 預設文字大小 16px
         let buttonData = []; // 儲存 JSON 資料
+
+        // 為中間文字添加點擊事件
+        const mainText = document.querySelector('.main-text');
+        mainText.addEventListener('click', () => {
+            window.location.href = 'https://linktr.ee/jinyistudio'; // 同一標籤頁打開
+        });
 
         // 檢查並讀取 button.json
         async function loadButtonData() {
@@ -117,11 +144,12 @@
             }
         }
 
-        function createButton(x, y, colorClass, content, url = null) {
+        function createButton(x, y, colorClass, content, url = null, textSize = defaultTextSize) {
             const button = document.createElement('button');
             button.className = `button ${colorClass}`;
             if (url) {
                 button.classList.add('caption'); // 文字按鈕使用不同樣式
+                button.style.fontSize = `${textSize}px`; // 設置文字大小
                 button.addEventListener('click', () => {
                     window.location.href = url; // 點擊後在同一標籤頁打開 URL
                 });
@@ -201,8 +229,9 @@
                         pos => pos.row === row && pos.col === col
                     );
                     if (isJsonButton && jsonIndex < buttonData.length) {
-                        const { caption, url } = buttonData[jsonIndex];
-                        createButton(x, y, color, caption, url);
+                        const { caption, url, size } = buttonData[jsonIndex];
+                        const textSize = size || defaultTextSize; // 使用 size 或預設值
+                        createButton(x, y, color, caption, url, textSize);
                         jsonIndex++;
                     } else {
                         const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
