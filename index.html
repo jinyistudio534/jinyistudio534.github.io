@@ -8,7 +8,6 @@
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
     <style>
-        /* 前次提供的 CSS 樣式，無變更 */
         body {
             margin: 0;
             height: 100vh;
@@ -186,16 +185,25 @@
         const buttonSize = 108;
         const defaultTextSize = 16;
         let buttonData = [];
-        // 韓國啦啦隊影片 ID（請替換為真實 ID，或設為 []）
-        const youtubeVideoIds = [
-            '5tSkyMDzxXk',
-            'WLIM-64FBXQ',
-            '9p_W5XBbPSI',
-            'F8p8BQeNoGA',
-            'lIc00UaO2uc',
-            'Hy63FqXOf8E'
-            // 可調整數量，或設為 [] 不啟用 YouTube 功能
-        ];
+        let youtubeVideoIds = []; // 預設為空陣列
+
+        // 載入 videos.json
+        async function loadVideoData() {
+            try {
+                const response = await fetch('./videos.json');
+                if (response.ok) {
+                    const data = await response.json();
+                    youtubeVideoIds = Array.isArray(data) && data.length > 0 ? data : [];
+                    console.log('成功載入 videos.json:', youtubeVideoIds);
+                } else {
+                    youtubeVideoIds = [];
+                    console.log('videos.json 不存在或無效，設為空陣列');
+                }
+            } catch (error) {
+                youtubeVideoIds = [];
+                console.log('無法讀取 videos.json，設為空陣列', error);
+            }
+        }
 
         // 為中間文字添加點擊事件
         const mainText = document.querySelector('.main-text');
@@ -364,15 +372,18 @@
 
         async function init() {
             await loadButtonData();
+            await loadVideoData(); // 新增載入 videos.json
             drawButtons();
             window.addEventListener('resize', async () => {
                 await loadButtonData();
+                await loadVideoData(); // 視窗調整時重新載入
                 drawButtons();
             });
         }
 
         init();
     </script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92f9c598a9a7bf6e',t:'MTc0NDUzNDgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92f9c598a9a7bf6e',t:'MTc0NDUzNDgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92fe3668a99844dc',t:'MTc0NDU4MTM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
