@@ -1,0 +1,40 @@
+<!DOCTYPE html>
+<html lang="zh">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Float Kanban Component</title>
+    <link rel="stylesheet" href="float_kanban.css">
+</head>
+<body>
+    <div id="kanban-container">
+        <div class="float-kanban-panel-content">
+            <h2>自定義內容</h2>
+            <p>這是我想要顯示的內容，直接寫在 HTML 中。</p>
+            <ul>
+                <li>自訂項目 11</li>
+                <li>自訂項目 22</li>
+                <li>自訂項目 33</li>
+            </ul>
+        </div>
+    </div>
+    <div style="padding: 20px;">
+        <h1>範例內容</h1>
+        <p>這是一些測試文字，用來展示 overlay 效果。</p>
+        <button id="toggle-btn">外部切換按鈕</button>
+    </div>
+    <script src="float_kanban.js"></script>
+    <script>
+        const kanban = float_kanban('kanban-container', 'left', 400, 20);
+        kanban.show();
+        document.getElementById('kanban-container').addEventListener('floatKanbanToggle', (e) => {
+            console.log('floatKanbanToggle:', e.detail.isOpen);
+            if (e.detail.isOpen) {
+                kanban.hide(); // Hide if it was open before click
+            } else {
+                kanban.show(); // Show if it was closed before click
+            }
+        });
+    </script>
+</body>
+</html>
