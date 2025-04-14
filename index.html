@@ -32,7 +32,7 @@
             text-align: center;
             white-space: nowrap;
             padding: 10px;
-            box-sizing: content-box;
+            box-sizing: content-content;
             z-index: 2;
             animation: heartbeat 1.5s ease-in-out infinite;
             cursor: pointer;
@@ -94,7 +94,7 @@
         .btn-color-2.caption { color: #ffffff; }
         .btn-color-3 { background-color: #4dff4d; }
         .btn-color-3.caption { color: #000000; }
-        .btn-color-4 { background-color: #ffcc4d; }
+        .btn-color-4 Vivi Color { background-color: #ffcc4d; }
         .btn-color-4.caption { color: #000000; }
         .btn-color-5 { background-color: #ff4dff; }
         .btn-color-5.caption { color: #ffffff; }
@@ -126,9 +126,15 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             z-index: 1001;
         }
-        .youtube-popup iframe {
+        /* 普通影片播放器 */
+        .youtube-popup.regular iframe {
             width: 560px;
             height: 315px;
+        }
+        /* Shorts 播放器 */
+        .youtube-popup.shorts iframe {
+            width: 300px;
+            height: 533px;
         }
         .close-button {
             position: absolute;
@@ -139,9 +145,23 @@
             cursor: pointer;
         }
         @media (max-width: 600px) {
-            .youtube-popup iframe {
+            .main-text {
+                font-size: 18px;
+            }
+            .github-icon {
+                width: 16px;
+                height: 16px;
+            }
+            .github-icon .fa-square-github {
+                font-size: 12px;
+            }
+            .youtube-popup.regular iframe {
                 width: 300px;
                 height: 169px;
+            }
+            .youtube-popup.shorts iframe {
+                width: 180px;
+                height: 320px;
             }
         }
     </style>
@@ -185,7 +205,7 @@
         const buttonSize = 108;
         const defaultTextSize = 16;
         let buttonData = [];
-        let youtubeVideoIds = []; // 預設為空陣列
+        let youtubeVideoIds = [];
 
         // 載入 videos.json
         async function loadVideoData() {
@@ -262,9 +282,31 @@
 
         // 顯示 YouTube 彈窗
         function showYouTubePopup() {
-            const randomVideoId = youtubeVideoIds[Math.floor(Math.random() * youtubeVideoIds.length)];
+            const randomVideo = youtubeVideoIds[Math.floor(Math.random() * youtubeVideoIds.length)];
             const iframe = document.querySelector('#youtubePopup iframe');
-            iframe.src = `https://www.youtube.com/embed/${randomVideoId}?autoplay=1`;
+            const popup = document.getElementById('youtubePopup');
+
+            // 判斷是否為 Shorts 並提取影片 ID
+            let videoId;
+            let isShorts = randomVideo.startsWith('shorts/');
+            if (isShorts) {
+                videoId = randomVideo.replace('shorts/', '');
+            } else {
+                videoId = randomVideo;
+            }
+
+            // 設置播放器 URL
+            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
+
+            // 根據影片類型設置播放器樣式
+            popup.classList.remove('regular', 'shorts');
+            if (isShorts) {
+                popup.classList.add('shorts');
+            } else {
+                popup.classList.add('regular');
+            }
+
+            // 顯示彈窗
             document.getElementById('overlay').style.display = 'block';
             document.getElementById('youtubePopup').style.display = 'block';
         }
@@ -295,69 +337,121 @@
             const textWidth = textRect.width + 2 * padding;
             const textHeight = textRect.height + githubRect.height + 5 + padding;
 
-            const cols = Math.floor(window.innerWidth / buttonSize);
-            const rows = Math.floor(window.innerHeight / buttonSize);
-            const marginX = (window.innerWidth - cols * buttonSize) / 2;
-            const marginY = (window.innerHeight - rows * buttonSize) / 2;
-
             const textLeft = (window.innerWidth - textWidth) / 2;
             const textTop = (window.innerHeight - textHeight) / 2;
-            const textColStart = Math.floor((textLeft - marginX) / buttonSize);
-            const textColEnd = Math.ceil((textLeft - marginX + textWidth) / buttonSize);
-            const textRowStart = Math.floor((textTop - marginY) / buttonSize);
-            const textRowEnd = Math.ceil((textTop - marginY + textHeight) / buttonSize);
-
-            const buttonPositions = [];
-            for (let row = 0; row < rows; row++) {
-                for (let col = 0; col < cols; col++) {
-                    if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue;
-                    }
-                    buttonPositions.push({ row, col });
-                }
-            }
-
-            const selectedIndices = [];
-            if (buttonData.length > 0) {
-                const maxButtons = Math.min(buttonData.length, buttonPositions.length);
-                for (let i = buttonPositions.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [buttonPositions[i], buttonPositions[j]] = [buttonPositions[j], buttonPositions[i]];
-                }
-                for (let i = 0; i < maxButtons; i++) {
-                    selectedIndices.push(buttonPositions[i]);
-                }
-            }
 
             const defaultButtons = [];
             let jsonIndex = 0;
-            for (let row = 0; row < rows; row++) {
-                for (let col = 0; col < cols; col++) {
-                    if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                        continue;
-                    }
-                    const x = marginX + col * buttonSize;
-                    const y = marginY + row * buttonSize;
-                    const color = colors[(row * cols + col) % colors.length];
 
-                    const isJsonButton = selectedIndices.some(
-                        pos => pos.row === row && pos.col === col
-                    );
-                    let button;
-                    if (isJsonButton && jsonIndex < buttonData.length) {
-                        const { caption, url, size } = buttonData[jsonIndex];
-                        const textSize = size || defaultTextSize;
-                        button = createButton(x, y, color, caption, url, textSize);
-                        jsonIndex++;
-                    } else {
-                        const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
-                        button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
-                        defaultButtons.push(button);
+            if (window.innerWidth <= 600) {
+                const buttonsPerRow = 6;
+                const rowsPerSection = 3;
+                const rowWidth = buttonsPerRow * buttonSize;
+                const rowLeft = (window.innerWidth - rowWidth) / 2;
+
+                const topStartY = textTop - (rowsPerSection * buttonSize) - padding;
+                const bottomStartY = textTop + textHeight + padding;
+
+                for (let row = 0; row < rowsPerSection; row++) {
+                    for (let col = 0; col < buttonsPerRow; col++) {
+                        const x = rowLeft + col * buttonSize;
+                        const y = topStartY + row * buttonSize;
+                        const color = colors[(jsonIndex) % colors.length];
+
+                        let button;
+                        if (jsonIndex < buttonData.length) {
+                            const { caption, url, size } = buttonData[jsonIndex];
+                            const textSize = size || defaultTextSize;
+                            button = createButton(x, y, color, caption, url, textSize);
+                            jsonIndex++;
+                        } else {
+                            const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
+                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                            defaultButtons.push(button);
+                        }
+                    }
+                }
+
+                for (let row = 0; row < rowsPerSection; row++) {
+                    for (let col = 0; col < buttonsPerRow; col++) {
+                        const x = rowLeft + col * buttonSize;
+                        const y = bottomStartY + row * buttonSize;
+                        const color = colors[(jsonIndex) % colors.length];
+
+                        let button;
+                        if (jsonIndex < buttonData.length) {
+                            const { caption, url, size } = buttonData[jsonIndex];
+                            const textSize = size || defaultTextSize;
+                            button = createButton(x, y, color, caption, url, textSize);
+                            jsonIndex++;
+                        } else {
+                            const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
+                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                            defaultButtons.push(button);
+                        }
+                    }
+                }
+            } else {
+                const cols = Math.floor(window.innerWidth / buttonSize);
+                const rows = Math.floor(window.innerHeight / buttonSize);
+                const marginX = (window.innerWidth - cols * buttonSize) / 2;
+                const marginY = (window.innerHeight - rows * buttonSize) / 2;
+
+                const textColStart = Math.floor((textLeft - marginX) / buttonSize);
+                const textColEnd = Math.ceil((textLeft - marginX + textWidth) / buttonSize);
+                const textRowStart = Math.floor((textTop - marginY) / buttonSize);
+                const textRowEnd = Math.ceil((textTop - marginY + textHeight) / buttonSize);
+
+                const buttonPositions = [];
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
+                            continue;
+                        }
+                        buttonPositions.push({ row, col });
+                    }
+                }
+
+                const selectedIndices = [];
+                if (buttonData.length > 0) {
+                    const maxButtons = Math.min(buttonData.length, buttonPositions.length);
+                    for (let i = buttonPositions.length - 1; i > 0; i--) {
+                        const j = Math.floor(Math.random() * (i + 1));
+                        [buttonPositions[i], buttonPositions[j]] = [buttonPositions[j], buttonPositions[i]];
+                    }
+                    for (let i = 0; i < maxButtons; i++) {
+                        selectedIndices.push(buttonPositions[i]);
+                    }
+                }
+
+                for (let row = 0; row < rows; row++) {
+                    for (let col = 0; col < cols; col++) {
+                        if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
+                            continue;
+                        }
+                        const x = marginX + col * buttonSize;
+                        const y = marginY + row * buttonSize;
+                        const color = colors[(row * cols + col) % colors.length];
+
+                        const isJsonButton = selectedIndices.some(
+                            pos => pos.row === row && pos.col === col
+                        );
+                        let button;
+                        if (isJsonButton && jsonIndex < buttonData.length) {
+                            const { caption, url, size } = buttonData[jsonIndex];
+                            const textSize = size || defaultTextSize;
+                            button = createButton(x, y, color, caption, url, textSize);
+                            jsonIndex++;
+                        } else {
+                            const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
+                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
+                            defaultButtons.push(button);
+                        }
                     }
                 }
             }
 
-            // 根據 youtubeVideoIds 長度選預設按鈕
+            // 為預設按鈕（非 button.json）添加 YouTube 彈窗事件
             if (youtubeVideoIds.length > 0) {
                 const maxYoutubeButtons = Math.min(youtubeVideoIds.length, defaultButtons.length);
                 for (let i = defaultButtons.length - 1; i > 0; i--) {
@@ -372,11 +466,11 @@
 
         async function init() {
             await loadButtonData();
-            await loadVideoData(); // 新增載入 videos.json
+            await loadVideoData();
             drawButtons();
             window.addEventListener('resize', async () => {
                 await loadButtonData();
-                await loadVideoData(); // 視窗調整時重新載入
+                await loadVideoData();
                 drawButtons();
             });
         }
@@ -385,5 +479,7 @@
     </script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92f9c598a9a7bf6e',t:'MTc0NDUzNDgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92fe3668a99844dc',t:'MTc0NDU4MTM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ff1264ccf060c7',t:'MTc0NDU5MDM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ffb379af786732',t:'MTc0NDU5Njk4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
