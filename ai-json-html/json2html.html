@@ -1,0 +1,148 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JSON to HTML Demo with Bootstrap</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            max-width: 500px;
+            margin: 20px auto;
+            padding: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div id="form-container" class="container"></div>
+
+    <script src="json2html.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script>
+        const formJson = [
+            {
+                "type": "text",
+                "id": "username",
+                "label": "使用者名稱",
+                "value": "預設名稱"
+            },
+            {
+                "type": "label",
+                "label": "這是一個新的標籤",
+                "id": "info-label",
+                "align": "right"
+            },
+            {
+                "type": "password",
+                "id": "password",
+                "label": "密碼"
+            },
+            {
+                "type": "spacer",
+                "height": 20,
+                "line": true
+            },
+            {
+                "type": "select",
+                "id": "gender",
+                "label": "性別",
+                "options": [
+                    { "value": "male", "label": "男" },
+                    { "value": "female", "label": "女" },
+                    { "value": "other", "label": "其他" }
+                ],
+                "value": "male"
+            },
+                             
+            {
+                "type": "image",
+                "id": "profile-pic",
+                "value": "https://placebear.com/150/150",
+                "align": "center"
+            },
+            {
+                "type": "textarea",
+                "id": "bio",
+                "label": "自我介紹",
+                "value": "這是我的介紹"
+            },    
+            {
+                "type": "checkbox",
+                "id": "subscribe",
+                "label": "訂閱通知",
+                "value": true
+            },   
+            {
+                "type": "image",
+                "id": "banner",
+                "label": "",
+                "value": "https://placebear.com/100/100",
+                "align": "center"
+            },
+            {
+                "type": "radio",
+                "id": "role",
+                "label": "角色",
+                "options": [
+                    { "value": "user", "label": "使用者" },
+                    { "value": "admin", "label": "管理員" }
+                ],
+                "value": "user"
+            },
+            {
+                "type": "spacer",
+                "height": 10,
+                "line": false
+            },            
+            {
+                "type": "button",
+                "id": "submit",
+                "label": "提交",               
+                "callback": "submit",
+                "group":"1"
+            },
+            {
+                "type": "button",
+                "id": "cancel",
+                "label": "取消",                
+                "callback": "cancel",
+                "group":"1"
+            },
+            {
+                "type": "button",
+                "id": "extra",
+                "label": "額外按鈕",   
+                       
+                "callback": "extra"
+            }
+        ];
+
+        const renderer = new JsonToHtml();
+        renderer.setMargin(20).toDiv(formJson, 'form-container');
+
+        document.getElementById('form-container').addEventListener('jsonButtonClick', (e) => {
+            console.log('Button clicked:', e.detail.buttonId);
+            console.log('Action:', e.detail.action);
+            if (e.detail.formData) {
+                console.log('Form data:', e.detail.formData);
+            }
+            
+            switch (e.detail.action) {
+                case 'submit':
+                    alert('表單已提交！\n' + JSON.stringify(e.detail.formData, null, 2));
+                    break;
+                case 'cancel':
+                    alert('已取消！');
+                    break;
+                case 'extra':
+                    alert('額外按鈕！');
+                    break;
+            }
+        });
+
+        const htmlString = renderer.toHtml(formJson);
+        console.log('HTML String:', htmlString);
+    </script>
+</body>
+</html>

@@ -1,0 +1,79 @@
+[
+    {
+        "type": "text",
+        "id": "username",
+        "label": "使用者名稱",
+        "value": "預設名稱"
+    },
+    {
+        "type": "label",
+        "label": "這是一個新的標籤",
+        "id": "info-label",
+        "align": "right"
+    },
+    {
+        "type": "password",
+        "id": "password",
+        "label": "密碼"
+    },    
+    {
+        "type": "select",
+        "id": "gender",
+        "label": "性別",
+        "options": [
+            { "value": "male", "label": "男" },
+            { "value": "female", "label": "女" },
+            { "value": "other", "label": "其他" }
+        ],
+        "value": "male"
+    },        
+    {
+        "type": "checkbox",
+        "id": "subscribe",
+        "label": "訂閱通知",
+        "value": true
+    },   
+    {
+        "type": "image",
+        "id": "banner",
+        "label": "",
+        "value": "https://placebear.com/100/100",
+        "align": "center"
+    },
+    {
+        "type": "radio",
+        "id": "role",
+        "label": "角色",
+        "options": [
+            { "value": "user", "label": "使用者" },
+            { "value": "admin", "label": "管理員" }
+        ],
+        "value": "user"
+    },
+    {
+        "type": "spacer",
+        "height": 10,
+        "line": false
+    },            
+    {
+        "type": "button",
+        "id": "submit",
+        "label": "提交",               
+        "callback": "submit",
+        "group":"1"
+    },
+    {
+        "type": "button",
+        "id": "cancel",
+        "label": "取消",                
+        "callback": "cancel",
+        "group":"1"
+    },
+    {
+        "type": "button",
+        "id": "extra",
+        "label": "額外按鈕",   
+               
+        "callback": "extra"
+    }
+]
