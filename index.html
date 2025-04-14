@@ -44,7 +44,14 @@
             75% { transform: scale(1.05); }
             100% { transform: scale(1); }
         }
-        .github-icon {
+        .icon-group {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            align-items: center;
+            margin-top: 5px;
+        }
+        .github-icon, .youtube-icon {
             width: 48px;
             height: 48px;
             background-color: #ffffff;
@@ -52,17 +59,20 @@
             display: flex;
             justify-content: center;
             align-items: center;
-            margin-top: 5px;
             cursor: pointer;
             z-index: 2;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
         }
-        .github-icon:hover {
+        .github-icon:hover, .youtube-icon:hover {
             transform: scale(1.1);
         }
         .github-icon .fa-square-github {
             font-size: 32px;
             color: #333;
+        }
+        .youtube-icon .fa-square-youtube {
+            font-size: 32px;
+            color: #ff0000;
         }
         .button {
             position: absolute;
@@ -126,12 +136,10 @@
             box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
             z-index: 1001;
         }
-        /* 普通影片播放器 */
         .youtube-popup.regular iframe {
             width: 560px;
             height: 315px;
         }
-        /* Shorts 播放器 */
         .youtube-popup.shorts iframe {
             width: 300px;
             height: 533px;
@@ -148,11 +156,11 @@
             .main-text {
                 font-size: 18px;
             }
-            .github-icon {
+            .github-icon, .youtube-icon {
                 width: 16px;
                 height: 16px;
             }
-            .github-icon .fa-square-github {
+            .github-icon .fa-square-github, .youtube-icon .fa-square-youtube {
                 font-size: 12px;
             }
             .youtube-popup.regular iframe {
@@ -183,8 +191,13 @@
 <body>
     <div class="container">
         <div class="main-text">金益工作室</div>
-        <div class="github-icon">
-            <i class="fa-brands fa-square-github"></i>
+        <div class="icon-group">
+            <div class="github-icon">
+                <i class="fa-brands fa-square-github"></i>
+            </div>
+            <div class="youtube-icon">
+                <i class="fa-brands fa-square-youtube"></i>
+            </div>
         </div>
     </div>
     <div class="overlay" id="overlay"></div>
@@ -235,6 +248,12 @@
         const githubIcon = document.querySelector('.github-icon');
         githubIcon.addEventListener('click', () => {
             window.location.href = 'https://github.com/jinyistudio534/jinyistudio534.github.io/tree/main';
+        });
+
+        // 為 YouTube 圖標添加點擊事件
+        const youtubeIcon = document.querySelector('.youtube-icon');
+        youtubeIcon.addEventListener('click', () => {
+            window.location.href = 'https://www.youtube.com/user/54bill534';
         });
 
         // 載入 button.json
@@ -329,7 +348,7 @@
             clearButtons();
 
             const textElement = document.querySelector('.main-text');
-            const githubIcon = document.querySelector('.github-icon');
+            const githubIcon = document.querySelector('.icon-group');
             const textRect = textElement.getBoundingClientRect();
             const githubRect = githubIcon.getBoundingClientRect();
 
@@ -481,5 +500,6 @@
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92fe3668a99844dc',t:'MTc0NDU4MTM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ff1264ccf060c7',t:'MTc0NDU5MDM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ffb379af786732',t:'MTc0NDU5Njk4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9306421a7b75dae9',t:'MTc0NDY2NTc0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
