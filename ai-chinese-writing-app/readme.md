@@ -1,5 +1,4 @@
 ---
-
 # AI Chinese Writing App 使用說明
 
 「AI Chinese Writing App」是一個基於 Web 的應用程式，允許使用者創建、編輯並顯示垂直排列的中文文字，並可搭配自訂背景圖片與顏色。以下是應用程式的功能介紹與操作指南。
