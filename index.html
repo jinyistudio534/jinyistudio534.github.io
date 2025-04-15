@@ -256,12 +256,12 @@
             window.location.href = 'https://www.youtube.com/user/54bill534';
         });
 
-        // 載入 button.json
+        // 載入 buttons.json
         async function loadButtonData() {
             try {
                 // 添加時間戳作為查詢參數
                 const timestamp = new Date().getTime();
-                const response = await fetch(`./button.json?t=${timestamp}`);
+                const response = await fetch(`./buttons.json?t=${timestamp}`);
                 if (response.ok) {
                     buttonData = await response.json();
                     console.log('成功載入 button.json:', buttonData);
