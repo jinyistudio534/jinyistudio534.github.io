@@ -259,7 +259,9 @@
         // 載入 button.json
         async function loadButtonData() {
             try {
-                const response = await fetch('./button.json');
+                // 添加時間戳作為查詢參數
+                const timestamp = new Date().getTime();
+                const response = await fetch(`./button.json?t=${timestamp}`);
                 if (response.ok) {
                     buttonData = await response.json();
                     console.log('成功載入 button.json:', buttonData);
