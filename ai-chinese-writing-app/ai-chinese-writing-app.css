@@ -1,0 +1,72 @@
+body {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.screen {
+    display: none;
+    height: 100%;
+    width: 100%;
+    padding: 20px;
+}
+
+.screen.active {
+    display: block;
+}
+
+#menu-btn {
+    width: 64px;
+    height: 64px;
+    position: absolute;
+    top: 0;
+    left: 0;
+    background: transparent;
+    border: none;
+    z-index: 1000;
+    cursor: pointer;
+}
+
+#main-writing {
+    height: 100%;
+    width: 100%;
+}
+
+#json-list-screen, #edit-screen {
+    background: white;
+}
+
+.action-btn {
+    margin-right: 5px;
+}
+
+.drag-handle {
+    cursor: move;
+    user-select: none;
+    width: 32px;
+    height: 32px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.drag-handle::before {
+    content: "≡";
+    font-size: 18px;
+}
+
+.dragging {
+    opacity: 0.5;
+    background-color: #f0f0f0;
+}
+
+.form-range {
+    width: 100px;
+}
+
+#bg-color {
+    width: 38px; /* 與 input-group-text 的典型寬度匹配 */
+    height: 38px; /* 與 input-group-text 的典型高度匹配 */
+    padding: 0; /* 移除內邊距以保持尺寸一致 */
+}
