@@ -1,0 +1,1067 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>lihao</title>
+
+    <style>
+
+        body {
+            margin: 0;
+        }
+
+        #container {
+
+            position: absolute;
+            width: 100%;
+            height: 100%;
+        }
+
+        #error {
+            display: none;
+        }
+
+    </style>
+</head>
+<body>
+
+<div id="container"></div>
+
+<div id="error">
+    <h1>The graphic files could not be loaded</h1>
+    <p>Please note that this example may only work when served through a web server. The example code needs to dynamically load files which for security reasons is not allowed when serving from the file system.</p>
+</div>
+
+<!-- Include the runtime library -->
+<!-- NOTE: The Archer Runtime library is free for personal, non-commercial use and testing environments. -->
+<!-- For using the Archer Runtime library in production environments please visit https://archer.graphics to learn more about commercial licensing options. -->
+<script src='libs/archer.min.js'></script>
+
+<script language='javascript' type='text/javascript'>
+
+    /*
+    * NOTE: This example may only work when it is loaded through a web server. The example code needs to load the archer
+    * graphic file as well as the archer configuration file, which for security reasons is not allowed when loading the
+    * HTML file from the file system.
+    */
+
+    /**
+     * Root location where your interactive graphic is stored.
+     * Leave empty to resolve paths relative from this HTML.
+     * Can also contain an absolute URL to the server where your graphic is stored, for example:
+     * http://my-domain.com/graphics/my-graphic/
+     */
+    var items={"665":"建興","664":"銅安","663":"西岐","662":"龍泉","661":"日南","660":"幸福",
+        "659":"孟春","658":"太白","657":"頂店","656":"江南","655":"德化","654":"奉化","653":"文武","652":"武曲","651":"文曲","650":"武陵",
+        "649":"義和","648":"薰風","647":"南陽","646":"中山","645":"岷山","644":"新美","643":"庄美","642":"平安","641":"孔門","640":"順天",
+        "639":"大甲","638":"朝陽","637":"建興"};
+
+    var rootUrl = '';
+
+    /**
+     * Location of the assets folder, by default resolved relative from root URL
+     */
+    var assetUrl = rootUrl + 'assets';
+
+    /**
+     * Location of the SVG file, by default resolved relative from root URL
+     */
+    var graphicUrl = rootUrl + 'archer.graphic.svg';
+
+    /**
+     * Location of the graphic configuration file, by default resolved relative from root URL
+     */
+    var configUrl = rootUrl + 'archer.config.json';
+
+    /**
+     * The container HTML element in which to display the graphic
+     */
+    var container = document.getElementById('container');
+
+    // Create a graphic instance over the container
+    var graphic = archer.create(container);
+
+    // Tell the graphic where assets (e.g. images) are located
+    graphic.document.setAssetRoot(assetUrl);
+
+    // Load graphic and configuration
+    graphic.loadUrl(graphicUrl, configUrl);
+
+    // Wait until files are loaded
+    graphic.on('ready', function () {
+
+        // Make graphic fit into container bounds
+        graphic.view.zoomToFit();
+
+        // Enable zoom / pan with mouse
+        graphic.view.enableMouse(true, true);
+
+        // Set variable values
+       
+        graphic.setValue('b665', 0);
+        graphic.setValue('b655', 0);
+        graphic.setValue('lihao', 0);
+        graphic.setValue('b639', 0);
+        graphic.setValue('b663', 0);
+        graphic.setValue('b649', 0);
+        graphic.setValue('b651', 0);
+        graphic.setValue('b653', 0);
+        graphic.setValue('b640', 0);
+        graphic.setValue('b643', 0);
+        
+        graphic.setValue('b659', 0);
+        graphic.setValue('b658', 0);
+        graphic.setValue('b657', 0);
+        graphic.setValue('b656', 0);
+        graphic.setValue('b654', 0);
+        graphic.setValue('b660', 0);
+        graphic.setValue('b662', 0);
+        graphic.setValue('b661', 0);
+        graphic.setValue('b642', 0);
+        graphic.setValue('b638', 0);
+        graphic.setValue('b646', 0);
+        graphic.setValue('b645', 0);
+        graphic.setValue('b648', 0);
+        
+        graphic.setValue('b652', 0);
+        graphic.setValue('b664', 0);
+        graphic.setValue('b637', 0);
+        graphic.setValue('b641', 0);
+        graphic.setValue('b644', 0);
+        graphic.setValue('b650', 0);
+       
+        graphic.setValue('b647', 0);
+        graphic.setValue('p665', 0);
+        graphic.setValue('p664', 0);
+        graphic.setValue('p663', 0);
+        graphic.setValue('p662', 0);
+        graphic.setValue('p661', 0);
+        graphic.setValue('p660', 0);
+        graphic.setValue('p659', 0);
+        graphic.setValue('p658', 0);
+        graphic.setValue('p657', 0);
+        graphic.setValue('p656', 0);
+        graphic.setValue('p655', 0);
+        graphic.setValue('p654', 0);
+        graphic.setValue('p653', 0);
+        graphic.setValue('p652', 0);
+        graphic.setValue('p651', 0);
+        graphic.setValue('p650', 0);
+        graphic.setValue('p649', 0);
+        graphic.setValue('p648', 0);
+        graphic.setValue('p647', 0);
+        graphic.setValue('p646', 0);
+        graphic.setValue('p645', 0);
+        graphic.setValue('p644', 0);
+        graphic.setValue('p643', 0);
+        graphic.setValue('p642', 0);
+        graphic.setValue('p641', 0);
+        graphic.setValue('p640', 0);
+        graphic.setValue('p639', 0);
+        graphic.setValue('p638', 0);
+        graphic.setValue('p637', 0);
+
+        // Add event listeners
+		graphic.element('path665').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(element.id.replace("path", ""));
+				
+        });
+
+        graphic.element('path665').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path665').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			
+        });
+
+        graphic.element('path664').on('mouseenter', function(element, event) {            
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(element.id.replace("path", ""));				
+        });
+
+        graphic.element('path664').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path664').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);			
+        });
+
+        graphic.element('path663').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path663').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path663').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p663', 2);
+        });
+
+        graphic.element('path662').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path662').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path662').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p662', 2);
+        });
+
+        graphic.element('path661').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path661').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path661').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p661', 2);
+        });
+
+        graphic.element('path660').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path660').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path660').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p660', 2);
+        });
+
+        graphic.element('path659').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));		
+        });
+
+        graphic.element('path659').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path659').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p659', 2);
+        });
+
+        graphic.element('path658').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path658').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path658').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p658', 2);
+        });
+
+        graphic.element('path657').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path657').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path657').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p657', 2);
+        });
+
+        graphic.element('path656').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path656').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path656').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p656', 2);
+        });
+
+        graphic.element('path655').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path655').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path655').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p655', 2);
+        });
+
+        graphic.element('path654').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path654').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path654').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p654', 2);
+        });
+
+        graphic.element('path653').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path653').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path653').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p653', 2);
+        });
+
+        graphic.element('path652').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));		
+        });
+
+        graphic.element('path652').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path652').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p652', 2);
+        });
+
+        graphic.element('path651').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path651').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path651').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p651', 2);
+        });
+
+        graphic.element('path650').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path650').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path650').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p650', 2);
+        });
+
+        graphic.element('path649').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path649').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path649').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p649', 2);
+        });
+
+        graphic.element('path648').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path648').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path648').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p648', 2);
+        });
+
+        graphic.element('path647').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));		
+        });
+
+        graphic.element('path647').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path647').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p647', 2);
+        });
+
+        graphic.element('path646').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path646').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path646').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p646', 2);
+        });
+
+        graphic.element('path645').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path645').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path645').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p645', 2);
+        });
+
+        graphic.element('path644').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path644').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path644').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p644', 2);
+        });
+
+        graphic.element('path643').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path643').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path643').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p643', 2);
+        });
+
+        graphic.element('path642').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));		
+        });
+
+        graphic.element('path642').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path642').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p642', 2);
+        });
+
+        graphic.element('path641').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path641').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path641').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p641', 2);
+        });
+
+        graphic.element('path640').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path640').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path640').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p640', 2);
+        });
+
+        graphic.element('path639').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path639').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path639').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p639', 2);
+        });
+
+        graphic.element('path638').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path638').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path638').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p638', 2);
+        });
+
+        graphic.element('path637').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(element.id.replace("path", ""));			
+        });
+
+        graphic.element('path637').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push("");
+        });
+
+        graphic.element('path637').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p637', 2);
+        });        
+        //========================================================================
+        graphic.element('box665').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b665', 1);			
+        });
+
+        graphic.element('box665').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b665', 0);
+        });
+
+        graphic.element('box665').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b665', 2);
+        });
+
+        graphic.element('box664').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b664', 1);			
+        });
+
+        graphic.element('box664').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b664', 0);
+        });
+
+        graphic.element('box664').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b664', 2);
+        });
+
+        graphic.element('box663').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b663', 1);			
+        });
+
+        graphic.element('box663').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b663', 0);
+        });
+
+        graphic.element('box663').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b663', 2);
+        });
+
+        graphic.element('box662').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b662', 1);			
+        });
+
+        graphic.element('box662').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b662', 0);
+        });
+
+        graphic.element('box662').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b662', 2);
+        });
+
+        graphic.element('box661').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b661', 1);			
+        });
+
+        graphic.element('box661').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b661', 0);
+        });
+
+        graphic.element('box661').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b661', 2);
+        });
+
+        graphic.element('box660').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b660', 1);			
+        });
+
+        graphic.element('box660').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b660', 0);
+        });
+
+        graphic.element('box660').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b660', 2);
+        });
+
+
+        graphic.element('box559').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b659', 1);			
+        });
+
+        graphic.element('box559').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b659', 0);
+        });
+
+        graphic.element('box559').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b659', 2);
+        });
+
+        graphic.element('box658').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b658', 1);			
+        });
+
+        graphic.element('box658').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b658', 0);
+        });
+
+        graphic.element('box658').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b658', 2);
+        });
+
+        graphic.element('box557').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b657', 1);			
+        });
+
+        graphic.element('box557').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b657', 0);
+        });
+
+        graphic.element('box557').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b657', 2);
+        });
+
+        graphic.element('box556').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b656', 1);			
+        });
+
+        graphic.element('box556').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b656', 0);
+        });
+
+        graphic.element('box556').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b656', 2);
+        });
+
+        graphic.element('box655').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b655', 1);			
+        });
+
+        graphic.element('box655').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b655', 0);
+        });
+
+        graphic.element('box655').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b655', 2);
+        });
+
+        graphic.element('box654').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b654', 1);			
+        });
+
+        graphic.element('box654').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b654', 0);
+        });
+
+        graphic.element('box654').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b654', 2);
+        });
+
+        graphic.element('box653').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b653', 1);			
+        });
+
+        graphic.element('box653').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b653', 0);
+        });
+
+        graphic.element('box653').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b653', 2);
+        });
+
+        graphic.element('box652').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b652', 1);			
+        });
+
+        graphic.element('box652').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b652', 0);
+        });
+
+        graphic.element('box652').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b652', 2);
+        });
+
+        graphic.element('box651').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b651', 1);			
+        });
+
+        graphic.element('box651').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b651', 0);
+        });
+
+        graphic.element('box651').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b651', 2);
+        });
+
+        graphic.element('box650').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b650', 1);			
+        });
+
+        graphic.element('box650').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b650', 0);
+        });
+
+        graphic.element('box650').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b650', 2);
+        });
+
+        graphic.element('box649').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b649', 1);			
+        });
+
+        graphic.element('box649').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b649', 0);
+        });
+
+        graphic.element('box649').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b649', 2);
+        });
+
+        graphic.element('box648').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b648', 1);			
+        });
+
+        graphic.element('box648').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b648', 0);
+        });
+
+        graphic.element('box648').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b648', 2);
+        });
+
+        graphic.element('box647').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b647', 1);			
+        });
+
+        graphic.element('box647').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b647', 0);
+        });
+
+        graphic.element('box647').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b647', 2);
+        });
+
+        graphic.element('box646').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b646', 1);			
+        });
+
+        graphic.element('box646').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b646', 0);
+        });
+
+        graphic.element('box646').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b646', 2);
+        });
+
+        graphic.element('box645').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b645', 1);			
+        });
+
+        graphic.element('box645').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b645', 0);
+        });
+
+        graphic.element('box645').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b645', 2);
+        });
+
+        graphic.element('box644').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b644', 1);			
+        });
+
+        graphic.element('box644').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b644', 0);
+        });
+
+        graphic.element('box644').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b644', 2);
+        });
+
+        graphic.element('box643').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b643', 1);			
+        });
+
+        graphic.element('box643').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b643', 0);
+        });
+
+        graphic.element('box643').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b643', 2);
+        });
+
+        graphic.element('box642').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b642', 1);			
+        });
+
+        graphic.element('box642').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b642', 0);
+        });
+
+        graphic.element('box642').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b642', 2);
+        });
+
+        graphic.element('box641').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b641', 1);			
+        });
+
+        graphic.element('box641').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b641', 0);
+        });
+
+        graphic.element('box641').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b641', 2);
+        });
+
+        graphic.element('box640').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b640', 1);			
+        });
+
+        graphic.element('box640').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b640', 0);
+        });
+
+        graphic.element('box640').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b640', 2);
+        });
+
+        graphic.element('box639').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b639', 1);			
+        });
+
+        graphic.element('box639').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b639', 0);
+        });
+
+        graphic.element('box639').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b639', 2);
+        });
+
+        graphic.element('box638').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b638', 1);			
+        });
+
+        graphic.element('box638').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b638', 0);
+        });
+
+        graphic.element('box638').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b638', 2);
+        });
+
+        graphic.element('box637').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b637', 1);			
+        });
+
+        graphic.element('box637').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b637', 0);
+        });
+
+        graphic.element('box637').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b637', 2);
+        });
+
+        var box=[];        
+        var box1="";
+        var step=0;
+        setInterval(() => { 
+            if(box.length>0) {
+                let item=box.shift();                
+                if(item=="") {
+                    graphic.setValue('b'+box1, 0);
+                }
+                else {
+                    graphic.setValue('b'+item, 1);
+                }
+                box1 = item;
+                step=0;                
+            }
+            if(box1 != "") {
+                graphic.setValue('b'+box1, step);
+                step=step>0 ? 0 : 1;
+            }
+        }, 250);
+
+    });
+
+    // Files could not be loaded, maybe due to security restrictions
+    // Display error message
+    graphic.on('error', function() {
+        document.getElementById('error').style['display'] = 'block';
+    })
+
+</script>
+
+</body>
+</html>
