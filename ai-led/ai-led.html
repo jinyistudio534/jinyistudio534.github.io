@@ -1,0 +1,91 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>AI LED Demo</title>
+    <style>
+        body {
+            padding: 20px;
+            background-color: #f5f5f5;
+            font-family: Arial, sans-serif;
+        }
+        .led-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 20px;
+            max-width: 400px;
+            margin: 20px auto;
+        }
+    </style>
+</head>
+<body>
+    <h1>AI LED Examples</h1>
+    <div class="led-grid">
+        <ai-led 
+            led-shape="circle" 
+            led-size="24" 
+            label-position="bottom" 
+            label-size="14" 
+            bevel-type="inner"
+            border-radius="15"
+            led-color="green"
+            led-state="on"
+            led-border="solid"
+            click-event="status-clicked">Status</ai-led>
+
+        <ai-led 
+            led-shape="square" 
+            led-size="30" 
+            label-position="top" 
+            label-size="16" 
+            bevel-type="inner"
+            border-radius="0"
+            led-color="red"
+            led-state="off"
+            led-border="inner"
+            container-width="100"
+            container-height="120"
+            click-event="error-clicked">Error</ai-led>
+
+        <ai-led 
+            led-shape="circle" 
+            led-size="20" 
+            label-position="bottom" 
+            label-size="12" 
+            bevel-type="solid"
+            border-radius="5"
+            led-color="blue"
+            led-state="blink"
+            blink-on-time="300"
+            blink-off-time="700"
+            led-border="outer">Power</ai-led>
+
+        <ai-led 
+            led-shape="square" 
+            led-size="24" 
+            label-position="top" 
+            label-size="14" 
+            bevel-type="none"
+            led-color="yellow"
+            led-state="blink"
+            led-border="inner"
+            container-width="90"
+            container-height="70"
+            click-event="warning-clicked">Warning</ai-led>
+    </div>
+
+    <script src="ai-led.js"></script>
+    <script>
+        // Example event listeners
+        document.addEventListener('status-clicked', (e) => {
+            console.log('Status clicked!', e.detail);
+        });
+        document.addEventListener('error-clicked', (e) => {
+            console.log('Error clicked!', e.detail);
+        });
+        document.addEventListener('warning-clicked', (e) => {
+            console.log('Warning clicked!', e.detail);
+        });
+    </script>
+</body>
+</html>

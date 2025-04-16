@@ -1,0 +1,67 @@
+.container {
+    display: flex;
+    flex-direction: column;
+    align-items: center; /* Horizontally centers both LED and label */
+    justify-content: space-between;
+    padding: 10px;
+    box-sizing: border-box;
+    cursor: pointer; /* Indicates the container is clickable */
+}
+
+.led {
+    transition: background-color 0.1s ease;
+}
+
+.led.solid {
+    border: 1px solid #000; /* Solid border style for LED */
+}
+
+.led.inner {
+    border: 2px solid;
+    border-top-color: #999;
+    border-left-color: #999;
+    border-right-color: #fff;
+    border-bottom-color: #fff; /* Concave (inner) bevel effect for LED */
+}
+
+.led.outer {
+    border: 2px solid;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #999;
+    border-bottom-color: #999; /* Convex (outer) bevel effect for LED */
+}
+
+.label {
+    color: #333;
+    text-align: center; /* Centers text within label */
+    width: 100%; /* Ensures label takes full width for proper centering */
+}
+
+.none {
+    background-color: transparent;
+    border: none; /* No frame, transparent */
+}
+
+.inner {
+    background-color: #e0e0e0;
+    border: 2px solid;
+    border-top-color: #999;
+    border-left-color: #999;
+    border-right-color: #fff;
+    border-bottom-color: #fff; /* Concave (inner) bevel effect for container */
+}
+
+.outer {
+    background-color: #e0e0e0;
+    border: 2px solid;
+    border-top-color: #fff;
+    border-left-color: #fff;
+    border-right-color: #999;
+    border-bottom-color: #999; /* Convex (outer) bevel effect for container */
+}
+
+.solid {
+    background-color: #e0e0e0;
+    border: 1px solid #000; /* Solid border with opaque background for container */
+}
