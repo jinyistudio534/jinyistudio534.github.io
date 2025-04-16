@@ -1,507 +1,1179 @@
 <!DOCTYPE html>
-<html lang="zh-TW">
+<html>
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="google-site-verification" content="dl147xRdelb6UnUGShljpSNbXy3j0BTa2_nIIpDi8gk" />
-    <title>金益工作室</title>
-    <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
-    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css">
+    <title>lihao</title>
+
     <style>
+
         body {
             margin: 0;
-            height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            background-color: #f0f0f0;
-            overflow: hidden;
         }
-        .container {
-            position: relative;
-            display: flex;
-            flex-direction: column;
-            justify-content: center;
-            align-items: center;
-            z-index: 1;
-        }
-        .main-text {
-            font-size: 80px;
-            font-weight: bold;
-            color: #333;
-            text-align: center;
-            white-space: nowrap;
-            padding: 10px;
-            box-sizing: content-content;
-            z-index: 2;
-            animation: heartbeat 1.5s ease-in-out infinite;
-            cursor: pointer;
-        }
-        @keyframes heartbeat {
-            0% { transform: scale(1); }
-            25% { transform: scale(1.1); }
-            50% { transform: scale(1); }
-            75% { transform: scale(1.05); }
-            100% { transform: scale(1); }
-        }
-        .icon-group {
-            display: flex;
-            gap: 10px;
-            justify-content: center;
-            align-items: center;
-            margin-top: 5px;
-        }
-        .github-icon, .youtube-icon {
-            width: 48px;
-            height: 48px;
-            background-color: #ffffff;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            cursor: pointer;
-            z-index: 2;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        }
-        .github-icon:hover, .youtube-icon:hover {
-            transform: scale(1.1);
-        }
-        .github-icon .fa-square-github {
-            font-size: 32px;
-            color: #333;
-        }
-        .youtube-icon .fa-square-youtube {
-            font-size: 32px;
-            color: #ff0000;
-        }
-        .button {
+
+        #container {
+
             position: absolute;
-            width: 108px;
-            height: 108px;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            text-align: center;
-            color: white;
-            font-size: 64px;
-            border: none;
-            cursor: pointer;
-            transition: transform 0.2s;
-            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-            z-index: 0;
-        }
-        .button.caption {
-            font-weight: bold;
-            line-height: 1.5;
-            white-space: pre-wrap;
-        }
-        .button:hover {
-            transform: scale(1.1);
-        }
-        .btn-color-1 { background-color: #ff4d4d; }
-        .btn-color-1.caption { color: #ffffff; }
-        .btn-color-2 { background-color: #4da8ff; }
-        .btn-color-2.caption { color: #ffffff; }
-        .btn-color-3 { background-color: #4dff4d; }
-        .btn-color-3.caption { color: #000000; }
-        .btn-color-4 Vivi Color { background-color: #ffcc4d; }
-        .btn-color-4.caption { color: #000000; }
-        .btn-color-5 { background-color: #ff4dff; }
-        .btn-color-5.caption { color: #ffffff; }
-        .btn-color-6 { background-color: #4dffff; }
-        .btn-color-6.caption { color: #000000; }
-        .btn-color-7 { background-color: #ff944d; }
-        .btn-color-7.caption { color: #000000; }
-        .btn-color-8 { background-color: #944dff; }
-        .btn-color-8.caption { color: #ffffff; }
-        .overlay {
-            display: none;
-            position: fixed;
-            top: 0;
-            left: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0, 0, 0, 0.5);
-            z-index: 1000;
         }
-        .youtube-popup {
+
+        #error {
             display: none;
-            position: fixed;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            background-color: #fff;
-            padding: 20px;
-            border-radius: 10px;
-            box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
-            z-index: 1001;
         }
-        .youtube-popup.regular iframe {
-            width: 560px;
-            height: 315px;
-        }
-        .youtube-popup.shorts iframe {
-            width: 300px;
-            height: 533px;
-        }
-        .close-button {
-            position: absolute;
-            top: 10px;
-            right: 10px;
-            font-size: 20px;
-            color: #333;
-            cursor: pointer;
-        }
-        @media (max-width: 600px) {
-            .main-text {
-                font-size: 18px;
-            }
-            .github-icon, .youtube-icon {
-                width: 16px;
-                height: 16px;
-            }
-            .github-icon .fa-square-github, .youtube-icon .fa-square-youtube {
-                font-size: 12px;
-            }
-            .youtube-popup.regular iframe {
-                width: 300px;
-                height: 169px;
-            }
-            .youtube-popup.shorts iframe {
-                width: 180px;
-                height: 320px;
-            }
-        }
+
     </style>
-    <script type="application/ld+json">
-        {
-            "@context": "https://schema.org",
-            "@type": "Organization",
-            "name": "金益工作室",
-            "url": "https://jinyistudio534.github.io/",
-            "logo": "https://jinyistudio534.github.io/images/logo.png",
-            "description": "金益工作室提供專業的網頁設計、程式開發與創意解決方案。",
-            "sameAs": [
-                "https://github.com/jinyistudio534",
-                "https://linktr.ee/jinyistudio"
-            ]
-        }
-    </script>
 </head>
 <body>
-    <div class="container">
-        <div class="main-text">金益工作室</div>
-        <div class="icon-group">
-            <div class="github-icon">
-                <i class="fa-brands fa-square-github"></i>
-            </div>
-            <div class="youtube-icon">
-                <i class="fa-brands fa-square-youtube"></i>
-            </div>
-        </div>
-    </div>
-    <div class="overlay" id="overlay"></div>
-    <div class="youtube-popup" id="youtubePopup">
-        <span class="close-button" id="closeButton">×</span>
-        <iframe src="" frameborder="0" allow="autoplay; encrypted-media" allowfullscreen></iframe>
-    </div>
-    <script>
-        const colors = [
-            'btn-color-1', 'btn-color-2', 'btn-color-3', 'btn-color-4',
-            'btn-color-5', 'btn-color-6', 'btn-color-7', 'btn-color-8'
-        ];
-        const defaultIcons = [
-            'home', 'star', 'favorite', 'settings',
-            'person', 'lock', 'cloud', 'camera_alt',
-            'music_note', 'phone', 'email', 'lightbulb'
-        ];
-        const buttonSize = 108;
-        const defaultTextSize = 16;
-        let buttonData = [];
-        let youtubeVideoIds = [];
 
-        // 載入 videos.json
-        async function loadVideoData() {
-            try {
-                const response = await fetch('./videos.json');
-                if (response.ok) {
-                    const data = await response.json();
-                    youtubeVideoIds = Array.isArray(data) && data.length > 0 ? data : [];
-                    console.log('成功載入 videos.json:', youtubeVideoIds);
-                } else {
-                    youtubeVideoIds = [];
-                    console.log('videos.json 不存在或無效，設為空陣列');
-                }
-            } catch (error) {
-                youtubeVideoIds = [];
-                console.log('無法讀取 videos.json，設為空陣列', error);
-            }
-        }
+<div id="container"></div>
 
-        // 為中間文字添加點擊事件
-        const mainText = document.querySelector('.main-text');
-        mainText.addEventListener('click', () => {
-            window.location.href = 'https://linktr.ee/jinyistudio';
+<div id="error">
+    <h1>The graphic files could not be loaded</h1>
+    <p>Please note that this example may only work when served through a web server. The example code needs to dynamically load files which for security reasons is not allowed when serving from the file system.</p>
+</div>
+
+<!-- Include the runtime library -->
+<!-- NOTE: The Archer Runtime library is free for personal, non-commercial use and testing environments. -->
+<!-- For using the Archer Runtime library in production environments please visit https://archer.graphics to learn more about commercial licensing options. -->
+<script src='libs/archer.min.js'></script>
+
+<script language='javascript' type='text/javascript'>
+
+    /*
+    * NOTE: This example may only work when it is loaded through a web server. The example code needs to load the archer
+    * graphic file as well as the archer configuration file, which for security reasons is not allowed when loading the
+    * HTML file from the file system.
+    */
+
+    /**
+     * Root location where your interactive graphic is stored.
+     * Leave empty to resolve paths relative from this HTML.
+     * Can also contain an absolute URL to the server where your graphic is stored, for example:
+     * http://my-domain.com/graphics/my-graphic/
+     */
+    var items={"665":"建興","664":"銅安","663":"西岐","662":"龍泉","661":"日南","660":"幸福",
+        "659":"孟春","658":"太白","657":"頂店","656":"江南","655":"德化","654":"奉化","653":"文武","652":"武曲","651":"文曲","650":"武陵",
+        "649":"義和","648":"薰風","647":"南陽","646":"中山","645":"岷山","644":"新美","643":"庄美","642":"平安","641":"孔門","640":"順天",
+        "639":"大甲","638":"朝陽","637":"建興"};
+
+    function createDict(key, value) {
+        const obj = {};
+        obj[key] = value;
+        return obj;
+    }
+
+    var rootUrl = '';
+
+    /**
+     * Location of the assets folder, by default resolved relative from root URL
+     */
+    var assetUrl = rootUrl + 'assets';
+
+    /**
+     * Location of the SVG file, by default resolved relative from root URL
+     */
+    var graphicUrl = rootUrl + 'archer.graphic.svg';
+
+    /**
+     * Location of the graphic configuration file, by default resolved relative from root URL
+     */
+    var configUrl = rootUrl + 'archer.config.json';
+
+    /**
+     * The container HTML element in which to display the graphic
+     */
+    var container = document.getElementById('container');
+
+    // Create a graphic instance over the container
+    var graphic = archer.create(container);
+
+    // Tell the graphic where assets (e.g. images) are located
+    graphic.document.setAssetRoot(assetUrl);
+
+    // Load graphic and configuration
+    graphic.loadUrl(graphicUrl, configUrl);
+
+    // Wait until files are loaded
+    graphic.on('ready', function () {
+
+        // Make graphic fit into container bounds
+        graphic.view.zoomToFit();
+
+        // Enable zoom / pan with mouse
+        graphic.view.enableMouse(false, false);
+
+        // Set variable values
+       
+        graphic.setValue('b665', 0);
+        graphic.setValue('b655', 0);
+        graphic.setValue('lihao', 0);
+        graphic.setValue('b639', 0);
+        graphic.setValue('b663', 0);
+        graphic.setValue('b649', 0);
+        graphic.setValue('b651', 0);
+        graphic.setValue('b653', 0);
+        graphic.setValue('b640', 0);
+        graphic.setValue('b643', 0);
+        
+        graphic.setValue('b659', 0);
+        graphic.setValue('b658', 0);
+        graphic.setValue('b657', 0);
+        graphic.setValue('b656', 0);
+        graphic.setValue('b654', 0);
+        graphic.setValue('b660', 0);
+        graphic.setValue('b662', 0);
+        graphic.setValue('b661', 0);
+        graphic.setValue('b642', 0);
+        graphic.setValue('b638', 0);
+        graphic.setValue('b646', 0);
+        graphic.setValue('b645', 0);
+        graphic.setValue('b648', 0);
+        
+        graphic.setValue('b652', 0);
+        graphic.setValue('b664', 0);
+        graphic.setValue('b637', 0);
+        graphic.setValue('b641', 0);
+        graphic.setValue('b644', 0);
+        graphic.setValue('b650', 0);
+       
+        graphic.setValue('b647', 0);
+        graphic.setValue('p665', 0);
+        graphic.setValue('p664', 0);
+        graphic.setValue('p663', 0);
+        graphic.setValue('p662', 0);
+        graphic.setValue('p661', 0);
+        graphic.setValue('p660', 0);
+        graphic.setValue('p659', 0);
+        graphic.setValue('p658', 0);
+        graphic.setValue('p657', 0);
+        graphic.setValue('p656', 0);
+        graphic.setValue('p655', 0);
+        graphic.setValue('p654', 0);
+        graphic.setValue('p653', 0);
+        graphic.setValue('p652', 0);
+        graphic.setValue('p651', 0);
+        graphic.setValue('p650', 0);
+        graphic.setValue('p649', 0);
+        graphic.setValue('p648', 0);
+        graphic.setValue('p647', 0);
+        graphic.setValue('p646', 0);
+        graphic.setValue('p645', 0);
+        graphic.setValue('p644', 0);
+        graphic.setValue('p643', 0);
+        graphic.setValue('p642', 0);
+        graphic.setValue('p641', 0);
+        graphic.setValue('p640', 0);
+        graphic.setValue('p639', 0);
+        graphic.setValue('p638', 0);
+        graphic.setValue('p637', 0);
+
+        // Add event listeners
+		graphic.element('path665').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);              
+            box.push(createDict(element.id.replace("path", "b"),2));
+			graphic.setValue(element.id.replace("path","p"),2);
         });
 
-        // 為 GitHub 圖標添加點擊事件
-        const githubIcon = document.querySelector('.github-icon');
-        githubIcon.addEventListener('click', () => {
-            window.location.href = 'https://github.com/jinyistudio534/jinyistudio534.github.io/tree/main';
+        graphic.element('path665').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);			
         });
 
-        // 為 YouTube 圖標添加點擊事件
-        const youtubeIcon = document.querySelector('.youtube-icon');
-        youtubeIcon.addEventListener('click', () => {
-            window.location.href = 'https://www.youtube.com/user/54bill534';
+        graphic.element('path665').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			
         });
 
-        // 載入 button.json
-        async function loadButtonData() {
-            try {
-                // 添加時間戳作為查詢參數
-                const timestamp = new Date().getTime();
-                const response = await fetch(`./button.json?t=${timestamp}`);
-                if (response.ok) {
-                    buttonData = await response.json();
-                    console.log('成功載入 button.json:', buttonData);
-                } else {
-                    buttonData = [];
-                    console.log('button.json 不存在，使用預設圖標');
-                }
-            } catch (error) {
-                buttonData = [];
-                console.log('無法讀取 button.json，使用預設圖標', error);
-            }
-        }
-
-        // 創建按鈕並返回按鈕類型
-        function createButton(x, y, colorClass, content, url = null, textSize = defaultTextSize) {
-            const button = document.createElement('button');
-            button.className = `button ${colorClass}`;
-            if (url) {
-                button.classList.add('caption');
-                button.style.fontSize = `${textSize}px`;
-                button.addEventListener('click', () => {
-                    window.location.href = url;
-                });
-                button.dataset.type = 'json';
-            } else {
-                button.dataset.type = 'default';
-            }
-            button.style.left = `${x}px`;
-            button.style.top = `${y}px`;
-            button.innerHTML = content.replace(/\n/g, '<br>');
-            document.body.appendChild(button);
-            return button;
-        }
-
-        function clearButtons() {
-            const buttons = document.querySelectorAll('.button');
-            buttons.forEach(button => button.remove());
-        }
-
-        // 顯示 YouTube 彈窗
-        function showYouTubePopup() {
-            const randomVideo = youtubeVideoIds[Math.floor(Math.random() * youtubeVideoIds.length)];
-            const iframe = document.querySelector('#youtubePopup iframe');
-            const popup = document.getElementById('youtubePopup');
-
-            // 判斷是否為 Shorts 並提取影片 ID
-            let videoId;
-            let isShorts = randomVideo.startsWith('shorts/');
-            if (isShorts) {
-                videoId = randomVideo.replace('shorts/', '');
-            } else {
-                videoId = randomVideo;
-            }
-
-            // 設置播放器 URL
-            iframe.src = `https://www.youtube.com/embed/${videoId}?autoplay=1`;
-
-            // 根據影片類型設置播放器樣式
-            popup.classList.remove('regular', 'shorts');
-            if (isShorts) {
-                popup.classList.add('shorts');
-            } else {
-                popup.classList.add('regular');
-            }
-
-            // 顯示彈窗
-            document.getElementById('overlay').style.display = 'block';
-            document.getElementById('youtubePopup').style.display = 'block';
-        }
-
-        // 關閉彈窗
-        document.getElementById('closeButton').addEventListener('click', () => {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('youtubePopup').style.display = 'none';
-            document.querySelector('#youtubePopup iframe').src = '';
+        graphic.element('path664').on('mouseenter', function(element, event) {            
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));	
+            graphic.setValue(element.id.replace("path","p"),2);			
         });
 
-        // 點擊遮罩關閉彈窗
-        document.getElementById('overlay').addEventListener('click', () => {
-            document.getElementById('overlay').style.display = 'none';
-            document.getElementById('youtubePopup').style.display = 'none';
-            document.querySelector('#youtubePopup iframe').src = '';
+        graphic.element('path664').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
-        function drawButtons() {
-            clearButtons();
+        graphic.element('path664').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);			
+        });
 
-            const textElement = document.querySelector('.main-text');
-            const githubIcon = document.querySelector('.icon-group');
-            const textRect = textElement.getBoundingClientRect();
-            const githubRect = githubIcon.getBoundingClientRect();
+        graphic.element('path663').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
 
-            const padding = 10;
-            const textWidth = textRect.width + 2 * padding;
-            const textHeight = textRect.height + githubRect.height + 5 + padding;
+        graphic.element('path663').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-            const textLeft = (window.innerWidth - textWidth) / 2;
-            const textTop = (window.innerHeight - textHeight) / 2;
+        graphic.element('path663').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p663', 2);
+        });
 
-            const defaultButtons = [];
-            let jsonIndex = 0;
+        graphic.element('path662').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
 
-            if (window.innerWidth <= 600) {
-                const buttonsPerRow = 6;
-                const rowsPerSection = 3;
-                const rowWidth = buttonsPerRow * buttonSize;
-                const rowLeft = (window.innerWidth - rowWidth) / 2;
+        graphic.element('path662').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-                const topStartY = textTop - (rowsPerSection * buttonSize) - padding;
-                const bottomStartY = textTop + textHeight + padding;
+        graphic.element('path662').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p662', 2);
+        });
 
-                for (let row = 0; row < rowsPerSection; row++) {
-                    for (let col = 0; col < buttonsPerRow; col++) {
-                        const x = rowLeft + col * buttonSize;
-                        const y = topStartY + row * buttonSize;
-                        const color = colors[(jsonIndex) % colors.length];
+        graphic.element('path661').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
 
-                        let button;
-                        if (jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
-                            const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
-                            jsonIndex++;
-                        } else {
-                            const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
-                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
-                            defaultButtons.push(button);
-                        }
-                    }
-                }
+        graphic.element('path661').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-                for (let row = 0; row < rowsPerSection; row++) {
-                    for (let col = 0; col < buttonsPerRow; col++) {
-                        const x = rowLeft + col * buttonSize;
-                        const y = bottomStartY + row * buttonSize;
-                        const color = colors[(jsonIndex) % colors.length];
+        graphic.element('path661').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p661', 2);
+        });
 
-                        let button;
-                        if (jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
-                            const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
-                            jsonIndex++;
-                        } else {
-                            const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
-                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
-                            defaultButtons.push(button);
-                        }
-                    }
-                }
-            } else {
-                const cols = Math.floor(window.innerWidth / buttonSize);
-                const rows = Math.floor(window.innerHeight / buttonSize);
-                const marginX = (window.innerWidth - cols * buttonSize) / 2;
-                const marginY = (window.innerHeight - rows * buttonSize) / 2;
+        graphic.element('path660').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
 
-                const textColStart = Math.floor((textLeft - marginX) / buttonSize);
-                const textColEnd = Math.ceil((textLeft - marginX + textWidth) / buttonSize);
-                const textRowStart = Math.floor((textTop - marginY) / buttonSize);
-                const textRowEnd = Math.ceil((textTop - marginY + textHeight) / buttonSize);
+        graphic.element('path660').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-                const buttonPositions = [];
-                for (let row = 0; row < rows; row++) {
-                    for (let col = 0; col < cols; col++) {
-                        if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                            continue;
-                        }
-                        buttonPositions.push({ row, col });
-                    }
-                }
+        graphic.element('path660').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p660', 2);
+        });
 
-                const selectedIndices = [];
-                if (buttonData.length > 0) {
-                    const maxButtons = Math.min(buttonData.length, buttonPositions.length);
-                    for (let i = buttonPositions.length - 1; i > 0; i--) {
-                        const j = Math.floor(Math.random() * (i + 1));
-                        [buttonPositions[i], buttonPositions[j]] = [buttonPositions[j], buttonPositions[i]];
-                    }
-                    for (let i = 0; i < maxButtons; i++) {
-                        selectedIndices.push(buttonPositions[i]);
-                    }
-                }
+        graphic.element('path659').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);
+        });
 
-                for (let row = 0; row < rows; row++) {
-                    for (let col = 0; col < cols; col++) {
-                        if (row >= textRowStart && row < textRowEnd && col >= textColStart && col < textColEnd) {
-                            continue;
-                        }
-                        const x = marginX + col * buttonSize;
-                        const y = marginY + row * buttonSize;
-                        const color = colors[(row * cols + col) % colors.length];
+        graphic.element('path659').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-                        const isJsonButton = selectedIndices.some(
-                            pos => pos.row === row && pos.col === col
-                        );
-                        let button;
-                        if (isJsonButton && jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
-                            const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
-                            jsonIndex++;
-                        } else {
-                            const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
-                            button = createButton(x, y, color, `<span class="material-icons">${icon}</span>`);
-                            defaultButtons.push(button);
-                        }
-                    }
-                }
-            }
+        graphic.element('path659').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p659', 2);
+        });
 
-            // 為預設按鈕（非 button.json）添加 YouTube 彈窗事件
-            if (youtubeVideoIds.length > 0) {
-                const maxYoutubeButtons = Math.min(youtubeVideoIds.length, defaultButtons.length);
-                for (let i = defaultButtons.length - 1; i > 0; i--) {
-                    const j = Math.floor(Math.random() * (i + 1));
-                    [defaultButtons[i], defaultButtons[j]] = [defaultButtons[j], defaultButtons[i]];
-                }
-                for (let i = 0; i < maxYoutubeButtons; i++) {
-                    defaultButtons[i].addEventListener('click', showYouTubePopup);
-                }
-            }
-        }
+        graphic.element('path658').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
 
-        async function init() {
-            await loadButtonData();
-            await loadVideoData();
-            drawButtons();
-            window.addEventListener('resize', async () => {
-                await loadButtonData();
-                await loadVideoData();
-                drawButtons();
-            });
-        }
+        graphic.element('path658').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
 
-        init();
-    </script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92f9c598a9a7bf6e',t:'MTc0NDUzNDgxMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92fe3668a99844dc',t:'MTc0NDU4MTM3Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ff1264ccf060c7',t:'MTc0NDU5MDM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-    <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ffb379af786732',t:'MTc0NDU5Njk4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9306421a7b75dae9',t:'MTc0NDY2NTc0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+        graphic.element('path658').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p658', 2);
+        });
+
+        graphic.element('path657').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);
+        });
+
+        graphic.element('path657').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path657').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p657', 2);
+        });
+
+        graphic.element('path656').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path656').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path656').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p656', 2);
+        });
+
+        graphic.element('path655').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path655').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path655').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p655', 2);
+        });
+
+        graphic.element('path654').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));	
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path654').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path654').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p654', 2);
+        });
+
+        graphic.element('path653').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path653').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path653').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p653', 2);
+        });
+
+        graphic.element('path652').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);
+        });
+
+        graphic.element('path652').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path652').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p652', 2);
+        });
+
+        graphic.element('path651').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path651').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path651').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p651', 2);
+        });
+
+        graphic.element('path650').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path650').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path650').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p650', 2);
+        });
+
+        graphic.element('path649').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path649').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path649').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p649', 2);
+        });
+
+        graphic.element('path648').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));	
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path648').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path648').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p648', 2);
+        });
+
+        graphic.element('path647').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);
+        });
+
+        graphic.element('path647').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path647').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p647', 2);
+        });
+
+        graphic.element('path646').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));	
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path646').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path646').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p646', 2);
+        });
+
+        graphic.element('path645').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path645').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path645').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p645', 2);
+        });
+
+        graphic.element('path644').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path644').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path644').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p644', 2);
+        });
+
+        graphic.element('path643').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path643').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path643').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p643', 2);
+        });
+
+        graphic.element('path642').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);
+        });
+
+        graphic.element('path642').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path642').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p642', 2);
+        });
+
+        graphic.element('path641').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path641').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path641').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p641', 2);
+        });
+
+        graphic.element('path640').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path640').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path640').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p640', 2);
+        });
+
+        graphic.element('path639').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path639').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path639').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p639', 2);
+        });
+
+        graphic.element('path638').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));			
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path638').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path638').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p638', 2);
+        });
+
+        graphic.element('path637').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("path", "b"),2));		
+            graphic.setValue(element.id.replace("path","p"),2);	
+        });
+
+        graphic.element('path637').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			box.push(createDict(element.id.replace("path", "b"),0));	
+            graphic.setValue(element.id.replace("path","p"),0);
+        });
+
+        graphic.element('path637').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('p637', 2);
+        });        
+        //========================================================================
+        graphic.element('box665').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));		
+			graphic.setValue('b665', 1);			
+        });
+
+        graphic.element('box665').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b665', 0);
+        });
+
+        graphic.element('box665').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b665', 2);
+        });
+
+        graphic.element('box664').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b664', 1);			
+        });
+
+        graphic.element('box664').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b664', 0);
+        });
+
+        graphic.element('box664').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b664', 2);
+        });
+
+        graphic.element('box663').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b663', 1);			
+        });
+
+        graphic.element('box663').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b663', 0);
+        });
+
+        graphic.element('box663').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b663', 2);
+        });
+
+        graphic.element('box662').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b662', 1);			
+        });
+
+        graphic.element('box662').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b662', 0);
+        });
+
+        graphic.element('box662').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b662', 2);
+        });
+
+        graphic.element('box661').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b661', 1);			
+        });
+
+        graphic.element('box661').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b661', 0);
+        });
+
+        graphic.element('box661').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b661', 2);
+        });
+
+        graphic.element('box660').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b660', 1);			
+        });
+
+        graphic.element('box660').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b660', 0);
+        });
+
+        graphic.element('box660').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b660', 2);
+        });
+
+
+        graphic.element('box559').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p659",2));	
+			graphic.setValue('b659', 1);			
+        });
+
+        graphic.element('box559').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p659",0));
+			graphic.setValue('b659', 0);
+        });
+
+        graphic.element('box559').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b659', 2);
+        });
+
+        graphic.element('box658').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b658', 1);			
+        });
+
+        graphic.element('box658').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b658', 0);
+        });
+
+        graphic.element('box658').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b658', 2);
+        });
+
+        graphic.element('box557').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p657",2));	
+			graphic.setValue('b657', 1);			
+        });
+
+        graphic.element('box557').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p657",0));	
+			graphic.setValue('b657', 0);
+        });
+
+        graphic.element('box557').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b657', 2);
+        });
+
+        graphic.element('box556').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p656",2));	
+			graphic.setValue('b656', 1);			
+        });
+
+        graphic.element('box556').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p656",0));	
+			graphic.setValue('b656', 0);
+        });
+
+        graphic.element('box556').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b656', 2);
+        });
+
+        graphic.element('box655').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b655', 1);			
+        });
+
+        graphic.element('box655').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b655', 0);
+        });
+
+        graphic.element('box655').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b655', 2);
+        });
+
+        graphic.element('box654').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b654', 1);			
+        });
+
+        graphic.element('box654').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b654', 0);
+        });
+
+        graphic.element('box654').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b654', 2);
+        });
+
+        graphic.element('box653').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b653', 1);			
+        });
+
+        graphic.element('box653').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b653', 0);
+        });
+
+        graphic.element('box653').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b653', 2);
+        });
+
+        graphic.element('box652').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b652', 1);			
+        });
+
+        graphic.element('box652').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b652', 0);
+        });
+
+        graphic.element('box652').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b652', 2);
+        });
+
+        graphic.element('box651').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b651', 1);			
+        });
+
+        graphic.element('box651').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b651', 0);
+        });
+
+        graphic.element('box651').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b651', 2);
+        });
+
+        graphic.element('box650').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b650', 1);			
+        });
+
+        graphic.element('box650').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b650', 0);
+        });
+
+        graphic.element('box650').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b650', 2);
+        });
+
+        graphic.element('box649').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b649', 1);			
+        });
+
+        graphic.element('box649').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b649', 0);
+        });
+
+        graphic.element('box649').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b649', 2);
+        });
+
+        graphic.element('box648').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b648', 1);			
+        });
+
+        graphic.element('box648').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b648', 0);
+        });
+
+        graphic.element('box648').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b648', 2);
+        });
+
+        graphic.element('box647').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b647', 1);			
+        });
+
+        graphic.element('box647').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b647', 0);
+        });
+
+        graphic.element('box647').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b647', 2);
+        });
+
+        graphic.element('box646').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b646', 1);			
+        });
+
+        graphic.element('box646').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b646', 0);
+        });
+
+        graphic.element('box646').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b646', 2);
+        });
+
+        graphic.element('box645').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b645', 1);			
+        });
+
+        graphic.element('box645').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b645', 0);
+        });
+
+        graphic.element('box645').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b645', 2);
+        });
+
+        graphic.element('box644').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b644', 1);			
+        });
+
+        graphic.element('box644').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b644', 0);
+        });
+
+        graphic.element('box644').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b644', 2);
+        });
+
+        graphic.element('box643').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b643', 1);			
+        });
+
+        graphic.element('box643').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b643', 0);
+        });
+
+        graphic.element('box643').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b643', 2);
+        });
+
+        graphic.element('box642').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b642', 1);			
+        });
+
+        graphic.element('box642').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b642', 0);
+        });
+
+        graphic.element('box642').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b642', 2);
+        });
+
+        graphic.element('box641').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b641', 1);			
+        });
+
+        graphic.element('box641').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b641', 0);
+        });
+
+        graphic.element('box641').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b641', 2);
+        });
+
+        graphic.element('box640').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b640', 1);			
+        });
+
+        graphic.element('box640').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b640', 0);
+        });
+
+        graphic.element('box640').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b640', 2);
+        });
+
+        graphic.element('box639').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b639', 1);			
+        });
+
+        graphic.element('box639').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b639', 0);
+        });
+
+        graphic.element('box639').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b639', 2);
+        });
+
+        graphic.element('box638').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b638', 1);			
+        });
+
+        graphic.element('box638').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b638', 0);
+        });
+
+        graphic.element('box638').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b638', 2);
+        });
+
+        graphic.element('box637').on('mouseenter', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
+			graphic.setValue('b637', 1);			
+        });
+
+        graphic.element('box637').on('mouseleave', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
+			graphic.setValue('b637', 0);
+        });
+
+        graphic.element('box637').on('click', function(element, event) {
+            console.log('event: ' + event.type + ', element: ' + element.id);
+			graphic.setValue('b637', 2);
+        });
+
+        var box=[];                   
+        var item={};
+        var beats=0;
+        setInterval(() => { 
+            if(box.length>0) {
+                item = box.shift();                               
+                graphic.setValue(Object.keys(item)[0] ,Object.values(item)[0]);                                
+            }            
+            graphic.setValue("lihao",beats);            
+            beats=beats>=4?0:beats+1;
+        }, 200);
+
+    });
+
+    // Files could not be loaded, maybe due to security restrictions
+    // Display error message
+    graphic.on('error', function() {
+        document.getElementById('error').style['display'] = 'block';
+    })
+
+</script>
+
 </body>
 </html>
