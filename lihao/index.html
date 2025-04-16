@@ -93,7 +93,7 @@
         graphic.view.zoomToFit();
 
         // Enable zoom / pan with mouse
-        graphic.view.enableMouse(true, true);
+        graphic.view.enableMouse(false, false);
 
         // Set variable values
        
@@ -164,11 +164,12 @@
 		graphic.element('path665').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
             box.push(element.id.replace("path", ""));
-				
+			graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path665').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            graphic.setValue(element.id.replace("path","p"),0);
 			box.push("");
         });
 
@@ -179,12 +180,14 @@
 
         graphic.element('path664').on('mouseenter', function(element, event) {            
             console.log('event: ' + event.type + ', element: ' + element.id);
-            box.push(element.id.replace("path", ""));				
+            box.push(element.id.replace("path", ""));	
+            graphic.setValue(element.id.replace("path","p"),2);			
         });
 
         graphic.element('path664').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path664').on('click', function(element, event) {
@@ -193,12 +196,14 @@
 
         graphic.element('path663').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path663').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path663').on('click', function(element, event) {
@@ -208,12 +213,14 @@
 
         graphic.element('path662').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path662').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path662').on('click', function(element, event) {
@@ -223,12 +230,14 @@
 
         graphic.element('path661').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path661').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path661').on('click', function(element, event) {
@@ -238,12 +247,14 @@
 
         graphic.element('path660').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path660').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path660').on('click', function(element, event) {
@@ -254,11 +265,13 @@
         graphic.element('path659').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path659').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path659').on('click', function(element, event) {
@@ -268,12 +281,14 @@
 
         graphic.element('path658').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path658').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path658').on('click', function(element, event) {
@@ -284,11 +299,13 @@
         graphic.element('path657').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push(element.id.replace("path", ""));			
+            graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path657').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path657').on('click', function(element, event) {
@@ -298,12 +315,14 @@
 
         graphic.element('path656').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path656').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path656').on('click', function(element, event) {
@@ -313,12 +332,14 @@
 
         graphic.element('path655').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path655').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path655').on('click', function(element, event) {
@@ -328,12 +349,14 @@
 
         graphic.element('path654').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path654').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path654').on('click', function(element, event) {
@@ -343,12 +366,14 @@
 
         graphic.element('path653').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path653').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path653').on('click', function(element, event) {
@@ -359,11 +384,13 @@
         graphic.element('path652').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path652').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path652').on('click', function(element, event) {
@@ -373,12 +400,14 @@
 
         graphic.element('path651').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path651').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path651').on('click', function(element, event) {
@@ -388,12 +417,14 @@
 
         graphic.element('path650').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path650').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path650').on('click', function(element, event) {
@@ -403,12 +434,14 @@
 
         graphic.element('path649').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path649').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path649').on('click', function(element, event) {
@@ -418,12 +451,14 @@
 
         graphic.element('path648').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path648').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path648').on('click', function(element, event) {
@@ -434,11 +469,13 @@
         graphic.element('path647').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path647').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path647').on('click', function(element, event) {
@@ -448,12 +485,14 @@
 
         graphic.element('path646').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path646').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path646').on('click', function(element, event) {
@@ -463,12 +502,14 @@
 
         graphic.element('path645').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path645').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path645').on('click', function(element, event) {
@@ -478,12 +519,14 @@
 
         graphic.element('path644').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path644').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path644').on('click', function(element, event) {
@@ -493,12 +536,14 @@
 
         graphic.element('path643').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path643').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path643').on('click', function(element, event) {
@@ -509,11 +554,13 @@
         graphic.element('path642').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path642').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path642').on('click', function(element, event) {
@@ -523,12 +570,14 @@
 
         graphic.element('path641').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path641').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path641').on('click', function(element, event) {
@@ -538,12 +587,14 @@
 
         graphic.element('path640').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path640').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path640').on('click', function(element, event) {
@@ -553,12 +604,14 @@
 
         graphic.element('path639').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path639').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path639').on('click', function(element, event) {
@@ -568,12 +621,14 @@
 
         graphic.element('path638').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path638').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path638').on('click', function(element, event) {
@@ -583,12 +638,14 @@
 
         graphic.element('path637').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+			box.push(element.id.replace("path", ""));		
+            graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path637').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
 			box.push("");
+            graphic.setValue(element.id.replace("path","p"),0);
         });
 
         graphic.element('path637').on('click', function(element, event) {
@@ -1035,6 +1092,7 @@
         var box=[];        
         var box1="";
         var step=0;
+        var beats=0;
         setInterval(() => { 
             if(box.length>0) {
                 let item=box.shift();                
@@ -1051,6 +1109,8 @@
                 graphic.setValue('b'+box1, step);
                 step=step>0 ? 0 : 1;
             }
+            graphic.setValue("lihao",beats);            
+            beats=beats>=4?0:beats+1;
         }, 250);
 
     });

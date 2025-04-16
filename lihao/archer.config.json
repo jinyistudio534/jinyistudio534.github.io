@@ -22,12 +22,12 @@
       "name": "lihao",
       "type": "number",
       "keyFrames": {
-        "08776222-c7e5-497e-834e-dd9201422e5f": 2,
-        "191e1cae-cde0-46bf-b2da-54401223a5f6": 4,
-        "d3a42cc3-1ac9-40de-8fd4-ba779d774458": 6
+        "08776222-c7e5-497e-834e-dd9201422e5f": 1,
+        "191e1cae-cde0-46bf-b2da-54401223a5f6": 2,
+        "d3a42cc3-1ac9-40de-8fd4-ba779d774458": 3
       },
       "minimum": 0,
-      "maximum": 8
+      "maximum": 4
     },
     {
       "name": "b639",
@@ -3813,7 +3813,7 @@
         },
         "7ae08a19-1776-47cb-b7bd-45cda95da73b": {
           "name": "7ae08a19-1776-47cb-b7bd-45cda95da73b",
-          "value": "#0000",
+          "value": "#000000",
           "transition": "linear"
         },
         "$max": {
