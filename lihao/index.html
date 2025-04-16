@@ -55,6 +55,12 @@
         "649":"義和","648":"薰風","647":"南陽","646":"中山","645":"岷山","644":"新美","643":"庄美","642":"平安","641":"孔門","640":"順天",
         "639":"大甲","638":"朝陽","637":"建興"};
 
+    function createDict(key, value) {
+        const obj = {};
+        obj[key] = value;
+        return obj;
+    }
+
     var rootUrl = '';
 
     /**
@@ -162,15 +168,15 @@
 
         // Add event listeners
 		graphic.element('path665').on('mouseenter', function(element, event) {
-            console.log('event: ' + event.type + ', element: ' + element.id);
-            box.push(element.id.replace("path", ""));
+            console.log('event: ' + event.type + ', element: ' + element.id);              
+            box.push(createDict(element.id.replace("path", "b"),2));
 			graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path665').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-            graphic.setValue(element.id.replace("path","p"),0);
-			box.push("");
+            box.push(createDict(element.id.replace("path", "b"),0));
+            graphic.setValue(element.id.replace("path","p"),0);			
         });
 
         graphic.element('path665').on('click', function(element, event) {
@@ -180,13 +186,13 @@
 
         graphic.element('path664').on('mouseenter', function(element, event) {            
             console.log('event: ' + event.type + ', element: ' + element.id);
-            box.push(element.id.replace("path", ""));	
+            box.push(createDict(element.id.replace("path", "b"),2));	
             graphic.setValue(element.id.replace("path","p"),2);			
         });
 
         graphic.element('path664').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+            box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -196,13 +202,13 @@
 
         graphic.element('path663').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path663').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -213,13 +219,13 @@
 
         graphic.element('path662').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path662').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -230,13 +236,13 @@
 
         graphic.element('path661').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path661').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -247,13 +253,13 @@
 
         graphic.element('path660').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path660').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -264,13 +270,13 @@
 
         graphic.element('path659').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path659').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -281,13 +287,13 @@
 
         graphic.element('path658').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path658').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -298,13 +304,13 @@
 
         graphic.element('path657').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));			
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path657').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -315,13 +321,13 @@
 
         graphic.element('path656').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path656').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -332,13 +338,13 @@
 
         graphic.element('path655').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path655').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -349,13 +355,13 @@
 
         graphic.element('path654').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));	
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path654').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -366,13 +372,13 @@
 
         graphic.element('path653').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path653').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -383,13 +389,13 @@
 
         graphic.element('path652').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path652').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -400,13 +406,13 @@
 
         graphic.element('path651').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path651').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -417,13 +423,13 @@
 
         graphic.element('path650').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path650').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -434,13 +440,13 @@
 
         graphic.element('path649').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path649').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -451,13 +457,13 @@
 
         graphic.element('path648').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));	
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path648').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -468,13 +474,13 @@
 
         graphic.element('path647').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path647').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -485,13 +491,13 @@
 
         graphic.element('path646').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));	
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path646').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -502,13 +508,13 @@
 
         graphic.element('path645').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path645').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -519,13 +525,13 @@
 
         graphic.element('path644').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path644').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -536,13 +542,13 @@
 
         graphic.element('path643').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path643').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -553,13 +559,13 @@
 
         graphic.element('path642').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);
         });
 
         graphic.element('path642').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -570,13 +576,13 @@
 
         graphic.element('path641').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path641').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -587,13 +593,13 @@
 
         graphic.element('path640').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path640').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -604,13 +610,13 @@
 
         graphic.element('path639').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path639').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -621,13 +627,13 @@
 
         graphic.element('path638').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));			
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path638').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -638,13 +644,13 @@
 
         graphic.element('path637').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push(element.id.replace("path", ""));		
+            box.push(createDict(element.id.replace("path", "b"),2));		
             graphic.setValue(element.id.replace("path","p"),2);	
         });
 
         graphic.element('path637').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
-			box.push("");
+			box.push(createDict(element.id.replace("path", "b"),0));	
             graphic.setValue(element.id.replace("path","p"),0);
         });
 
@@ -655,11 +661,13 @@
         //========================================================================
         graphic.element('box665').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));		
 			graphic.setValue('b665', 1);			
         });
 
         graphic.element('box665').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b665', 0);
         });
 
@@ -670,11 +678,13 @@
 
         graphic.element('box664').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b664', 1);			
         });
 
         graphic.element('box664').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b664', 0);
         });
 
@@ -685,11 +695,13 @@
 
         graphic.element('box663').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b663', 1);			
         });
 
         graphic.element('box663').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b663', 0);
         });
 
@@ -700,11 +712,13 @@
 
         graphic.element('box662').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b662', 1);			
         });
 
         graphic.element('box662').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b662', 0);
         });
 
@@ -715,11 +729,13 @@
 
         graphic.element('box661').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b661', 1);			
         });
 
         graphic.element('box661').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b661', 0);
         });
 
@@ -730,11 +746,13 @@
 
         graphic.element('box660').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b660', 1);			
         });
 
         graphic.element('box660').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b660', 0);
         });
 
@@ -746,11 +764,13 @@
 
         graphic.element('box559').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p659",2));	
 			graphic.setValue('b659', 1);			
         });
 
         graphic.element('box559').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p659",0));
 			graphic.setValue('b659', 0);
         });
 
@@ -761,11 +781,13 @@
 
         graphic.element('box658').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b658', 1);			
         });
 
         graphic.element('box658').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b658', 0);
         });
 
@@ -776,11 +798,13 @@
 
         graphic.element('box557').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p657",2));	
 			graphic.setValue('b657', 1);			
         });
 
         graphic.element('box557').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p657",0));	
 			graphic.setValue('b657', 0);
         });
 
@@ -791,11 +815,13 @@
 
         graphic.element('box556').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p656",2));	
 			graphic.setValue('b656', 1);			
         });
 
         graphic.element('box556').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict("p656",0));	
 			graphic.setValue('b656', 0);
         });
 
@@ -806,11 +832,13 @@
 
         graphic.element('box655').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b655', 1);			
         });
 
         graphic.element('box655').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b655', 0);
         });
 
@@ -821,11 +849,13 @@
 
         graphic.element('box654').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b654', 1);			
         });
 
         graphic.element('box654').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b654', 0);
         });
 
@@ -836,11 +866,13 @@
 
         graphic.element('box653').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b653', 1);			
         });
 
         graphic.element('box653').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b653', 0);
         });
 
@@ -851,11 +883,13 @@
 
         graphic.element('box652').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b652', 1);			
         });
 
         graphic.element('box652').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b652', 0);
         });
 
@@ -866,11 +900,13 @@
 
         graphic.element('box651').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b651', 1);			
         });
 
         graphic.element('box651').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b651', 0);
         });
 
@@ -881,11 +917,13 @@
 
         graphic.element('box650').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b650', 1);			
         });
 
         graphic.element('box650').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b650', 0);
         });
 
@@ -896,11 +934,13 @@
 
         graphic.element('box649').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b649', 1);			
         });
 
         graphic.element('box649').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b649', 0);
         });
 
@@ -911,11 +951,13 @@
 
         graphic.element('box648').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b648', 1);			
         });
 
         graphic.element('box648').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b648', 0);
         });
 
@@ -926,11 +968,13 @@
 
         graphic.element('box647').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b647', 1);			
         });
 
         graphic.element('box647').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b647', 0);
         });
 
@@ -941,11 +985,13 @@
 
         graphic.element('box646').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b646', 1);			
         });
 
         graphic.element('box646').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b646', 0);
         });
 
@@ -956,11 +1002,13 @@
 
         graphic.element('box645').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b645', 1);			
         });
 
         graphic.element('box645').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b645', 0);
         });
 
@@ -971,11 +1019,13 @@
 
         graphic.element('box644').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b644', 1);			
         });
 
         graphic.element('box644').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b644', 0);
         });
 
@@ -986,11 +1036,13 @@
 
         graphic.element('box643').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b643', 1);			
         });
 
         graphic.element('box643').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b643', 0);
         });
 
@@ -1001,11 +1053,13 @@
 
         graphic.element('box642').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b642', 1);			
         });
 
         graphic.element('box642').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b642', 0);
         });
 
@@ -1016,11 +1070,13 @@
 
         graphic.element('box641').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b641', 1);			
         });
 
         graphic.element('box641').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b641', 0);
         });
 
@@ -1031,11 +1087,13 @@
 
         graphic.element('box640').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b640', 1);			
         });
 
         graphic.element('box640').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b640', 0);
         });
 
@@ -1046,11 +1104,13 @@
 
         graphic.element('box639').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b639', 1);			
         });
 
         graphic.element('box639').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b639', 0);
         });
 
@@ -1061,11 +1121,13 @@
 
         graphic.element('box638').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b638', 1);			
         });
 
         graphic.element('box638').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b638', 0);
         });
 
@@ -1076,11 +1138,13 @@
 
         graphic.element('box637').on('mouseenter', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),2));	
 			graphic.setValue('b637', 1);			
         });
 
         graphic.element('box637').on('mouseleave', function(element, event) {
             console.log('event: ' + event.type + ', element: ' + element.id);
+            box.push(createDict(element.id.replace("box", "p"),0));	
 			graphic.setValue('b637', 0);
         });
 
@@ -1089,29 +1153,17 @@
 			graphic.setValue('b637', 2);
         });
 
-        var box=[];        
-        var box1="";
-        var step=0;
+        var box=[];                   
+        var item={};
         var beats=0;
         setInterval(() => { 
             if(box.length>0) {
-                let item=box.shift();                
-                if(item=="") {
-                    graphic.setValue('b'+box1, 0);
-                }
-                else {
-                    graphic.setValue('b'+item, 1);
-                }
-                box1 = item;
-                step=0;                
-            }
-            if(box1 != "") {
-                graphic.setValue('b'+box1, step);
-                step=step>0 ? 0 : 1;
-            }
+                item = box.shift();                               
+                graphic.setValue(Object.keys(item)[0] ,Object.values(item)[0]);                                
+            }            
             graphic.setValue("lihao",beats);            
             beats=beats>=4?0:beats+1;
-        }, 250);
+        }, 200);
 
     });
 
