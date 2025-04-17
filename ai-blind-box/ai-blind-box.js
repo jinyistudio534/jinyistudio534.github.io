@@ -40,6 +40,11 @@ class AIBlindBox extends HTMLElement {
   }
 
   connectedCallback() {
+    // 從 localStorage 載入 rows 和 cols，若無則使用預設值 6
+    const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
+    const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
+    this.setAttribute('rows', storedRows);
+    this.setAttribute('cols', storedCols);
     this.render();
     document.addEventListener('keydown', this.handleCtrlR.bind(this));
     this.restoreClickedStates();
@@ -75,32 +80,41 @@ class AIBlindBox extends HTMLElement {
       icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
     }));
     localStorage.setItem('giftData', JSON.stringify(this._giftData));
-    this.assignCells();
+
+    // 檢查 cellAssignments 是否有效
+    const rows = parseInt(this.getAttribute('rows')) || 6;
+    const cols = parseInt(this.getAttribute('cols')) || 6;
+    const totalCells = rows * cols;
+    const storedAssignments = JSON.parse(localStorage.getItem('cellAssignments') || '[]');
+    if (storedAssignments.length === totalCells && storedAssignments.every(assignment => assignment.type && assignment.content)) {
+      this.cellAssignments = storedAssignments;
+    } else {
+      this.assignCells();
+    }
     this.render();
   }
 
   assignCells() {
     if (!this.giftData) return;
-    const rows = parseInt(this.getAttribute('rows')) || 4;
-    const cols = parseInt(this.getAttribute('cols')) || 4;
+    const rows = parseInt(this.getAttribute('rows')) || 6;
+    const cols = parseInt(this.getAttribute('cols')) || 6;
     const totalCells = rows * cols;
     
-    if (this.cellAssignments.length === 0) {
-      this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
-      const giftIndices = [];
-      this.giftData.gift.forEach(gift => {
-        const count = gift.count || 1;
-        for (let i = 0; i < count; i++) {
-          let index;
-          do {
-            index = Math.floor(Math.random() * totalCells);
-          } while (giftIndices.includes(index));
-          giftIndices.push(index);
-          this.cellAssignments[index] = { type: 'gift', content: gift.name, image: gift.image };
-        }
-      });
-      localStorage.setItem('cellAssignments', JSON.stringify(this.cellAssignments));
-    }
+    // 重置 cellAssignments 以匹配新尺寸
+    this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
+    const giftIndices = [];
+    this.giftData.gift.forEach(gift => {
+      const count = gift.count || 1;
+      for (let i = 0; i < count; i++) {
+        let index;
+        do {
+          index = Math.floor(Math.random() * totalCells);
+        } while (giftIndices.includes(index));
+        giftIndices.push(index);
+        this.cellAssignments[index] = { type: 'gift', content: gift.name, image: gift.image };
+      }
+    });
+    localStorage.setItem('cellAssignments', JSON.stringify(this.cellAssignments));
   }
 
   handleCtrlR(event) {
@@ -140,6 +154,11 @@ class AIBlindBox extends HTMLElement {
         localStorage.removeItem('cellAssignments');
         this.clickedCells = [];
         this.cellAssignments = [];
+        // 保留 localStorage 中的 gridRows 和 gridCols
+        const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
+        const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
+        this.setAttribute('rows', storedRows);
+        this.setAttribute('cols', storedCols);
         this.assignCells();
         this.render();
         document.body.removeChild(modal);
@@ -218,8 +237,8 @@ class AIBlindBox extends HTMLElement {
 
   render() {
     if (!this.giftData || !this.cellAssignments.length) return;
-    const rows = parseInt(this.getAttribute('rows')) || 4;
-    const cols = parseInt(this.getAttribute('cols')) || 4;
+    const rows = parseInt(this.getAttribute('rows')) || 6;
+    const cols = parseInt(this.getAttribute('cols')) || 6;
     const gridWidth = parseInt(this.getAttribute('grid-width')) || 6;
     const borderWidth = parseInt(this.getAttribute('border-width')) || 6;
     const totalCells = rows * cols;
