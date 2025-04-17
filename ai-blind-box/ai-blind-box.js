@@ -10,6 +10,25 @@ class AIBlindBox extends HTMLElement {
     this.clickedCells = JSON.parse(localStorage.getItem('clickedCells') || '[]');
     this.cellAssignments = JSON.parse(localStorage.getItem('cellAssignments') || '[]');
     this.verificationCode = '';
+
+    // 預設 gift.json 資料，圖標隨機選擇，圖片設為空字串
+    this.defaultGiftData = {
+      gift: [
+        {
+          name: "糖果",
+          count: 3,
+          image: "",
+          icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+        },
+        {
+          name: "餅干",
+          count: 3,
+          image: "",
+          icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+        }
+      ],
+      nothing: "銘謝惠顧"
+    };
   }
 
   static get observedAttributes() {
@@ -24,6 +43,7 @@ class AIBlindBox extends HTMLElement {
     this.render();
     document.addEventListener('keydown', this.handleCtrlR.bind(this));
     this.restoreClickedStates();
+    this.initializeGiftData();
   }
 
   disconnectedCallback() {
@@ -31,7 +51,13 @@ class AIBlindBox extends HTMLElement {
   }
 
   set giftData(data) {
+    // 確保每個獎品有隨機圖標
+    data.gift = data.gift.map(gift => ({
+      ...gift,
+      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
+    }));
     this._giftData = data;
+    localStorage.setItem('giftData', JSON.stringify(data));
     this.assignCells();
     this.render();
   }
@@ -40,13 +66,27 @@ class AIBlindBox extends HTMLElement {
     return this._giftData;
   }
 
-  assignCells() {
-    if (!this.giftData || this.cellAssignments.length === 0) {
-      const rows = parseInt(this.getAttribute('rows')) || 4;
-      const cols = parseInt(this.getAttribute('cols')) || 4;
-      const totalCells = rows * cols;
-      this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
+  initializeGiftData() {
+    const storedGiftData = localStorage.getItem('giftData');
+    this._giftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
+    // 確保載入的資料有隨機圖標
+    this._giftData.gift = this._giftData.gift.map(gift => ({
+      ...gift,
+      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
+    }));
+    localStorage.setItem('giftData', JSON.stringify(this._giftData));
+    this.assignCells();
+    this.render();
+  }
 
+  assignCells() {
+    if (!this.giftData) return;
+    const rows = parseInt(this.getAttribute('rows')) || 4;
+    const cols = parseInt(this.getAttribute('cols')) || 4;
+    const totalCells = rows * cols;
+    
+    if (this.cellAssignments.length === 0) {
+      this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
       const giftIndices = [];
       this.giftData.gift.forEach(gift => {
         const count = gift.count || 1;
@@ -71,7 +111,6 @@ class AIBlindBox extends HTMLElement {
   }
 
   showVerificationModal() {
-    // 生成隨機 4 位數字
     this.verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
     const modal = document.createElement('div');
     modal.style.cssText = `
@@ -86,27 +125,33 @@ class AIBlindBox extends HTMLElement {
       z-index: 1000;
       text-align: center;
     `;
+    const message = document.createElement('p');
+    message.textContent = `請輸入 ${this.verificationCode} 以重置`;
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = `輸入 ${this.verificationCode}`;
-    input.style.cssText = 'margin-bottom: 10px; padding: 5px;';
-    const message = document.createElement('p');
-    message.textContent = `請輸入 ${this.verificationCode} 以重置`;
+    input.style.cssText = 'margin: 10px 0; padding: 5px;';
     const submit = document.createElement('button');
     submit.textContent = '提交';
-    submit.style.cssText = 'padding: 5px 10px;';
+    submit.style.cssText = 'padding: 5px 10px; margin-right: 10px;';
     submit.onclick = () => {
       if (input.value === this.verificationCode) {
         localStorage.removeItem('clickedCells');
+        localStorage.removeItem('cellAssignments');
         this.clickedCells = [];
-        this.assignCells(); // 重新分配 gift 和 nothing
+        this.cellAssignments = [];
+        this.assignCells();
         this.render();
         document.body.removeChild(modal);
       } else {
         message.textContent = '輸入錯誤，請再試一次';
       }
     };
-    // 添加 Enter 和 Esc 鍵支援
+    const editLink = document.createElement('a');
+    editLink.href = 'edit.html';
+    editLink.textContent = '編輯獎品資料';
+    editLink.style.cssText = 'color: #4CAF50; text-decoration: underline; display: block; margin-top: 10px;';
+    
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submit.click();
       if (e.key === 'Escape') document.body.removeChild(modal);
@@ -114,6 +159,7 @@ class AIBlindBox extends HTMLElement {
     modal.appendChild(message);
     modal.appendChild(input);
     modal.appendChild(submit);
+    modal.appendChild(editLink);
     document.body.appendChild(modal);
   }
 
@@ -137,7 +183,8 @@ class AIBlindBox extends HTMLElement {
 
       const thankYouSpan = document.createElement('span');
       thankYouSpan.className = 'thank-you';
-      thankYouSpan.textContent = this.cellAssignments[index].content;
+      // 將 \n 轉為 <br> 實現換行
+      thankYouSpan.innerHTML = this.cellAssignments[index].content.replace(/\n/g, '<br>');
       cell.appendChild(thankYouSpan);
     }
   }
@@ -161,7 +208,8 @@ class AIBlindBox extends HTMLElement {
 
           const thankYouSpan = document.createElement('span');
           thankYouSpan.className = 'thank-you';
-          thankYouSpan.textContent = this.cellAssignments[index].content;
+          // 將 \n 轉為 <br> 實現換行
+          thankYouSpan.innerHTML = this.cellAssignments[index].content.replace(/\n/g, '<br>');
           cells[index].appendChild(thankYouSpan);
         }
       });
@@ -241,6 +289,7 @@ class AIBlindBox extends HTMLElement {
         font-family: Arial, sans-serif;
         white-space: pre-wrap;
         z-index: 1;
+        text-align: center;
       }
       .clicked {
         background-color: transparent !important;
@@ -278,7 +327,7 @@ class AIBlindBox extends HTMLElement {
 
         const thankYouSpan = document.createElement('span');
         thankYouSpan.className = 'thank-you';
-        thankYouSpan.textContent = this.cellAssignments[i].content;
+        thankYouSpan.innerHTML = this.cellAssignments[i].content.replace(/\n/g, '<br>');
         cell.appendChild(thankYouSpan);
       } else {
         cell.addEventListener('click', this.handleCellClick.bind(this));
