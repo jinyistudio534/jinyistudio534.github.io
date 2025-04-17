@@ -1,0 +1,17 @@
+{
+    "gift": [
+      {
+        "name": "糖\n果",
+        "count": 3,
+        "image": "candy.png",
+        "icon": "card_giftcard"
+      },
+      {
+        "name": "餅\n干",
+        "count": 3,
+        "image": "cake.png",
+        "icon": "cake"
+      }
+    ],
+    "nothing": "銘謝\n惠顧"
+  }
