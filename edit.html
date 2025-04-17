@@ -1,0 +1,274 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Edit Gift Data</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 20px;
+      box-sizing: border-box;
+      font-family: Arial, sans-serif;
+      background: #f5f5f5;
+    }
+    .editor-container {
+      max-width: 600px;
+      margin: 0 auto;
+      background: white;
+      padding: 20px;
+      border-radius: 8px;
+      box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+    }
+    h1 {
+      font-size: 24px;
+      margin: 0 0 20px;
+    }
+    .grid-size-inputs {
+      display: flex;
+      gap: 20px;
+      margin-bottom: 20px;
+      align-items: center;
+    }
+    .grid-size-inputs label {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+    }
+    .grid-size-inputs input {
+      width: 60px;
+      padding: 8px;
+    }
+    .gift-item {
+      border: 1px solid #ddd;
+      padding: 10px;
+      margin-bottom: 10px;
+      border-radius: 4px;
+    }
+    input, textarea, button {
+      padding: 8px;
+      margin-bottom: 8px;
+      box-sizing: border-box;
+    }
+    input[type="number"], input[type="file"] {
+      width: 100%;
+    }
+    textarea {
+      width: 100%;
+      height: 60px;
+      resize: vertical;
+    }
+    button {
+      cursor: pointer;
+      border: none;
+      border-radius: 4px;
+      padding: 10px;
+    }
+    .button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 10px;
+    }
+    .button-group button {
+      flex: 1;
+      width: auto;
+    }
+    .gift-button-group {
+      display: flex;
+      gap: 10px;
+      margin-top: 8px;
+    }
+    .gift-button-group button {
+      width: auto;
+      flex: 1;
+    }
+    .add-button {
+      background: #4CAF50;
+      color: white;
+    }
+    .delete-button {
+      background: #ff4d4d;
+      color: white;
+    }
+    .save-button {
+      background: #2196F3;
+      color: white;
+    }
+    .clear-image-button {
+      background: #FFA500;
+      color: white;
+    }
+    .back-button {
+      background: #666;
+      color: white;
+    }
+    img.preview {
+      max-width: 100px;
+      max-height: 100px;
+      margin-bottom: 8px;
+      display: block;
+    }
+    .no-image {
+      display: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-container">
+    <h1>編輯獎品資料</h1>
+    <div class="grid-size-inputs">
+      <label for="rows">行數 (Rows): <input type="number" id="rows" min="3" max="15" placeholder="3-15" value="6"></label>
+      <label for="cols">列數 (Cols): <input type="number" id="cols" min="3" max="15" placeholder="3-15" value="6"></label>
+    </div>
+    <div id="gift-list"></div>
+    <textarea id="nothing" placeholder="未中獎提示（支援\n換行）"></textarea>
+    <div class="button-group">
+      <button class="add-button" onclick="addGiftItem()">新增獎品</button>
+      <button class="save-button" onclick="saveGiftData()">儲存</button>
+      <button class="back-button" onclick="window.location.href='index.html'">返回</button>
+    </div>
+  </div>
+  <script>
+    const defaultGiftData = {
+      gift: [
+        { name: "糖果", count: 3, image: "" },
+        { name: "餅干", count: 3, image: "" }
+      ],
+      nothing: "銘謝惠顧"
+    };
+    const icons = ['star', 'favorite', 'card_giftcard', 'cake', 'emoji_events', 'lightbulb', 'music_note', 'palette', 'rocket', 'sports_soccer'];
+    
+    let giftData = JSON.parse(localStorage.getItem('giftData')) || defaultGiftData;
+    // 為載入的資料分配隨機圖標
+    giftData.gift = giftData.gift.map(gift => ({
+      ...gift,
+      icon: gift.icon || icons[Math.floor(Math.random() * icons.length)]
+    }));
+
+    // 載入 rows 和 cols 從 localStorage
+    const rowsInput = document.getElementById('rows');
+    const colsInput = document.getElementById('cols');
+    rowsInput.value = parseInt(localStorage.getItem('gridRows')) || 6;
+    colsInput.value = parseInt(localStorage.getItem('gridCols')) || 6;
+
+    function renderGiftItems() {
+      const giftList = document.getElementById('gift-list');
+      giftList.innerHTML = '';
+      giftData.gift.forEach((gift, index) => {
+        const giftItem = document.createElement('div');
+        giftItem.className = 'gift-item';
+
+        const preview = document.createElement('img');
+        preview.className = 'preview';
+        preview.src = gift.image;
+        if (!gift.image) preview.classList.add('no-image');
+
+        const nameInput = document.createElement('textarea');
+        nameInput.value = gift.name;
+        nameInput.placeholder = '獎品名稱（支援\n換行）';
+        nameInput.onchange = () => { giftData.gift[index].name = nameInput.value; };
+
+        const countInput = document.createElement('input');
+        countInput.type = 'number';
+        countInput.value = gift.count;
+        countInput.min = '1';
+        countInput.placeholder = '數量';
+        countInput.onchange = () => { giftData.gift[index].count = parseInt(countInput.value) || 1; };
+
+        const imageInput = document.createElement('input');
+        imageInput.type = 'file';
+        imageInput.accept = 'image/*';
+        imageInput.onchange = (e) => {
+          const file = e.target.files[0];
+          if (file) {
+            const reader = new FileReader();
+            reader.onload = (ev) => {
+              giftData.gift[index].image = ev.target.result;
+              preview.src = ev.target.result;
+              preview.classList.remove('no-image');
+            };
+            reader.readAsDataURL(file);
+          }
+        };
+
+        const clearImageButton = document.createElement('button');
+        clearImageButton.className = 'clear-image-button';
+        clearImageButton.textContent = '清除圖檔';
+        clearImageButton.onclick = () => {
+          giftData.gift[index].image = '';
+          preview.src = '';
+          preview.classList.add('no-image');
+        };
+
+        const deleteButton = document.createElement('button');
+        deleteButton.className = 'delete-button';
+        deleteButton.textContent = '刪除';
+        deleteButton.onclick = () => {
+          giftData.gift.splice(index, 1);
+          renderGiftItems();
+        };
+
+        const giftButtonGroup = document.createElement('div');
+        giftButtonGroup.className = 'gift-button-group';
+        giftButtonGroup.appendChild(clearImageButton);
+        giftButtonGroup.appendChild(deleteButton);
+
+        giftItem.appendChild(preview);
+        giftItem.appendChild(nameInput);
+        giftItem.appendChild(countInput);
+        giftItem.appendChild(imageInput);
+        giftItem.appendChild(giftButtonGroup);
+        giftList.appendChild(giftItem);
+      });
+
+      const nothingInput = document.getElementById('nothing');
+      nothingInput.value = giftData.nothing;
+      nothingInput.onchange = () => { giftData.nothing = nothingInput.value; };
+    }
+
+    function addGiftItem() {
+      giftData.gift.push({
+        name: '新獎品',
+        count: 1,
+        image: '',
+        icon: icons[Math.floor(Math.random() * icons.length)]
+      });
+      renderGiftItems();
+    }
+
+    function saveGiftData() {
+      const rows = parseInt(rowsInput.value);
+      const cols = parseInt(colsInput.value);
+      // 驗證 rows 和 cols
+      if (isNaN(rows) || rows < 3 || rows > 15 || isNaN(cols) || cols < 3 || cols > 15) {
+        alert('行數和列數必須在 3 到 15 之間！');
+        return;
+      }
+      if (validateGiftData(giftData)) {
+        localStorage.setItem('giftData', JSON.stringify(giftData));
+        localStorage.setItem('gridRows', rows);
+        localStorage.setItem('gridCols', cols);
+        alert('資料儲存成功！');
+      } else {
+        alert('獎品資料格式無效，請檢查！');
+      }
+    }
+
+    function validateGiftData(data) {
+      return (
+        data &&
+        Array.isArray(data.gift) &&
+        data.nothing &&
+        data.gift.every(item => 
+          item.name && 
+          typeof item.count === 'number' && 
+          (item.image || item.image === '') && 
+          item.icon
+        )
+      );
+    }
+
+    renderGiftItems();
+  </script>
+</body>
+</html>
