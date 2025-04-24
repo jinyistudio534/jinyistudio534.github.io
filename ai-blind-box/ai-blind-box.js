@@ -149,13 +149,16 @@ class AIBlindBox extends HTMLElement {
       left: 50%;
       transform: translateX(-50%);
       width: 300px;
+      min-height: 150px;
       max-height: calc(100vh - 40px);
       overflow-y: auto;
       box-sizing: border-box;
+      touch-action: none;
     `;
     
-    // 禁用頁面滾動
+    // 禁用頁面滾動並防止縮放
     document.body.style.overflow = 'hidden';
+    document.body.style.touchAction = 'none';
     
     const message = document.createElement('p');
     message.textContent = `請輸入 ${this.verificationCode} 以重置`;
@@ -163,7 +166,15 @@ class AIBlindBox extends HTMLElement {
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = `輸入 ${this.verificationCode}`;
-    input.style.cssText = 'margin: 10px 0; padding: 5px; width: 100%; box-sizing: border-box;';
+    input.style.cssText = `
+      margin: 10px 0;
+      padding: 5px;
+      width: 100%;
+      box-sizing: border-box;
+      font-size: 16px;
+      -webkit-user-select: auto;
+      touch-action: manipulation;
+    `;
     
     const submit = document.createElement('button');
     submit.textContent = '提交';
@@ -181,7 +192,7 @@ class AIBlindBox extends HTMLElement {
         this.assignCells();
         this.render();
         document.body.removeChild(overlay);
-        document.body.style.overflow = '';
+        resetViewport();
       } else {
         message.textContent = '輸入錯誤，請再試一次';
       }
@@ -212,15 +223,20 @@ class AIBlindBox extends HTMLElement {
     `;
     closeButton.onclick = () => {
       document.body.removeChild(overlay);
-      document.body.style.overflow = '';
+      resetViewport();
     };
     
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submit.click();
       if (e.key === 'Escape') {
         document.body.removeChild(overlay);
-        document.body.style.overflow = '';
+        resetViewport();
       }
+    });
+    
+    // 監聽輸入框焦點，防止鍵盤縮放
+    input.addEventListener('focus', () => {
+      input.style.fontSize = '16px'; // 防止 iOS 縮放
     });
     
     modal.appendChild(closeButton);
@@ -230,6 +246,19 @@ class AIBlindBox extends HTMLElement {
     modal.appendChild(editLink);
     document.body.appendChild(overlay);
     overlay.appendChild(modal);
+
+    // 重置視口縮放和滾動的輔助函數
+    function resetViewport() {
+      document.body.style.overflow = '';
+      document.body.style.touchAction = '';
+      // 強制重置縮放（針對 iOS Safari）
+      const viewport = document.querySelector('meta[name=viewport]');
+      if (viewport) {
+        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
+      }
+      // 確保頁面滾動到頂部
+      window.scrollTo(0, 0);
+    }
   }
 
   handleCellClick(event) {
