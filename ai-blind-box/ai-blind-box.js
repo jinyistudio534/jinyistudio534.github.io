@@ -10,6 +10,8 @@ class AIBlindBox extends HTMLElement {
     this.clickedCells = JSON.parse(localStorage.getItem('clickedCells') || '[]');
     this.cellAssignments = JSON.parse(localStorage.getItem('cellAssignments') || '[]');
     this.verificationCode = '';
+    this.longPressTimer = null;
+    this.isLongPressing = false;
 
     // 預設 gift.json 資料，圖標隨機選擇，圖片設為空字串
     this.defaultGiftData = {
@@ -40,7 +42,6 @@ class AIBlindBox extends HTMLElement {
   }
 
   connectedCallback() {
-    // 從 localStorage 載入 rows 和 cols，若無則使用預設值 6
     const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
     const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
     this.setAttribute('rows', storedRows);
@@ -56,7 +57,6 @@ class AIBlindBox extends HTMLElement {
   }
 
   set giftData(data) {
-    // 確保每個獎品有隨機圖標
     data.gift = data.gift.map(gift => ({
       ...gift,
       icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
@@ -74,14 +74,12 @@ class AIBlindBox extends HTMLElement {
   initializeGiftData() {
     const storedGiftData = localStorage.getItem('giftData');
     this._giftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
-    // 確保載入的資料有隨機圖標
     this._giftData.gift = this._giftData.gift.map(gift => ({
       ...gift,
       icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
     }));
     localStorage.setItem('giftData', JSON.stringify(this._giftData));
 
-    // 檢查 cellAssignments 是否有效
     const rows = parseInt(this.getAttribute('rows')) || 6;
     const cols = parseInt(this.getAttribute('cols')) || 6;
     const totalCells = rows * cols;
@@ -100,7 +98,6 @@ class AIBlindBox extends HTMLElement {
     const cols = parseInt(this.getAttribute('cols')) || 6;
     const totalCells = rows * cols;
     
-    // 重置 cellAssignments 以匹配新尺寸
     this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
     const giftIndices = [];
     this.giftData.gift.forEach(gift => {
@@ -126,25 +123,48 @@ class AIBlindBox extends HTMLElement {
 
   showVerificationModal() {
     this.verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
+    
+    // 創建背景遮罩
+    const overlay = document.createElement('div');
+    overlay.style.cssText = `
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      background: rgba(0, 0, 0, 0.5);
+      z-index: 999;
+    `;
+    
     const modal = document.createElement('div');
     modal.style.cssText = `
-      position: fixed;
-      top: 50%;
-      left: 50%;
-      transform: translate(-50%, -50%);
       background: rgba(0, 0, 0, 0.8);
       color: white;
       padding: 20px;
       border-radius: 5px;
       z-index: 1000;
       text-align: center;
+      position: fixed;
+      bottom: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      width: 300px;
+      max-height: calc(100vh - 40px);
+      overflow-y: auto;
+      box-sizing: border-box;
     `;
+    
+    // 禁用頁面滾動
+    document.body.style.overflow = 'hidden';
+    
     const message = document.createElement('p');
     message.textContent = `請輸入 ${this.verificationCode} 以重置`;
+    
     const input = document.createElement('input');
     input.type = 'text';
     input.placeholder = `輸入 ${this.verificationCode}`;
-    input.style.cssText = 'margin: 10px 0; padding: 5px;';
+    input.style.cssText = 'margin: 10px 0; padding: 5px; width: 100%; box-sizing: border-box;';
+    
     const submit = document.createElement('button');
     submit.textContent = '提交';
     submit.style.cssText = 'padding: 5px 10px; margin-right: 10px;';
@@ -154,35 +174,66 @@ class AIBlindBox extends HTMLElement {
         localStorage.removeItem('cellAssignments');
         this.clickedCells = [];
         this.cellAssignments = [];
-        // 保留 localStorage 中的 gridRows 和 gridCols
         const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
         const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
         this.setAttribute('rows', storedRows);
         this.setAttribute('cols', storedCols);
         this.assignCells();
         this.render();
-        document.body.removeChild(modal);
+        document.body.removeChild(overlay);
+        document.body.style.overflow = '';
       } else {
         message.textContent = '輸入錯誤，請再試一次';
       }
     };
+    
     const editLink = document.createElement('a');
     editLink.href = 'edit.html';
     editLink.textContent = '編輯獎品資料';
     editLink.style.cssText = 'color: #4CAF50; text-decoration: underline; display: block; margin-top: 10px;';
     
+    const closeButton = document.createElement('button');
+    closeButton.textContent = '✕';
+    closeButton.style.cssText = `
+      position: absolute;
+      top: 10px;
+      right: 10px;
+      background: #ff4d4d;
+      color: white;
+      border: none;
+      border-radius: 50%;
+      width: 24px;
+      height: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      cursor: pointer;
+      font-size: 16px;
+    `;
+    closeButton.onclick = () => {
+      document.body.removeChild(overlay);
+      document.body.style.overflow = '';
+    };
+    
     input.addEventListener('keydown', (e) => {
       if (e.key === 'Enter') submit.click();
-      if (e.key === 'Escape') document.body.removeChild(modal);
+      if (e.key === 'Escape') {
+        document.body.removeChild(overlay);
+        document.body.style.overflow = '';
+      }
     });
+    
+    modal.appendChild(closeButton);
     modal.appendChild(message);
     modal.appendChild(input);
     modal.appendChild(submit);
     modal.appendChild(editLink);
-    document.body.appendChild(modal);
+    document.body.appendChild(overlay);
+    overlay.appendChild(modal);
   }
 
   handleCellClick(event) {
+    if (this.isLongPressing) return;
     const cell = event.target.closest('.grid-cell');
     if (cell && !cell.classList.contains('clicked')) {
       const index = Array.from(this.shadowRoot.querySelectorAll('.grid-cell')).indexOf(cell);
@@ -202,7 +253,6 @@ class AIBlindBox extends HTMLElement {
 
       const thankYouSpan = document.createElement('span');
       thankYouSpan.className = 'thank-you';
-      // 將 \n 轉為 <br> 實現換行
       thankYouSpan.innerHTML = this.cellAssignments[index].content.replace(/\n/g, '<br>');
       cell.appendChild(thankYouSpan);
     }
@@ -227,7 +277,6 @@ class AIBlindBox extends HTMLElement {
 
           const thankYouSpan = document.createElement('span');
           thankYouSpan.className = 'thank-you';
-          // 將 \n 轉為 <br> 實現換行
           thankYouSpan.innerHTML = this.cellAssignments[index].content.replace(/\n/g, '<br>');
           cells[index].appendChild(thankYouSpan);
         }
@@ -250,6 +299,7 @@ class AIBlindBox extends HTMLElement {
         width: 100vw;
         height: 100vh;
         margin: 0;
+        background: white;
       }
       .grid-container {
         display: grid;
@@ -268,6 +318,7 @@ class AIBlindBox extends HTMLElement {
         border: ${borderWidth}px solid #000;
         cursor: pointer;
         position: relative;
+        touch-action: none;
       }
       .grid-cell:hover:not(.clicked) {
         filter: brightness(1.1);
@@ -331,8 +382,45 @@ class AIBlindBox extends HTMLElement {
         cell.appendChild(iconSpan);
       }
 
-      if (this.clickedCells.includes(i)) {
-        cell.classList.add('clicked');
+      if (i === 0) {
+        cell.addEventListener('mousedown', (e) => {
+          e.preventDefault();
+          this.isLongPressing = false;
+          this.longPressTimer = setTimeout(() => {
+            this.isLongPressing = true;
+            this.showVerificationModal();
+          }, 3000);
+        });
+        cell.addEventListener('mouseup', () => {
+          clearTimeout(this.longPressTimer);
+          this.isLongPressing = false;
+        });
+        cell.addEventListener('mouseleave', () => {
+          clearTimeout(this.longPressTimer);
+          this.isLongPressing = false;
+        });
+
+        cell.addEventListener('touchstart', (e) => {
+          e.preventDefault();
+          this.isLongPressing = false;
+          this.longPressTimer = setTimeout(() => {
+            this.isLongPressing = true;
+            this.showVerificationModal();
+          }, 3000);
+        });
+        cell.addEventListener('touchend', () => {
+          clearTimeout(this.longPressTimer);
+          this.isLongPressing = false;
+        });
+        cell.addEventListener('touchcancel', () => {
+          clearTimeout(this.longPressTimer);
+          this.isLongPressing = false;
+        });
+      }
+
+      if (!this.clickedCells.includes(i)) {
+        cell.addEventListener('click', this.handleCellClick.bind(this));
+      } else {
         cell.style.backgroundColor = 'transparent';
         cell.innerHTML = '';
 
@@ -348,8 +436,6 @@ class AIBlindBox extends HTMLElement {
         thankYouSpan.className = 'thank-you';
         thankYouSpan.innerHTML = this.cellAssignments[i].content.replace(/\n/g, '<br>');
         cell.appendChild(thankYouSpan);
-      } else {
-        cell.addEventListener('click', this.handleCellClick.bind(this));
       }
       gridContainer.appendChild(cell);
     }
