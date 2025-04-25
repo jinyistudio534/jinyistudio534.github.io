@@ -48,9 +48,11 @@ class AIBlindBox extends HTMLElement {
     this.setAttribute('rows', storedRows);
     this.setAttribute('cols', storedCols);
     this.initializeGiftData();
-    this.render();
+    document.addEventListener('DOMContentLoaded', () => {
+      this.render();
+      this.restoreClickedStates();
+    });
     document.addEventListener('keydown', this.handleCtrlR.bind(this));
-    this.restoreClickedStates();
     window.addEventListener('resize', () => this.render());
   }
 
@@ -269,57 +271,34 @@ class AIBlindBox extends HTMLElement {
     }
   }
 
-  showFireworks() {
+  showFireworks(cell) {
     console.log('Showing fireworks animation...');
     const fireworks = document.createElement('div');
     fireworks.className = 'fireworks';
-    document.documentElement.appendChild(fireworks);
-    console.log('Fireworks element created and appended to document.documentElement:', fireworks);
+    
+    // 獲取網格容器作為父元素
+    const gridContainer = this.shadowRoot.querySelector('.grid-container');
+    gridContainer.appendChild(fireworks);
+    console.log('Fireworks element created and appended to grid-container:', fireworks);
 
-    // 檢查 <html> 元素的樣式
-    const htmlStyles = window.getComputedStyle(document.documentElement);
-    console.log('HTML element styles:', {
-      overflow: htmlStyles.overflow,
-      position: htmlStyles.position,
-      display: htmlStyles.display,
-      visibility: htmlStyles.visibility,
-      opacity: htmlStyles.opacity
+    // 計算單元中心座標（相對於 grid-container）
+    const cellRect = cell.getBoundingClientRect();
+    const gridRect = gridContainer.getBoundingClientRect();
+    const cellCenterX = cellRect.left - gridRect.left + cellRect.width / 2;
+    const cellCenterY = cellRect.top - gridRect.top + cellRect.height / 2;
+
+    // 設置煙火容器的位置
+    fireworks.style.left = `${cellCenterX}px`;
+    fireworks.style.top = `${cellCenterY}px`;
+
+    // 添加音效
+    const audio = document.createElement('audio');
+    audio.src = './firework.wav'; // 使用項目目錄中的 firework.wav
+    audio.preload = 'auto';
+    document.body.appendChild(audio);
+    audio.play().catch(error => {
+      console.warn('Failed to play firework sound:', error);
     });
-
-    // 檢查 fireworks 元素的計算樣式
-    const fireworksStyles = window.getComputedStyle(fireworks);
-    console.log('Fireworks computed styles:', {
-      display: fireworksStyles.display,
-      visibility: fireworksStyles.visibility,
-      opacity: fireworksStyles.opacity,
-      position: fireworksStyles.position,
-      top: fireworksStyles.top,
-      left: fireworksStyles.left,
-      transform: fireworksStyles.transform,
-      zIndex: fireworksStyles.zIndex
-    });
-
-    // 檢查 fireworks 元素的位置
-    const fireworksRect = fireworks.getBoundingClientRect();
-    console.log('Fireworks position and size:', {
-      top: fireworksRect.top,
-      left: fireworksRect.left,
-      width: fireworksRect.width,
-      height: fireworksRect.height,
-      isVisible: fireworksRect.top >= 0 && fireworksRect.left >= 0 &&
-                fireworksRect.bottom <= window.innerHeight &&
-                fireworksRect.right <= window.innerWidth
-    });
-
-    const elements = document.documentElement.getElementsByTagName('*');
-    let maxZIndex = 0;
-    for (let i = 0; i < elements.length; i++) {
-      const zIndex = parseInt(window.getComputedStyle(elements[i]).zIndex) || 0;
-      if (zIndex > maxZIndex && elements[i] !== fireworks) {
-        maxZIndex = zIndex;
-      }
-    }
-    console.log('Highest z-index found in document.documentElement (excluding fireworks):', maxZIndex);
 
     const particleCount = 12;
     const particles = [];
@@ -328,35 +307,26 @@ class AIBlindBox extends HTMLElement {
       particle.className = 'firework-particle';
       particle.style.backgroundColor = this.colors[Math.floor(Math.random() * this.colors.length)];
       const angle = (i / particleCount) * 360;
-      const radius = 100;
+      const radius = 150;
       const targetX = radius * Math.cos((angle * Math.PI) / 180);
       const targetY = radius * Math.sin((angle * Math.PI) / 180);
       particle.style.setProperty('--target-x', `${targetX}px`);
       particle.style.setProperty('--target-y', `${targetY}px`);
       fireworks.appendChild(particle);
       particles.push(particle);
-
-      // 檢查粒子元素的計算樣式
-      const particleStyles = window.getComputedStyle(particle);
-      console.log(`Firework particle ${i} computed styles:`, {
-        display: particleStyles.display,
-        visibility: particleStyles.visibility,
-        opacity: particleStyles.opacity,
-        position: particleStyles.position,
-        top: particleStyles.top,
-        left: particleStyles.left,
-        transform: particleStyles.transform,
-        animation: particleStyles.animation
-      });
     }
     console.log(`Created ${particles.length} firework particles:`, particles);
 
-    fireworks.addEventListener('animationend', () => {
+    setTimeout(() => {
       console.log('Fireworks animation ended, removing element.');
       if (fireworks.parentNode) {
-        document.documentElement.removeChild(fireworks);
+        gridContainer.removeChild(fireworks);
       }
-    });
+      if (audio.parentNode) {
+        audio.pause();
+        document.body.removeChild(audio);
+      }
+    }, 2000);
   }
 
   handleCellClick(event) {
@@ -381,7 +351,7 @@ class AIBlindBox extends HTMLElement {
           backgroundImage.style.opacity = (this.cellAssignments[index].opacity / 100).toString();
           cell.appendChild(backgroundImage);
         }
-        this.showFireworks();
+        this.showFireworks(cell);
       } else {
         console.log(`Cell ${index} is not a gift. No fireworks triggered.`);
       }
@@ -483,6 +453,7 @@ class AIBlindBox extends HTMLElement {
         margin: 20px auto;
         overflow: auto;
         box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
+        position: relative;
       }
       .grid-cell {
         display: flex;
@@ -552,55 +523,30 @@ class AIBlindBox extends HTMLElement {
         background-color: transparent !important;
       }
       .fireworks {
-        position: fixed;
-        top: 50%;
-        left: 50%;
-        transform: translate(-50%, -50%);
-        width: 300px; /* 增大尺寸 */
+        position: absolute;
+        width: 300px;
         height: 300px;
-        z-index: 2147483648;
-        isolation: isolate;
-        border: 5px solid red;
-        background: yellow !important; /* 更顯眼的背景色 */
+        transform: translate(-50%, -50%);
+        z-index: 1000;
         pointer-events: none;
-        opacity: 1 !important;
-        display: block !important;
-        visibility: visible !important;
-        will-change: transform;
-        animation: blink 5s ease-in-out forwards;
       }
       .firework-particle {
         position: absolute;
-        width: 20px; /* 增大粒子尺寸 */
+        width: 20px;
         height: 20px;
         border-radius: 50%;
         top: 50%;
         left: 50%;
-        background-color: yellow;
-        border: 2px solid black; /* 加粗邊框 */
-        z-index: 2147483649; /* 更高 z-index */
-        animation: fallback 5s ease-out forwards; /* 僅使用備用動畫 */
-        opacity: 1 !important;
-        display: block !important;
-        visibility: visible !important;
-        isolation: isolate;
+        animation: fallback 2s ease-out forwards;
       }
       @keyframes fallback {
         0% {
-          transform: scale(1);
+          transform: translate(0, 0) scale(1);
           opacity: 1;
         }
         100% {
-          transform: scale(3);
+          transform: translate(var(--target-x), var(--target-y)) scale(3);
           opacity: 0;
-        }
-      }
-      @keyframes blink {
-        0%, 100% {
-          opacity: 1;
-        }
-        50% {
-          opacity: 0.5;
         }
       }
       @media (max-width: 600px) {
@@ -619,16 +565,6 @@ class AIBlindBox extends HTMLElement {
         .firework-particle {
           width: 15px;
           height: 15px;
-        }
-        @keyframes fallback {
-          0% {
-            transform: scale(1);
-            opacity: 1;
-          }
-          100% {
-            transform: scale(3);
-            opacity: 0;
-          }
         }
       }
       @media (min-width: 601px) and (max-width: 1199px) {
@@ -666,7 +602,7 @@ class AIBlindBox extends HTMLElement {
           this.longPressTimer = setTimeout(() => {
             this.isLongPressing = true;
             this.showVerificationModal();
-          }, 3000);
+          }, 2000);
         });
         cell.addEventListener('mouseup', () => {
           clearTimeout(this.longPressTimer);
@@ -682,7 +618,7 @@ class AIBlindBox extends HTMLElement {
           this.longPressTimer = setTimeout(() => {
             this.isLongPressing = true;
             this.showVerificationModal();
-          }, 3000);
+          }, 2000);
         });
         cell.addEventListener('touchend', () => {
           clearTimeout(this.longPressTimer);
