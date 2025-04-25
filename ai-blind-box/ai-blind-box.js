@@ -293,7 +293,7 @@ class AIBlindBox extends HTMLElement {
 
     // 添加音效
     const audio = document.createElement('audio');
-    audio.src = './firework.wav'; // 使用項目目錄中的 firework.wav
+    audio.src = './firework.wav';
     audio.preload = 'auto';
     document.body.appendChild(audio);
     audio.play().catch(error => {
@@ -412,8 +412,8 @@ class AIBlindBox extends HTMLElement {
     }
 
     const cellSize = Math.min(
-      (window.innerWidth * 0.9 - (cols - 1) * gridWidth - 2 * borderWidth * cols) / cols,
-      (window.innerHeight * 0.9 - (rows - 1) * gridWidth - 2 * borderWidth * rows) / rows,
+      (window.innerWidth - (cols - 1) * gridWidth - 2 * borderWidth * cols) / cols,
+      (window.innerHeight - (rows - 1) * gridWidth - 2 * borderWidth * rows) / rows,
       maxCellSize
     );
 
@@ -427,13 +427,13 @@ class AIBlindBox extends HTMLElement {
       :host {
         display: block;
         width: 100%;
-        min-height: 100vh;
+        height: 100vh;
         margin: 0;
         background: white;
-        overflow: auto;
+        overflow: hidden;
       }
       html {
-        overflow: visible !important;
+        overflow: hidden !important;
         position: static !important;
         display: block !important;
         visibility: visible !important;
@@ -444,14 +444,13 @@ class AIBlindBox extends HTMLElement {
         grid-template-rows: repeat(${rows}, ${cellSize}px);
         grid-template-columns: repeat(${cols}, ${cellSize}px);
         gap: ${gridWidth}px;
-        width: fit-content;
-        max-width: 90%;
+        width: 100%;
         height: auto;
         background: #000;
         box-sizing: border-box;
-        padding: ${screenWidth < 600 ? '5px' : '20px'};
-        margin: 20px auto;
-        overflow: auto;
+        padding: ${screenWidth < 600 ? '5px' : '10px'};
+        margin: 0;
+        overflow: hidden;
         box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
         position: relative;
       }
@@ -551,7 +550,8 @@ class AIBlindBox extends HTMLElement {
       }
       @media (max-width: 600px) {
         .grid-container {
-          max-width: 100%;
+          width: 100%;
+          height: auto;
           padding: 5px;
         }
         .grid-cell {
@@ -569,12 +569,28 @@ class AIBlindBox extends HTMLElement {
       }
       @media (min-width: 601px) and (max-width: 1199px) {
         .grid-container {
-          max-width: 90%;
+          width: 90%;
+          height: auto;
+          margin: 20px auto;
+          padding: 10px;
         }
       }
       @media (min-width: 1200px) {
         .grid-container {
-          max-width: 1600px;
+          width: 100vw;
+          height: 100vh;
+          margin: 0;
+          padding: 0;
+          display: grid;
+          grid-template-rows: repeat(${rows}, 1fr);
+          grid-template-columns: repeat(${cols}, 1fr);
+          gap: ${gridWidth}px;
+        }
+        .grid-cell {
+          min-width: 0;
+          min-height: 0;
+          width: 100%;
+          height: 100%;
         }
       }
     `;
