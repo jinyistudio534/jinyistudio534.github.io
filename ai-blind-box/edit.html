@@ -3,7 +3,7 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Edit Gift Data</title>
+  <title>編輯獎品資料</title>
   <style>
     body {
       margin: 0;
@@ -327,7 +327,7 @@
         deleteButton.className = 'delete-button';
         deleteButton.textContent = '刪除';
         deleteButton.onclick = () => {
-          giftData.gift[index] = giftData.gift.splice(index, 1);
+          giftData.gift.splice(index, 1); // 修改：直接使用 splice 移除元素
           renderGiftItems();
         };
 
@@ -387,6 +387,7 @@
         return;
       }
       if (validateGiftData(giftData)) {
+        // 只儲存待應用參數，不影響 current* 鍵
         localStorage.setItem('giftData', JSON.stringify(giftData));
         localStorage.setItem('gridRows', rows);
         localStorage.setItem('gridCols', cols);
@@ -394,7 +395,7 @@
         localStorage.setItem('iconSize', iconSize);
         localStorage.setItem('textPosition', textPosition);
         localStorage.setItem('textColor', textColor);
-        alert('資料儲存成功！');
+        alert('資料儲存成功！請使用 Ctrl+R 並輸入驗證碼以應用新設定。');
       } else {
         alert('獎品資料格式無效，請檢查！');
       }
@@ -419,5 +420,6 @@
     renderGiftItems();
   </script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9358bd4bbf026745',t:'MTc0NTUzMDYyMC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'935b07e23c0e78c6',t:'MTc0NTU1NDY0Ny4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>

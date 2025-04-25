@@ -13,6 +13,14 @@ class AIBlindBox extends HTMLElement {
     this.longPressTimer = null;
     this.isLongPressing = false;
 
+    // 初始化僅使用 current* 鍵，無 current* 時使用預設值
+    this.currentRows = parseInt(localStorage.getItem('currentGridRows')) || 6;
+    this.currentCols = parseInt(localStorage.getItem('currentGridCols')) || 6;
+    this.currentTextSize = parseInt(localStorage.getItem('currentTextSize')) || 14;
+    this.currentIconSize = parseInt(localStorage.getItem('currentIconSize')) || 32;
+    this.currentTextPosition = localStorage.getItem('currentTextPosition') || 'center';
+    this.currentTextColor = localStorage.getItem('currentTextColor') || '#FFFFFF';
+
     this.defaultGiftData = {
       gift: [
         {
@@ -32,6 +40,15 @@ class AIBlindBox extends HTMLElement {
       ],
       nothing: "銘謝惠顧"
     };
+
+    // 初始化 giftData 僅使用 currentGiftData 或預設值
+    const storedGiftData = localStorage.getItem('currentGiftData');
+    this.currentGiftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
+    this.currentGiftData.gift = this.currentGiftData.gift.map(gift => ({
+      ...gift,
+      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
+      opacity: gift.opacity !== undefined ? gift.opacity : 50
+    }));
   }
 
   static get observedAttributes() {
@@ -43,14 +60,13 @@ class AIBlindBox extends HTMLElement {
   }
 
   connectedCallback() {
-    const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
-    const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
-    this.setAttribute('rows', storedRows);
-    this.setAttribute('cols', storedCols);
+    // 使用當前狀態設置屬性
+    this.setAttribute('rows', this.currentRows);
+    this.setAttribute('cols', this.currentCols);
     this.initializeGiftData();
     document.addEventListener('DOMContentLoaded', () => {
       this.render();
-      this.restoreClickedStates();
+      this.restoreClickedStates(); // 修正：使用正確的函數名稱
     });
     document.addEventListener('keydown', this.handleCtrlR.bind(this));
     window.addEventListener('resize', () => this.render());
@@ -67,25 +83,25 @@ class AIBlindBox extends HTMLElement {
       icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
       opacity: gift.opacity !== undefined ? gift.opacity : 50
     }));
-    this._giftData = data;
-    localStorage.setItem('giftData', JSON.stringify(data));
+    this.currentGiftData = data;
+    localStorage.setItem('currentGiftData', JSON.stringify(data));
+    localStorage.setItem('giftData', JSON.stringify(data)); // 同時更新待應用參數
     this.assignCells();
     this.render();
   }
 
   get giftData() {
-    return this._giftData;
+    return this.currentGiftData;
   }
 
   initializeGiftData() {
-    const storedGiftData = localStorage.getItem('giftData');
-    this._giftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
+    // 使用當前 giftData 初始化
+    this._giftData = JSON.parse(JSON.stringify(this.currentGiftData)); // 深拷貝
     this._giftData.gift = this._giftData.gift.map(gift => ({
       ...gift,
       icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
       opacity: gift.opacity !== undefined ? gift.opacity : 50
     }));
-    localStorage.setItem('giftData', JSON.stringify(this._giftData));
 
     const rows = parseInt(this.getAttribute('rows')) || 6;
     const cols = parseInt(this.getAttribute('cols')) || 6;
@@ -199,16 +215,44 @@ class AIBlindBox extends HTMLElement {
     submit.style.cssText = 'padding: 5px 10px; margin-right: 10px;';
     submit.onclick = () => {
       if (input.value === this.verificationCode) {
+        // 清空當前狀態
         localStorage.removeItem('clickedCells');
         localStorage.removeItem('cellAssignments');
         this.clickedCells = [];
         this.cellAssignments = [];
-        const storedRows = parseInt(localStorage.getItem('gridRows')) || 6;
-        const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
-        this.setAttribute('rows', storedRows);
-        this.setAttribute('cols', storedCols);
+
+        // 應用待應用參數到當前狀態
+        this.currentRows = parseInt(localStorage.getItem('gridRows')) || 6;
+        this.currentCols = parseInt(localStorage.getItem('gridCols')) || 6;
+        this.currentTextSize = parseInt(localStorage.getItem('textSize')) || 14;
+        this.currentIconSize = parseInt(localStorage.getItem('iconSize')) || 32;
+        this.currentTextPosition = localStorage.getItem('textPosition') || 'center';
+        this.currentTextColor = localStorage.getItem('textColor') || '#FFFFFF';
+        
+        const storedGiftData = localStorage.getItem('giftData');
+        this.currentGiftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
+        this.currentGiftData.gift = this.currentGiftData.gift.map(gift => ({
+          ...gift,
+          icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
+          opacity: gift.opacity !== undefined ? gift.opacity : 50
+        }));
+
+        // 儲存新的當前狀態
+        localStorage.setItem('currentGridRows', this.currentRows);
+        localStorage.setItem('currentGridCols', this.currentCols);
+        localStorage.setItem('currentTextSize', this.currentTextSize);
+        localStorage.setItem('currentIconSize', this.currentIconSize);
+        localStorage.setItem('currentTextPosition', this.currentTextPosition);
+        localStorage.setItem('currentTextColor', this.currentTextColor);
+        localStorage.setItem('currentGiftData', JSON.stringify(this.currentGiftData));
+
+        // 更新網格屬性
+        this.setAttribute('rows', this.currentRows);
+        this.setAttribute('cols', this.currentCols);
+        this.initializeGiftData();
         this.assignCells();
         this.render();
+        
         document.body.removeChild(overlay);
         resetViewport();
         this.showFireworks();
@@ -276,22 +320,18 @@ class AIBlindBox extends HTMLElement {
     const fireworks = document.createElement('div');
     fireworks.className = 'fireworks';
     
-    // 獲取網格容器作為父元素
     const gridContainer = this.shadowRoot.querySelector('.grid-container');
     gridContainer.appendChild(fireworks);
     console.log('Fireworks element created and appended to grid-container:', fireworks);
 
-    // 計算單元中心座標（相對於 grid-container）
     const cellRect = cell.getBoundingClientRect();
     const gridRect = gridContainer.getBoundingClientRect();
     const cellCenterX = cellRect.left - gridRect.left + cellRect.width / 2;
     const cellCenterY = cellRect.top - gridRect.top + cellRect.height / 2;
 
-    // 設置煙火容器的位置
     fireworks.style.left = `${cellCenterX}px`;
     fireworks.style.top = `${cellCenterY}px`;
 
-    // 添加音效
     const audio = document.createElement('audio');
     audio.src = './firework.wav';
     audio.preload = 'auto';
@@ -402,6 +442,7 @@ class AIBlindBox extends HTMLElement {
     const totalCells = rows * cols;
 
     const screenWidth = window.innerWidth;
+    const screenHeight = window.innerHeight;
     let maxCellSize;
     if (screenWidth < 600) {
       maxCellSize = 80;
@@ -411,21 +452,25 @@ class AIBlindBox extends HTMLElement {
       maxCellSize = 150;
     }
 
+    const gridSize = Math.min(screenWidth, screenHeight);
     const cellSize = Math.min(
-      (window.innerWidth - (cols - 1) * gridWidth - 2 * borderWidth * cols) / cols,
-      (window.innerHeight - (rows - 1) * gridWidth - 2 * borderWidth * rows) / rows,
+      (gridSize - (cols - 1) * gridWidth - 2 * borderWidth * cols) / cols,
+      (gridSize - (rows - 1) * gridWidth - 2 * borderWidth * rows) / rows,
       maxCellSize
     );
 
-    const textSize = parseInt(localStorage.getItem('textSize')) || 14;
-    const iconSize = parseInt(localStorage.getItem('iconSize')) || 32;
-    const textPosition = localStorage.getItem('textPosition') || 'center';
-    const textColor = localStorage.getItem('textColor') || '#FFFFFF';
+    // 使用當前狀態的參數
+    const textSize = this.currentTextSize;
+    const iconSize = this.currentIconSize;
+    const textPosition = this.currentTextPosition;
+    const textColor = this.currentTextColor;
 
     const style = document.createElement('style');
     style.textContent = `
       :host {
-        display: block;
+        display: flex;
+        justify-content: center;
+        align-items: center;
         width: 100%;
         height: 100vh;
         margin: 0;
@@ -577,8 +622,8 @@ class AIBlindBox extends HTMLElement {
       }
       @media (min-width: 1200px) {
         .grid-container {
-          width: 100vw;
-          height: 100vh;
+          width: min(100vw, 100vh);
+          height: min(100vw, 100vh);
           margin: 0;
           padding: 0;
           display: grid;
@@ -591,6 +636,7 @@ class AIBlindBox extends HTMLElement {
           min-height: 0;
           width: 100%;
           height: 100%;
+          aspect-ratio: 1 / 1;
         }
       }
     `;
