@@ -8,25 +8,26 @@ class AIBlindBox extends HTMLElement {
     ];
     this.icons = ['star', 'favorite', 'card_giftcard', 'cake', 'emoji_events', 'lightbulb', 'music_note', 'palette', 'rocket', 'sports_soccer'];
     this.clickedCells = JSON.parse(localStorage.getItem('clickedCells') || '[]');
-    this.cellAssignments = JSON.parse(localStorage.getItem('cellAssignments') || '[]');
+    this.cellAssignments = [];
     this.verificationCode = '';
     this.longPressTimer = null;
     this.isLongPressing = false;
 
-    // 預設 gift.json 資料，圖標隨機選擇，圖片設為空字串
     this.defaultGiftData = {
       gift: [
         {
           name: "糖果",
           count: 3,
           image: "",
-          icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+          icon: this.icons[Math.floor(Math.random() * this.icons.length)],
+          opacity: 50
         },
         {
           name: "餅干",
           count: 3,
           image: "",
-          icon: this.icons[Math.floor(Math.random() * this.icons.length)]
+          icon: this.icons[Math.floor(Math.random() * this.icons.length)],
+          opacity: 50
         }
       ],
       nothing: "銘謝惠顧"
@@ -46,20 +47,23 @@ class AIBlindBox extends HTMLElement {
     const storedCols = parseInt(localStorage.getItem('gridCols')) || 6;
     this.setAttribute('rows', storedRows);
     this.setAttribute('cols', storedCols);
+    this.initializeGiftData();
     this.render();
     document.addEventListener('keydown', this.handleCtrlR.bind(this));
     this.restoreClickedStates();
-    this.initializeGiftData();
+    window.addEventListener('resize', () => this.render());
   }
 
   disconnectedCallback() {
     document.removeEventListener('keydown', this.handleCtrlR.bind(this));
+    window.removeEventListener('resize', () => this.render());
   }
 
   set giftData(data) {
     data.gift = data.gift.map(gift => ({
       ...gift,
-      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
+      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
+      opacity: gift.opacity !== undefined ? gift.opacity : 50
     }));
     this._giftData = data;
     localStorage.setItem('giftData', JSON.stringify(data));
@@ -76,7 +80,8 @@ class AIBlindBox extends HTMLElement {
     this._giftData = storedGiftData ? JSON.parse(storedGiftData) : this.defaultGiftData;
     this._giftData.gift = this._giftData.gift.map(gift => ({
       ...gift,
-      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)]
+      icon: gift.icon || this.icons[Math.floor(Math.random() * this.icons.length)],
+      opacity: gift.opacity !== undefined ? gift.opacity : 50
     }));
     localStorage.setItem('giftData', JSON.stringify(this._giftData));
 
@@ -84,33 +89,49 @@ class AIBlindBox extends HTMLElement {
     const cols = parseInt(this.getAttribute('cols')) || 6;
     const totalCells = rows * cols;
     const storedAssignments = JSON.parse(localStorage.getItem('cellAssignments') || '[]');
-    if (storedAssignments.length === totalCells && storedAssignments.every(assignment => assignment.type && assignment.content)) {
-      this.cellAssignments = storedAssignments;
-    } else {
+
+    if (storedAssignments.length !== totalCells || !storedAssignments.every(assignment => assignment && assignment.type && assignment.content)) {
+      console.log('Stored cell assignments invalid or mismatch, reassigning cells...');
       this.assignCells();
+    } else {
+      console.log('Loaded cell assignments from localStorage:', storedAssignments);
+      this.cellAssignments = storedAssignments;
     }
-    this.render();
   }
 
   assignCells() {
-    if (!this.giftData) return;
+    if (!this.giftData) {
+      console.error('Gift data not initialized, cannot assign cells.');
+      return;
+    }
     const rows = parseInt(this.getAttribute('rows')) || 6;
     const cols = parseInt(this.getAttribute('cols')) || 6;
     const totalCells = rows * cols;
     
     this.cellAssignments = Array(totalCells).fill({ type: 'nothing', content: this.giftData.nothing });
     const giftIndices = [];
+    let totalGiftCount = 0;
+
     this.giftData.gift.forEach(gift => {
       const count = gift.count || 1;
+      totalGiftCount += count;
       for (let i = 0; i < count; i++) {
         let index;
         do {
           index = Math.floor(Math.random() * totalCells);
         } while (giftIndices.includes(index));
         giftIndices.push(index);
-        this.cellAssignments[index] = { type: 'gift', content: gift.name, image: gift.image };
+        this.cellAssignments[index] = { 
+          type: 'gift', 
+          content: gift.name, 
+          image: gift.image,
+          opacity: gift.opacity
+        };
       }
     });
+
+    console.log(`Assigned ${giftIndices.length} gift cells out of ${totalCells} total cells.`);
+    console.log('Cell assignments:', this.cellAssignments);
     localStorage.setItem('cellAssignments', JSON.stringify(this.cellAssignments));
   }
 
@@ -124,7 +145,6 @@ class AIBlindBox extends HTMLElement {
   showVerificationModal() {
     this.verificationCode = Math.floor(1000 + Math.random() * 9000).toString();
     
-    // 創建背景遮罩
     const overlay = document.createElement('div');
     overlay.style.cssText = `
       position: fixed;
@@ -153,12 +173,9 @@ class AIBlindBox extends HTMLElement {
       max-height: calc(100vh - 40px);
       overflow-y: auto;
       box-sizing: border-box;
-      touch-action: none;
     `;
     
-    // 禁用頁面滾動並防止縮放
     document.body.style.overflow = 'hidden';
-    document.body.style.touchAction = 'none';
     
     const message = document.createElement('p');
     message.textContent = `請輸入 ${this.verificationCode} 以重置`;
@@ -173,7 +190,6 @@ class AIBlindBox extends HTMLElement {
       box-sizing: border-box;
       font-size: 16px;
       -webkit-user-select: auto;
-      touch-action: manipulation;
     `;
     
     const submit = document.createElement('button');
@@ -193,6 +209,7 @@ class AIBlindBox extends HTMLElement {
         this.render();
         document.body.removeChild(overlay);
         resetViewport();
+        this.showFireworks();
       } else {
         message.textContent = '輸入錯誤，請再試一次';
       }
@@ -234,9 +251,8 @@ class AIBlindBox extends HTMLElement {
       }
     });
     
-    // 監聽輸入框焦點，防止鍵盤縮放
     input.addEventListener('focus', () => {
-      input.style.fontSize = '16px'; // 防止 iOS 縮放
+      input.style.fontSize = '16px';
     });
     
     modal.appendChild(closeButton);
@@ -247,18 +263,100 @@ class AIBlindBox extends HTMLElement {
     document.body.appendChild(overlay);
     overlay.appendChild(modal);
 
-    // 重置視口縮放和滾動的輔助函數
     function resetViewport() {
       document.body.style.overflow = '';
-      document.body.style.touchAction = '';
-      // 強制重置縮放（針對 iOS Safari）
-      const viewport = document.querySelector('meta[name=viewport]');
-      if (viewport) {
-        viewport.setAttribute('content', 'width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no');
-      }
-      // 確保頁面滾動到頂部
       window.scrollTo(0, 0);
     }
+  }
+
+  showFireworks() {
+    console.log('Showing fireworks animation...');
+    const fireworks = document.createElement('div');
+    fireworks.className = 'fireworks';
+    document.documentElement.appendChild(fireworks);
+    console.log('Fireworks element created and appended to document.documentElement:', fireworks);
+
+    // 檢查 <html> 元素的樣式
+    const htmlStyles = window.getComputedStyle(document.documentElement);
+    console.log('HTML element styles:', {
+      overflow: htmlStyles.overflow,
+      position: htmlStyles.position,
+      display: htmlStyles.display,
+      visibility: htmlStyles.visibility,
+      opacity: htmlStyles.opacity
+    });
+
+    // 檢查 fireworks 元素的計算樣式
+    const fireworksStyles = window.getComputedStyle(fireworks);
+    console.log('Fireworks computed styles:', {
+      display: fireworksStyles.display,
+      visibility: fireworksStyles.visibility,
+      opacity: fireworksStyles.opacity,
+      position: fireworksStyles.position,
+      top: fireworksStyles.top,
+      left: fireworksStyles.left,
+      transform: fireworksStyles.transform,
+      zIndex: fireworksStyles.zIndex
+    });
+
+    // 檢查 fireworks 元素的位置
+    const fireworksRect = fireworks.getBoundingClientRect();
+    console.log('Fireworks position and size:', {
+      top: fireworksRect.top,
+      left: fireworksRect.left,
+      width: fireworksRect.width,
+      height: fireworksRect.height,
+      isVisible: fireworksRect.top >= 0 && fireworksRect.left >= 0 &&
+                fireworksRect.bottom <= window.innerHeight &&
+                fireworksRect.right <= window.innerWidth
+    });
+
+    const elements = document.documentElement.getElementsByTagName('*');
+    let maxZIndex = 0;
+    for (let i = 0; i < elements.length; i++) {
+      const zIndex = parseInt(window.getComputedStyle(elements[i]).zIndex) || 0;
+      if (zIndex > maxZIndex && elements[i] !== fireworks) {
+        maxZIndex = zIndex;
+      }
+    }
+    console.log('Highest z-index found in document.documentElement (excluding fireworks):', maxZIndex);
+
+    const particleCount = 12;
+    const particles = [];
+    for (let i = 0; i < particleCount; i++) {
+      const particle = document.createElement('div');
+      particle.className = 'firework-particle';
+      particle.style.backgroundColor = this.colors[Math.floor(Math.random() * this.colors.length)];
+      const angle = (i / particleCount) * 360;
+      const radius = 100;
+      const targetX = radius * Math.cos((angle * Math.PI) / 180);
+      const targetY = radius * Math.sin((angle * Math.PI) / 180);
+      particle.style.setProperty('--target-x', `${targetX}px`);
+      particle.style.setProperty('--target-y', `${targetY}px`);
+      fireworks.appendChild(particle);
+      particles.push(particle);
+
+      // 檢查粒子元素的計算樣式
+      const particleStyles = window.getComputedStyle(particle);
+      console.log(`Firework particle ${i} computed styles:`, {
+        display: particleStyles.display,
+        visibility: particleStyles.visibility,
+        opacity: particleStyles.opacity,
+        position: particleStyles.position,
+        top: particleStyles.top,
+        left: particleStyles.left,
+        transform: particleStyles.transform,
+        animation: particleStyles.animation
+      });
+    }
+    console.log(`Created ${particles.length} firework particles:`, particles);
+
+    fireworks.addEventListener('animationend', () => {
+      console.log('Fireworks animation ended, removing element.');
+      if (fireworks.parentNode) {
+        document.documentElement.removeChild(fireworks);
+      }
+    });
   }
 
   handleCellClick(event) {
@@ -266,18 +364,26 @@ class AIBlindBox extends HTMLElement {
     const cell = event.target.closest('.grid-cell');
     if (cell && !cell.classList.contains('clicked')) {
       const index = Array.from(this.shadowRoot.querySelectorAll('.grid-cell')).indexOf(cell);
+      console.log(`Cell ${index} clicked. Assignment:`, this.cellAssignments[index]);
+      
       this.clickedCells.push(index);
       localStorage.setItem('clickedCells', JSON.stringify(this.clickedCells));
       cell.classList.add('clicked');
       cell.style.backgroundColor = 'transparent';
       cell.innerHTML = '';
 
-      if (this.cellAssignments[index].type === 'gift' && this.cellAssignments[index].image) {
-        const backgroundImage = document.createElement('div');
-        backgroundImage.className = 'background-image';
-        backgroundImage.style.backgroundImage = `url(${this.cellAssignments[index].image})`;
-        backgroundImage.style.opacity = '0.5';
-        cell.appendChild(backgroundImage);
+      if (this.cellAssignments[index] && this.cellAssignments[index].type === 'gift') {
+        console.log(`Cell ${index} is a gift! Triggering fireworks.`);
+        if (this.cellAssignments[index].image) {
+          const backgroundImage = document.createElement('div');
+          backgroundImage.className = 'background-image';
+          backgroundImage.style.backgroundImage = `url(${this.cellAssignments[index].image})`;
+          backgroundImage.style.opacity = (this.cellAssignments[index].opacity / 100).toString();
+          cell.appendChild(backgroundImage);
+        }
+        this.showFireworks();
+      } else {
+        console.log(`Cell ${index} is not a gift. No fireworks triggered.`);
       }
 
       const thankYouSpan = document.createElement('span');
@@ -292,15 +398,16 @@ class AIBlindBox extends HTMLElement {
       const cells = this.shadowRoot.querySelectorAll('.grid-cell');
       this.clickedCells.forEach(index => {
         if (cells[index]) {
+          console.log(`Restoring clicked state for cell ${index}:`, this.cellAssignments[index]);
           cells[index].classList.add('clicked');
           cells[index].style.backgroundColor = 'transparent';
           cells[index].innerHTML = '';
 
-          if (this.cellAssignments[index].type === 'gift' && this.cellAssignments[index].image) {
+          if (this.cellAssignments[index] && this.cellAssignments[index].type === 'gift' && this.cellAssignments[index].image) {
             const backgroundImage = document.createElement('div');
             backgroundImage.className = 'background-image';
             backgroundImage.style.backgroundImage = `url(${this.cellAssignments[index].image})`;
-            backgroundImage.style.opacity = '0.5';
+            backgroundImage.style.opacity = (this.cellAssignments[index].opacity / 100).toString();
             cells[index].appendChild(backgroundImage);
           }
 
@@ -314,31 +421,68 @@ class AIBlindBox extends HTMLElement {
   }
 
   render() {
-    if (!this.giftData || !this.cellAssignments.length) return;
+    if (!this.giftData || !this.cellAssignments.length) {
+      console.warn('Gift data or cell assignments not ready, cannot render.');
+      return;
+    }
     const rows = parseInt(this.getAttribute('rows')) || 6;
     const cols = parseInt(this.getAttribute('cols')) || 6;
     const gridWidth = parseInt(this.getAttribute('grid-width')) || 6;
     const borderWidth = parseInt(this.getAttribute('border-width')) || 6;
     const totalCells = rows * cols;
 
+    const screenWidth = window.innerWidth;
+    let maxCellSize;
+    if (screenWidth < 600) {
+      maxCellSize = 80;
+    } else if (screenWidth < 1200) {
+      maxCellSize = 120;
+    } else {
+      maxCellSize = 150;
+    }
+
+    const cellSize = Math.min(
+      (window.innerWidth * 0.9 - (cols - 1) * gridWidth - 2 * borderWidth * cols) / cols,
+      (window.innerHeight * 0.9 - (rows - 1) * gridWidth - 2 * borderWidth * rows) / rows,
+      maxCellSize
+    );
+
+    const textSize = parseInt(localStorage.getItem('textSize')) || 14;
+    const iconSize = parseInt(localStorage.getItem('iconSize')) || 32;
+    const textPosition = localStorage.getItem('textPosition') || 'center';
+    const textColor = localStorage.getItem('textColor') || '#FFFFFF';
+
     const style = document.createElement('style');
     style.textContent = `
       :host {
         display: block;
-        width: 100vw;
-        height: 100vh;
+        width: 100%;
+        min-height: 100vh;
         margin: 0;
         background: white;
+        overflow: auto;
+      }
+      html {
+        overflow: visible !important;
+        position: static !important;
+        display: block !important;
+        visibility: visible !important;
+        opacity: 1 !important;
       }
       .grid-container {
         display: grid;
-        grid-template-rows: repeat(${rows}, 1fr);
-        grid-template-columns: repeat(${cols}, 1fr);
+        grid-template-rows: repeat(${rows}, ${cellSize}px);
+        grid-template-columns: repeat(${cols}, ${cellSize}px);
         gap: ${gridWidth}px;
-        width: 100%;
-        height: 100%;
+        width: fit-content;
+        max-width: 90%;
+        height: auto;
         background: #000;
         box-sizing: border-box;
+        padding: ${screenWidth < 600 ? '5px' : '20px'};
+        margin: 20px auto;
+        overflow: auto;
+        box-shadow: inset 0 0 10px rgba(0, 0, 0, 0.5);
       }
       .grid-cell {
         display: flex;
@@ -347,7 +491,9 @@ class AIBlindBox extends HTMLElement {
         border: ${borderWidth}px solid #000;
         cursor: pointer;
         position: relative;
-        touch-action: none;
+        min-width: ${cellSize}px;
+        min-height: ${cellSize}px;
+        aspect-ratio: 1 / 1;
       }
       .grid-cell:hover:not(.clicked) {
         filter: brightness(1.1);
@@ -366,7 +512,7 @@ class AIBlindBox extends HTMLElement {
       }
       .material-icons {
         font-family: 'Material Icons';
-        font-size: 64px;
+        font-size: ${iconSize}px;
         color: #fff;
         font-weight: normal;
         font-style: normal;
@@ -383,15 +529,117 @@ class AIBlindBox extends HTMLElement {
         z-index: 1;
       }
       .thank-you {
-        font-size: 24px;
-        color: #fff;
+        font-size: ${textSize}px;
+        color: ${textColor};
         font-family: Arial, sans-serif;
         white-space: pre-wrap;
         z-index: 1;
         text-align: center;
+        width: 100%;
+        box-sizing: border-box;
+        position: absolute;
+        left: 50%;
+        transform: translateX(-50%);
+        ${textPosition === 'bottom' ? `
+          bottom: 5px;
+          top: auto;
+        ` : `
+          top: 50%;
+          transform: translate(-50%, -50%);
+        `}
       }
       .clicked {
         background-color: transparent !important;
+      }
+      .fireworks {
+        position: fixed;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 300px; /* 增大尺寸 */
+        height: 300px;
+        z-index: 2147483648;
+        isolation: isolate;
+        border: 5px solid red;
+        background: yellow !important; /* 更顯眼的背景色 */
+        pointer-events: none;
+        opacity: 1 !important;
+        display: block !important;
+        visibility: visible !important;
+        will-change: transform;
+        animation: blink 5s ease-in-out forwards;
+      }
+      .firework-particle {
+        position: absolute;
+        width: 20px; /* 增大粒子尺寸 */
+        height: 20px;
+        border-radius: 50%;
+        top: 50%;
+        left: 50%;
+        background-color: yellow;
+        border: 2px solid black; /* 加粗邊框 */
+        z-index: 2147483649; /* 更高 z-index */
+        animation: fallback 5s ease-out forwards; /* 僅使用備用動畫 */
+        opacity: 1 !important;
+        display: block !important;
+        visibility: visible !important;
+        isolation: isolate;
+      }
+      @keyframes fallback {
+        0% {
+          transform: scale(1);
+          opacity: 1;
+        }
+        100% {
+          transform: scale(3);
+          opacity: 0;
+        }
+      }
+      @keyframes blink {
+        0%, 100% {
+          opacity: 1;
+        }
+        50% {
+          opacity: 0.5;
+        }
+      }
+      @media (max-width: 600px) {
+        .grid-container {
+          max-width: 100%;
+          padding: 5px;
+        }
+        .grid-cell {
+          min-width: 50px;
+          min-height: 50px;
+        }
+        .fireworks {
+          width: 200px;
+          height: 200px;
+        }
+        .firework-particle {
+          width: 15px;
+          height: 15px;
+        }
+        @keyframes fallback {
+          0% {
+            transform: scale(1);
+            opacity: 1;
+          }
+          100% {
+            transform: scale(3);
+            opacity: 0;
+          }
+        }
+      }
+      @media (min-width: 601px) and (max-width: 1199px) {
+        .grid-container {
+          max-width: 90%;
+        }
+      }
+      @media (min-width: 1200px) {
+        .grid-container {
+          max-width: 1600px;
+        }
       }
     `;
 
@@ -429,8 +677,7 @@ class AIBlindBox extends HTMLElement {
           this.isLongPressing = false;
         });
 
-        cell.addEventListener('touchstart', (e) => {
-          e.preventDefault();
+        cell.addEventListener('touchstart', () => {
           this.isLongPressing = false;
           this.longPressTimer = setTimeout(() => {
             this.isLongPressing = true;
@@ -449,15 +696,16 @@ class AIBlindBox extends HTMLElement {
 
       if (!this.clickedCells.includes(i)) {
         cell.addEventListener('click', this.handleCellClick.bind(this));
+        cell.addEventListener('touchend', this.handleCellClick.bind(this));
       } else {
         cell.style.backgroundColor = 'transparent';
         cell.innerHTML = '';
 
-        if (this.cellAssignments[i].type === 'gift' && this.cellAssignments[i].image) {
+        if (this.cellAssignments[i] && this.cellAssignments[i].type === 'gift' && this.cellAssignments[i].image) {
           const backgroundImage = document.createElement('div');
           backgroundImage.className = 'background-image';
           backgroundImage.style.backgroundImage = `url(${this.cellAssignments[i].image})`;
-          backgroundImage.style.opacity = '0.5';
+          backgroundImage.style.opacity = (this.cellAssignments[i].opacity / 100).toString();
           cell.appendChild(backgroundImage);
         }
 
