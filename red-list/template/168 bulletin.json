@@ -1,0 +1,114 @@
+{
+  "headData": {
+    "list": {
+      "width": "100",
+      "height": 938,
+      "colorOption": "transparent",
+      "color": "#f44848",
+      "lineSpacing": "10"
+    },
+    "head": {
+      "spacing": "10",
+      "align": "center",
+      "height": "900",
+      "lineSpacing": "10",
+      "lines": [
+        {
+          "text": "{year}年中獎🏆名單",
+          "size": 50,
+          "color": "#000000",
+          "spacing": "0"
+        }
+      ]
+    },
+    "tail": {
+      "spacing": "30",
+      "align": "center",
+      "lineSpacing": "10",
+      "lines": []
+    }
+  },
+  "listData": {
+    "panel": {
+      "source": "roster-data.json"
+    },
+    "divider": {
+      "fontSize": "24",
+      "spacing": "16",
+      "color": "#ff0000"
+    },
+    "list": {
+      "width": "100",
+      "height": 300,
+      "shape": "outer",
+      "peak": "10",
+      "colorOption": "custom",
+      "color": "#f9a4e7",
+      "lineSpacing": "0"
+    },
+    "head": {
+      "spacing": "10",
+      "align": "center",
+      "height": "150",
+      "lineSpacing": "0",
+      "lines": [
+        {
+          "text": "{name}",
+          "size": 30,
+          "color": "#000000",
+          "spacing": "0"
+        }
+      ]
+    },
+    "tail": {
+      "spacing": "10",
+      "align": "left",
+      "lineSpacing": "0",
+      "lines": [
+        {
+          "text": "{sex}",
+          "size": 24,
+          "color": "#ff0000",
+          "spacing": "end"
+        }
+      ]
+    }
+  },
+  "tailData": {
+    "enableTail": true,
+    "list": {
+      "width": "100",
+      "height": 938,
+      "colorOption": "transparent",
+      "color": "#f9aeae",
+      "lineSpacing": "10"
+    },
+    "head": {
+      "spacing": "10",
+      "align": "right",
+      "height": "400",
+      "lineSpacing": "10",
+      "lines": [
+        {
+          "text": "大甲圖書館",
+          "size": 50,
+          "color": "#418cd2",
+          "spacing": "0"
+        }
+      ]
+    },
+    "tail": {
+      "spacing": "30",
+      "align": "left",
+      "lineSpacing": "10",
+      "lines": [
+        {
+          "text": "{year1} 製",
+          "size": 40,
+          "color": "#ff0505",
+          "spacing": "center"
+        }
+      ]
+    }
+  }
+}
