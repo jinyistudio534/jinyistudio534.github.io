@@ -1,0 +1,88 @@
+{
+  "headFields": [
+    {
+      "key": "head",
+      "label": "頭",
+      "type": "text",
+      "list": ""
+    },
+    {
+      "key": "tail",
+      "label": "尾",
+      "type": "text",
+      "list": ""
+    }
+  ],
+  "tailFields": [
+    {
+      "key": "head",
+      "label": "頭",
+      "type": "text",
+      "list": ""
+    },
+    {
+      "key": "tail",
+      "label": "尾",
+      "type": "text",
+      "list": ""
+    }
+  ],
+  "listFields": [
+    {
+      "key": "head",
+      "label": "頭",
+      "type": "text",
+      "list": ""
+    },
+    {
+      "key": "tail",
+      "label": "尾",
+      "type": "text",
+      "list": ""
+    }
+  ],
+  "headRoster": [
+    {
+      "head": "十一",
+      "tail": "十二"
+    }
+  ],
+  "tailRoster": [
+    {
+      "head": "十三",
+      "tail": "十四"
+    }
+  ],
+  "listRoster": [
+    {
+      "isdivider": true,
+      "text": "台中"
+    },
+    {
+      "head": "六一",
+      "tail": "六二"
+    },
+    {
+      "head": "六三",
+      "tail": "六四"
+    },
+    {
+      "head": "六五",
+      "tail": "六六"
+    },
+    {
+      "isdivider": true,
+      "text": "大甲"
+    },
+    {
+      "head": "五一",
+      "tail": "五二"
+    },
+    {
+      "head": "五三",
+      "tail": "五四"
+    }
+  ],
+  "rosterDescription": "名冊內容介紹",
+  "template": "從BulletinDB讀取"
+}

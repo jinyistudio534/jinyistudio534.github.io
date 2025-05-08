@@ -4,11 +4,180 @@
 <title>自動重新導向</title>
 <script>
   window.onload = function() {
-    window.location.href = "ai-red-bulletin.html";
+    // bulletin_example.json 內容
+    const bulletinData = {
+      "headData": {
+        "list": {
+          "width": "100",
+          "height": 938,
+          "colorOption": "transparent",
+          "color": "#f44848",
+          "lineSpacing": "10"
+        },
+        "head": {
+          "spacing": "10",
+          "align": "center",
+          "height": "450",
+          "lineSpacing": "10",
+          "lines": [
+            {
+              "text": "榜首頭{head}年",
+              "size": 50,
+              "color": "#000000",
+              "spacing": "0"
+            }
+          ]
+        },
+        "tail": {
+          "spacing": "30",
+          "align": "center",
+          "lineSpacing": "10",
+          "lines": [
+            {
+              "text": "榜首尾{tail}年",
+              "size": 50,
+              "color": "#063ee5",
+              "spacing": "end"
+            }
+          ]
+        }
+      },
+      "tailData": {
+        "enableTail": true,
+        "list": {
+          "width": "100",
+          "height": 938,
+          "colorOption": "transparent",
+          "color": "#f9aeae",
+          "lineSpacing": "10"
+        },
+        "head": {
+          "spacing": "10",
+          "align": "left",
+          "height": "450",
+          "lineSpacing": "10",
+          "lines": [
+            {
+              "text": "榜尾{head}頭",
+              "size": 50,
+              "color": "#418cd2",
+              "spacing": "center"
+            }
+          ]
+        },
+        "tail": {
+          "spacing": "30",
+          "align": "left",
+          "lineSpacing": "10",
+          "lines": [
+            {
+              "text": "榜尾{tail}製",
+              "size": 40,
+              "color": "#ff0505",
+              "spacing": "center"
+            }
+          ]
+        }
+      },
+      "listData": {
+        "divider": {
+          "size": "24",
+          "align": "center",
+          "spacing": "16",
+          "color": "#ff0000"
+        },
+        "list": {
+          "width": "100",
+          "height": 300,
+          "shape": "outer",
+          "peak": "10",
+          "colorOption": "custom",
+          "color": "#f9a4e7",
+          "lineSpacing": "0"
+        },
+        "head": {
+          "spacing": "10",
+          "align": "center",
+          "height": "150",
+          "lineSpacing": "0",
+          "lines": [
+            {
+              "text": "榜單{head}頭",
+              "size": 30,
+              "color": "#000000",
+              "spacing": "0"
+            }
+          ]
+        },
+        "tail": {
+          "spacing": "10",
+          "align": "center",
+          "lineSpacing": "0",
+          "lines": [
+            {
+              "text": "榜單{tail}尾",
+              "size": 24,
+              "color": "#ff0000",
+              "spacing": "end"
+            }
+          ]
+        }
+      },
+      "panelData": {}
+    };
+
+    // IndexedDB 操作
+    const dbName = "BulletinDB";
+    const storeName = "settings";
+    const request = indexedDB.open(dbName, 1);
+
+    request.onupgradeneeded = function(event) {
+      const db = event.target.result;
+      // 創建 object store
+      db.createObjectStore(storeName, { keyPath: "id" });
+    };
+
+    request.onsuccess = function(event) {
+      const db = event.target.result;
+      const transaction = db.transaction([storeName], "readwrite");
+      const objectStore = transaction.objectStore(storeName);
+
+      // 將 bulletinData 分成四個鍵儲存
+      const data = [
+        { id: "headData", data:bulletinData.headData },
+        { id: "listData", data:bulletinData.listData },
+        { id: "tailData", data:bulletinData.tailData },
+        { id: "panelData", data:bulletinData.panelData }
+      ];
+
+      // 逐一儲存每個鍵值對
+      data.forEach(item => {
+        objectStore.put(item);
+      });
+
+      transaction.oncomplete = function() {
+        db.close();
+        // 完成後執行重新導向
+        window.location.href = "ai-red-bulletin.html";
+      };
+
+      transaction.onerror = function() {
+        console.error("儲存 settings 失敗");
+        // 即使失敗也執行重新導向
+        window.location.href = "ai-red-bulletin.html";
+      };
+    };
+
+    request.onerror = function() {
+      console.error("無法開啟 IndexedDB");
+      // 即使失敗也執行重新導向
+      window.location.href = "ai-red-bulletin.html";
+    };
   };
 </script>
 </head>
 <body>
   <p>如果您沒有自動被重新導向，請<a href="ai-red-bulletin.html">點擊這裡</a>。</p>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c838cbfaddaff8',t:'MTc0NjY5OTU5OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>
