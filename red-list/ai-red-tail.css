@@ -1,0 +1,178 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+}
+
+.tail-page {
+    width: 100%;
+    height: 100vh;
+    position: absolute;
+    top: 0;
+    left: 0;
+    overflow-y: auto;
+    background-color: #fff;
+}
+
+.fixed-header {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    background-color: #e9ecef;
+    padding: 0.01rem 0;
+    z-index: 1000;
+}
+
+.form-container {
+    min-height: 100vh;
+    padding: 15px;
+    padding-top: 80px;
+}
+
+.form-section {
+    margin-bottom: 1.5rem;
+}
+
+.form-section .card {
+    border: 1px solid rgba(0, 0, 0, 0.125);
+    border-radius: 0.25rem;
+}
+
+.form-section label {
+    font-size: 0.9rem;
+    margin-bottom: 0.25rem;
+}
+
+.form-section .form-control,
+.form-section .form-select {
+    font-size: 0.9rem;
+    padding: 0.375rem 0.75rem;
+}
+
+.line-input {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    margin-bottom: 0.5rem;
+    padding: 0.5rem;
+    border-bottom: 1px solid #e9ecef;
+}
+
+.line-input label {
+    margin-bottom: 0;
+}
+
+.line-input input[type="text"] {
+    flex: 0 0 50%;
+}
+
+.line-input input[type="number"],
+.line-input input[type="color"],
+.line-input select {
+    flex: 0 0 auto;
+    width: 100px;
+}
+
+.line-input button {
+    flex: 0 0 auto;
+    padding: 0.25rem 0.5rem;
+    font-size: 0.85rem;
+}
+
+.back-btn {
+    left: 10px;
+    z-index: 1000;
+}
+
+.save-btn {
+    right: 10px;
+    z-index: 1000;
+}
+
+red-list {
+    display: flex;
+    flex-direction: column;
+    width: attr(width px, 200);
+    height: attr(height px, 100vh);
+    box-sizing: border-box;
+    overflow: hidden;
+    margin: 0;
+    padding: 0;
+}
+
+red-head, red-tail {
+    display: block;
+    position: relative;
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+red-head > ai-chinese-writing,
+red-tail > ai-chinese-writing {
+    width: 100%;
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+}
+
+ai-chinese-writing > chinese-writing {
+    display: block;
+    margin: 0;
+    padding: 0;
+}
+
+.center-title {
+    text-align: center;
+    flex-grow: 1;
+}
+
+@media (max-width: 768px) {
+    .form-section .row > div {
+        flex: 0 0 100%;
+        max-width: 100%;
+        margin-bottom: 0.5rem;
+    }
+
+    .line-input {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .line-input input[type="text"],
+    .line-input input[type="number"],
+    .line-input input[type="color"],
+    .line-input select {
+        flex: 0 0 auto;
+        width: 100%;
+    }
+
+    .line-input button {
+        width: auto;
+        align-self: flex-end;
+    }
+
+    .fixed-header {
+        padding: 0.25rem 0;
+    }
+
+    .form-container {
+        padding-top: 64px;
+    }
+
+    .center-title {
+        font-size: 1rem;
+    }
+}

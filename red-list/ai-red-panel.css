@@ -1,0 +1,106 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    height: 100vh;
+    overflow: hidden;
+    overflow-x: hidden;
+}
+
+.app-container {
+    display: flex;
+    height: 100vh;
+    width: 100%;
+    position: relative;
+    overflow-x: hidden;
+    box-sizing: border-box;
+}
+
+.panel-container {
+    position: relative;
+    width: 100%;
+    height: 100vh;
+    overflow-y: auto; /* Allow scrolling */
+    overflow-x: hidden;
+    box-sizing: border-box;
+    padding: 16px;
+}
+
+/* Hide scrollbar for WebKit browsers (Chrome, Safari) */
+.panel-container::-webkit-scrollbar {
+    display: none;
+}
+
+/* Hide scrollbar for Firefox */
+.panel-container {
+    scrollbar-width: none;
+}
+
+/* Hide scrollbar for Edge and IE */
+.panel-container {
+    -ms-overflow-style: none;
+}
+
+.list-row {
+    display: grid;
+    grid-gap: 16px;
+    margin-bottom: 16px;
+    background: transparent;
+    width: 100%;
+    box-sizing: border-box;
+    margin-left: auto; /* Align to the right */
+    padding-right: 16px; /* Ensure fixed right padding of 16px */
+}
+
+red-list {
+    display: block;
+    box-sizing: border-box;
+}
+
+.placeholder {
+    width: 150px; /* Match red-list width */
+    height: 0;
+    min-height: 0;
+    background: transparent !important;
+    border: none !important;
+    overflow: hidden;
+}
+
+/* Styles for scroll indicator triangles */
+.scroll-indicator-top,
+.scroll-indicator-bottom {
+    position: fixed;
+    right: 4px; /* 4px from right edge */
+    width: 0;
+    height: 0;
+    border-left: 20px solid transparent;
+    border-right: 20px solid transparent;
+    opacity: 0.3;
+    z-index: 1000;
+    pointer-events: none; /* Prevent interaction with triangles */
+}
+
+.scroll-indicator-top {
+    top: 4px; /* 4px from top edge */
+    border-bottom: 20px solid red; /* Upward triangle */
+}
+
+.scroll-indicator-bottom {
+    bottom: 4px; /* 4px from bottom edge */
+    border-top: 20px solid red; /* Downward triangle */
+}
+
+.hidden {
+    display: none;
+}
+
+/* Style for error message */
+.error-message {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 48px;
+    color: #ff0000; /* Red text */
+    writing-mode: vertical-rl; /* Vertical text, right-to-left */
+    text-align: center;
+}

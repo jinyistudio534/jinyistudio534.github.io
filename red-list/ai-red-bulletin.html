@@ -1,0 +1,330 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Red Bulletin</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.css" rel="stylesheet">
+    <link rel="stylesheet" href="static/ai-chinese-writing.css">
+    <link rel="stylesheet" href="ai-red-bulletin.css">
+    <link rel="stylesheet" href="ai-red-panel.css">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js" integrity="sha256-/xUj+3OJU5yExlq6GSYGSHk7tPXikynS7ogEvDej/m4=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js" integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js" integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz" crossorigin="anonymous"></script>
+    <script src="static/ai-chinese-writing.js" defer></script>
+    <script src="ai-red-list.js" defer></script>
+    <script src="ai-red-bulletin.js" defer></script>
+</head>
+<body>
+    <div class="app-container">
+        <!-- 主畫面 -->
+        <div class="main-page">
+            <div class="dropdown">
+                <button class="top-right-btn btn btn-outline-secondary" type="button" data-bs-toggle="dropdown" aria-expanded="false" title="選項" style="z-index: 1000;">
+                    <i class="bi bi-three-dots-vertical"></i>
+                </button>
+                <ul class="dropdown-menu">
+                    <li><a class="dropdown-item popup-menu-item" href="ai-red-edits.html">紅榜名冊</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item popup-menu-item" href="ai-red-head.html">榜首設計</a></li>
+                    <li><a class="dropdown-item popup-menu-item" href="ai-red-body.html">榜單設計</a></li>
+                    <li><a class="dropdown-item popup-menu-item" href="ai-red-tail.html">榜尾設計</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li class="dropdown-submenu">
+                        <a class="dropdown-item popup-menu-item dropdown-toggle" href="#" data-action="use-template">線上範本</a>
+                        <ul class="dropdown-menu template-submenu">
+                            <!-- 範本檔案將由 JavaScript 動態填充 -->
+                        </ul>
+                    </li>
+                    <li><a class="dropdown-item popup-menu-item" href="#" data-action="import">本機匯入</a></li>
+                    <li><a class="dropdown-item popup-menu-item" href="#" data-action="export">本機匯出</a></li>
+                    <li><hr class="dropdown-divider"></li>
+                    <li><a class="dropdown-item popup-menu-item" href="ai-red-setting.html">設  定</a></li>
+                    <li><a class="dropdown-item popup-menu-item" href="#" data-action="close">離  開</a></li>
+                </ul>
+            </div>
+            <input type="file" id="import-file" accept=".json" style="display: none;">
+            <!-- Toast 容器 -->
+            <div class="toast-container position-fixed top-0 end-0 p-3" style="z-index: 1050;">
+                <!-- 確認 Toast -->
+                <div id="confirmToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
+                    <div class="toast-header">
+                        <strong class="me-auto">確認</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="關閉"></button>
+                    </div>
+                    <div class="toast-body">
+                        <p id="confirmMessage">載入範本將覆蓋現有設定，是否繼續？</p>
+                        <div class="d-flex justify-content-end gap-2">
+                            <button type="button" class="btn btn-primary btn-sm" id="confirmYes">確定</button>
+                            <button type="button" class="btn btn-secondary btn-sm" id="confirmNo" data-bs-dismiss="toast">取消</button>
+                        </div>
+                    </div>
+                </div>
+                <!-- 訊息 Toast -->
+                <div id="messageToast" class="toast" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="5000">
+                    <div class="toast-header">
+                        <strong class="me-auto" id="messageTitle">提示</strong>
+                        <button type="button" class="btn-close" data-bs-dismiss="toast" aria-label="關閉"></button>
+                    </div>
+                    <div class="toast-body" id="messageBody"></div>
+                </div>
+            </div>
+            <div class="bulletin-container">
+                <div class="tail-section">
+                    <div id="tail-roster-container"></div>
+                </div>
+                <div class="list-section">
+                    <iframe src="ai-red-panel.html" style="width: 100%; height: 100%; border: none;"></iframe>
+                </div>
+                <div class="head-section">
+                    <div id="head-roster-container"></div>
+                </div>
+            </div>
+        </div>
+    </div>
+    <script>
+        (async () => {
+            console.log('Starting ai-red-bulletin.html logic');
+            let db;
+            const dbName = 'BulletinDB';
+            const storeName = 'settings';
+
+            // Initialize Bootstrap Toast
+            const messageToastEl = document.getElementById('messageToast');
+            const messageTitleEl = document.getElementById('messageTitle');
+            const messageBodyEl = document.getElementById('messageBody');
+            const messageToast = new bootstrap.Toast(messageToastEl);
+
+            const showMessageToast = (message, isSuccess = true) => {
+                messageTitleEl.textContent = isSuccess ? '成功' : '錯誤';
+                messageBodyEl.textContent = message;
+                messageToastEl.classList.remove('bg-success', 'bg-danger', 'text-white');
+                messageToastEl.classList.add(isSuccess ? 'bg-success' : 'bg-danger', 'text-white');
+                messageToast.show();
+            };
+
+            // Open IndexedDB
+            const openDB = () => {
+                return new Promise((resolve, reject) => {
+                    const request = indexedDB.open(dbName, 15);
+                    request.onupgradeneeded = (event) => {
+                        const db = event.target.result;
+                        if (!db.objectStoreNames.contains(storeName)) {
+                            db.createObjectStore(storeName, { keyPath: 'id' });
+                        }
+                    };
+                    request.onsuccess = (event) => {
+                        console.log('IndexedDB opened successfully');
+                        resolve(event.target.result);
+                    };
+                    request.onerror = (event) => {
+                        console.error('IndexedDB open failed:', event.target.error);
+                        showMessageToast(`無法開啟資料庫: ${event.target.error.message}`, false);
+                        reject(event.target.error);
+                    };
+                });
+            };
+
+            // Get data from IndexedDB
+            const getFromIndexedDB = async (id) => {
+                if (!db) {
+                    console.log('DB not initialized, opening IndexedDB');
+                    db = await openDB();
+                }
+                return new Promise((resolve, reject) => {
+                    const transaction = db.transaction([storeName], 'readonly');
+                    const store = transaction.objectStore(storeName);
+                    const request = store.get(id);
+                    request.onsuccess = (event) => {
+                        console.log(`Retrieved ${id} from IndexedDB`);
+                        resolve(event.target.result ? event.target.result.data : {});
+                    };
+                    request.onerror = (event) => {
+                        console.error(`Failed to retrieve ${id} from IndexedDB:`, event.target.error);
+                        showMessageToast(`無法從資料庫讀取 ${id}: ${event.target.error.message}`, false);
+                        reject(event.target.error);
+                    };
+                });
+            };
+
+            // Render section (head or tail)
+            const renderSection = async (section, data, sectionType) => {
+                console.log(`Rendering ${section.className}, data:`, data);
+                if (section.dataset.rendered === 'true') {
+                    console.log(`Skipping duplicate render of ${section.className}`);
+                    return;
+                }
+                if (!data || !data.list || !data.head || !data.tail) {
+                    console.warn(`Invalid data for ${sectionType}, using default data`);
+                    data = {
+                        list: { width: '100', colorOption: 'transparent', lineSpacing: '10' },
+                        head: { spacing: '10', align: 'center', height: '900', lineSpacing: '10', lines: [{ text: '無資料', size: 50, color: '#000000', spacing: 'center' }] },
+                        tail: { spacing: '30', align: 'center', lineSpacing: '10', lines: [] }
+                    };
+                    showMessageToast(`無法載入${sectionType === 'head-section' ? '頭部' : '尾部'}資料，使用預設資料`, false);
+                }
+                section.dataset.rendered = 'true';
+                section.innerHTML = '';
+
+                const { list, head, tail } = data;
+                const headLines = head.lines && Array.isArray(head.lines) ? head.lines : [{ text: '無資料', size: 50, color: '#000000', spacing: 'center' }];
+                const tailLines = tail.lines && Array.isArray(tail.lines) ? tail.lines : [];
+
+                // Get roster data from IndexedDB
+                const listData = await getFromIndexedDB('panelData');
+                console.log(`Retrieved listData for ${sectionType}:`, listData);
+                let rosterData;
+                if (listData?.filename) {
+                    try {
+                        const response = await fetch(listData.filename);
+                        if (!response.ok) {
+                            throw new Error(`Failed to fetch JSON file: ${listData.filename}`);
+                        }
+                        rosterData = await response.json();
+                        console.log(`Parsed roster data from ${listData.filename} for ${sectionType}:`, rosterData);
+                    } catch (error) {
+                        console.error(`Error fetching or parsing JSON file ${listData.filename}:`, error);
+                        showMessageToast(`無法載入 JSON 檔案 ${listData.filename}: ${error.message}`, false);
+                        rosterData = {
+                            headRoster: [{ year: '無資料' }],
+                            tailRoster: [{ year1: '無資料' }]
+                        };
+                    }
+                } else {
+                    console.warn(`No valid JSON file specified in listData.filename for ${sectionType}`);
+                    rosterData = {
+                        headRoster: [{ year: '無資料' }],
+                        tailRoster: [{ year1: '無資料' }]
+                    };
+                }
+                const roster = sectionType === 'head-section' ? rosterData?.headRoster?.[0] : rosterData?.tailRoster?.[0];
+                console.log(`Selected roster for ${sectionType}:`, roster);
+
+                const redList = document.createElement('red-list');
+                redList.setAttribute('shape', 'square');
+                redList.setAttribute('color', list.colorOption || 'transparent');
+                redList.setAttribute('width', list.width || '100');
+
+                const redHead = document.createElement('red-head');
+                redHead.setAttribute('spacing', head.spacing || '10');
+                redHead.setAttribute('align', head.align || 'center');
+                redHead.setAttribute('height', head.height || '900');
+
+                const headWriting = document.createElement('ai-chinese-writing');
+                headWriting.setAttribute('line-spacing', head.lineSpacing || '10');
+                headLines.forEach((line, index) => {
+                    const headChinese = document.createElement('chinese-writing');
+                    headChinese.setAttribute('color', line.color || '#000000');
+                    headChinese.setAttribute('size', line.size || '50');
+                    headChinese.setAttribute('spacing', line.spacing || 'center');
+                    let text = line.text || '無資料';
+                    console.log(`Processing head line ${index} original text:`, text);
+                    if (roster && text.includes('{')) {
+                        Object.keys(roster).forEach(key => {
+                            const placeholder = `{${key}}`;
+                            if (text.includes(placeholder)) {
+                                text = text.replace(placeholder, roster[key] || '');
+                                console.log(`Replaced ${placeholder} with ${roster[key] || ''} in head line ${index}`);
+                            }
+                        });
+                    }
+                    console.log(`Final head line ${index} text:`, text);
+                    headChinese.textContent = text;
+                    headWriting.appendChild(headChinese);
+                });
+                redHead.appendChild(headWriting);
+
+                const redTail = document.createElement('red-tail');
+                redTail.setAttribute('spacing', tail.spacing || '30');
+                redTail.setAttribute('align', tail.align || 'center');
+
+                const tailWriting = document.createElement('ai-chinese-writing');
+                tailWriting.setAttribute('line-spacing', tail.lineSpacing || '10');
+                tailLines.forEach((line, index) => {
+                    const tailChinese = document.createElement('chinese-writing');
+                    tailChinese.setAttribute('color', line.color || '#f00505');
+                    tailChinese.setAttribute('size', line.size || '50');
+                    tailChinese.setAttribute('spacing', line.spacing || 'center');
+                    let text = line.text || '無資料';
+                    console.log(`Processing tail line ${index} original text:`, text);
+                    if (roster && text.includes('{')) {
+                        Object.keys(roster).forEach(key => {
+                            const placeholder = `{${key}}`;
+                            if (text.includes(placeholder)) {
+                                text = text.replace(placeholder, roster[key] || '');
+                                console.log(`Replaced ${placeholder} with ${roster[key] || ''} in tail line ${index}`);
+                            }
+                        });
+                    }
+                    console.log(`Final tail line ${index} text:`, text);
+                    tailChinese.textContent = text;
+                    tailWriting.appendChild(tailChinese);
+                });
+                redTail.appendChild(tailWriting);
+
+                redList.appendChild(redHead);
+                redList.appendChild(redTail);
+                section.appendChild(redList);
+
+                console.log(`[${section.className}] Render completed`);
+            };
+
+            try {
+                // Initialize IndexedDB
+                db = await openDB();
+                const hdData = await getFromIndexedDB('headData');
+                console.log('headData:', hdData);
+
+                // Extract headData and tailData
+                const headData = hdData || {
+                    list: { width: '100', colorOption: 'transparent', lineSpacing: '10' },
+                    head: { spacing: '10', align: 'center', height: '900', lineSpacing: '10', lines: [{ text: '無資料', size: 50, color: '#000000', spacing: 'center' }] },
+                    tail: { spacing: '30', align: 'center', lineSpacing: '10', lines: [] }
+                };
+                const tlData = await getFromIndexedDB('tailData');
+                console.log('tailData:', tlData);
+                const tailData = tlData || {
+                    list: { width: '100', colorOption: 'transparent', lineSpacing: '10' },
+                    head: { spacing: '10', align: 'center', height: '400', lineSpacing: '10', lines: [{ text: '無資料', size: 50, color: '#418cd2', spacing: 'center' }] },
+                    tail: { spacing: '30', align: 'left', lineSpacing: '10', lines: [{ text: '無資料', size: 40, color: '#ff0505', spacing: 'end' }] }
+                };
+
+                // Initialize dropdown menu
+                await setupDropdownMenu();
+
+                // Wait for custom elements
+                await Promise.all([
+                    customElements.whenDefined('chinese-writing'),
+                    customElements.whenDefined('ai-chinese-writing'),
+                    customElements.whenDefined('red-list'),
+                    customElements.whenDefined('red-head'),
+                    customElements.whenDefined('red-tail')
+                ]);
+                console.log('All custom elements are ready');
+
+                // Render head section
+                const headSection = document.querySelector('.head-section');
+                if (headSection) {
+                    await renderSection(headSection, headData, 'head-section');
+                } else {
+                    console.warn('head-section element not found');
+                    showMessageToast('找不到頭部區域元素', false);
+                }
+
+                // Render tail section
+                const tailSection = document.querySelector('.tail-section');
+                if (tailSection) {
+                    await renderSection(tailSection, tailData, 'tail-section');
+                } else {
+                    console.warn('tail-section element not found');
+                    showMessageToast('找不到尾部區域元素', false);
+                }
+            } catch (error) {
+                console.error('Error processing data:', error);
+                showMessageToast(`處理資料時出錯: ${error.message}`, false);
+            }
+        })();
+    </script>
+</body>
+</html>

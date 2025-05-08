@@ -1,0 +1,260 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>固定標頭與紅榜設定</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: Arial, sans-serif;
+        }
+        .header-container {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            background-color: #e6e6e6; /* 淡灰色 */
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+            z-index: 1000;
+        }
+        .header-title {
+            margin: 0;
+            font-size: 1.5em;
+        }
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        .content {
+            margin-top: 80px; /* 確保內容不會被固定標頭覆蓋 */
+            padding: 20px;
+            background-color: #ffffff; /* 白色 */
+            min-height: 100vh;
+        }
+        .toast-container {
+            position: fixed;
+            bottom: 1rem;
+            right: 1rem;
+            z-index: 1050;
+        }
+        /* 隱藏原始檔案輸入框 */
+        #list-panel-source {
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <div class="header-container">
+        <button class="btn btn-secondary back-btn" onclick="window.location.href='ai-red-bulletin.html'">返回</button>
+        <h2 class="header-title">榜首資料編輯</h2>
+        <button class="btn btn-primary save-btn" onclick="saveSettings()">儲存</button>
+    </div>
+    <div class="content">
+        <div class="col-6">
+            <h3 class="mb-3">red-panel 設定</h3>
+            <div class="panel-divider-container">
+                <label for="list-panel-source-filename" class="form-label">紅榜顯示來源:</label>
+                <div class="input-group">
+                    <input type="text" class="form-control" id="list-panel-source-filename" placeholder="尚未選擇檔案">
+                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('list-panel-source').click()">選擇檔案</button>
+                </div>
+                <input type="file" id="list-panel-source" accept=".json">
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast 容器 -->
+    <div class="toast-container">
+        <div id="appToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2000">
+            <div class="toast-body">
+                <!-- 訊息內容將動態插入 -->
+            </div>
+        </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        // 初始化 Toast
+        const toastElement = document.getElementById('appToast');
+        const toast = new bootstrap.Toast(toastElement);
+
+        // 顯示 Toast 訊息
+        function showToast(message) {
+            toastElement.querySelector('.toast-body').textContent = message;
+            toast.show();
+        }
+
+        // 初始化 IndexedDB
+        let db;
+        const dbName = 'BulletinDB';
+        const dbVersion = 15; // 與現有資料庫版本一致
+
+        function initializeIndexedDB() {
+            if (!window.indexedDB) {
+                console.error('此瀏覽器不支援 IndexedDB！');
+                showToast('您的瀏覽器不支援 IndexedDB，無法儲存設定！');
+                return;
+            }
+
+            console.log(`嘗試開啟資料庫 ${dbName}，版本 ${dbVersion}`);
+            const request = indexedDB.open(dbName, dbVersion);
+
+            request.onupgradeneeded = function (event) {
+                console.log('正在初始化或升級資料庫...');
+                db = event.target.result;
+                if (!db.objectStoreNames.contains('settings')) {
+                    db.createObjectStore('settings', { keyPath: 'id' });
+                    console.log('已創建 settings 物件儲存區');
+                } else {
+                    console.log('settings 物件儲存區已存在，無需創建');
+                }
+            };
+
+            request.onsuccess = function (event) {
+                db = event.target.result;
+                console.log('IndexedDB 初始化成功，版本:', db.version);
+                loadSettings(); // 頁面載入時讀取設定
+            };
+
+            request.onerror = function (event) {
+                const error = event.target.error;
+                console.error('IndexedDB 初始化失敗:', error ? error.message : '未知錯誤');
+                showToast('IndexedDB 初始化失敗: ' + (error ? error.message : '未知錯誤'));
+            };
+
+            request.onblocked = function () {
+                console.error('IndexedDB 被阻止，請關閉其他使用此資料庫的標籤或應用程式');
+                showToast('資料庫被阻止，請關閉其他使用 BulletinDB 的頁面後重試');
+            };
+        }
+
+        // 當選擇檔案時更新檔名顯示
+        document.getElementById('list-panel-source').addEventListener('change', function (event) {
+            const file = event.target.files[0];
+            if (file) {
+                // 預設顯示檔案名稱，允許用戶編輯
+                document.getElementById('list-panel-source-filename').value = file.name;
+            } else {
+                document.getElementById('list-panel-source-filename').value = '';
+            }
+        });
+
+        // 儲存設定到 IndexedDB
+        function saveSettings() {
+            if (!db) {
+                console.error('資料庫尚未初始化');
+                showToast('資料庫尚未初始化，請稍後再試');
+                return;
+            }
+
+            const fileInput = document.getElementById('list-panel-source');
+            const file = fileInput.files[0];
+            const filenameInput = document.getElementById('list-panel-source-filename').value.trim();
+
+            if (!file && !filenameInput) {
+                showToast('請選擇一個 JSON 檔案或輸入檔案路徑！');
+                return;
+            }
+
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function (event) {
+                    try {
+                        const panelData = JSON.parse(event.target.result); // 解析 JSON 內容
+                        const transaction = db.transaction(['settings'], 'readwrite');
+                        const store = transaction.objectStore('settings');
+                        const data = {
+                            id: 'panelData',                    
+                            data:{filename: filenameInput || file.name} // 優先使用輸入框中的路徑+名稱
+                        };
+
+                        const request = store.put(data);
+                        request.onsuccess = function () {
+                            console.log('設定已儲存:', data.filename);
+                            showToast('設定已儲存！');
+                        };
+                        request.onerror = function (event) {
+                            console.error('儲存失敗:', event.target.error);
+                            showToast('儲存失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
+                        };
+                    } catch (e) {
+                        console.error('JSON 解析失敗:', e);
+                        showToast('無效的 JSON 檔案！');
+                    }
+                };
+                reader.onerror = function () {
+                    console.error('檔案讀取失敗');
+                    showToast('無法讀取檔案，請重試');
+                };
+                reader.readAsText(file);
+            } else {
+                // 若無新檔案但有輸入路徑，僅更新檔案路徑
+                const transaction = db.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                const request = store.get('panelData');
+
+                request.onsuccess = function (event) {
+                    const existingData = event.target.result || { id: 'panelData', data: { } };
+                    const data = {
+                        id: 'panelData',                        
+                        data:{filename: filenameInput}
+                    };
+
+                    const putRequest = store.put(data);
+                    putRequest.onsuccess = function () {
+                        console.log('檔案路徑已儲存:', filenameInput);
+                        showToast('檔案路徑已儲存！');
+                    };
+                    putRequest.onerror = function (event) {
+                        console.error('儲存失敗:', event.target.error);
+                        showToast('儲存失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
+                    };
+                };
+                request.onerror = function (event) {
+                    console.error('載入現有設定失敗:', event.target.error);
+                    showToast('載入現有設定失敗！');
+                };
+            }
+        }
+
+        // 從 IndexedDB 載入設定
+        function loadSettings() {
+            if (!db) {
+                console.error('資料庫尚未初始化');
+                return;
+            }
+
+            const transaction = db.transaction(['settings'], 'readonly');
+            const store = transaction.objectStore('settings');
+            const request = store.get('panelData');
+
+            request.onsuccess = function (event) {
+                const data = event.target.result.data;
+                if (data && data.filename) {
+                    document.getElementById('list-panel-source-filename').value = data.filename;
+                    console.log('設定已載入:', data.filename);
+                } else {
+                    console.log('無儲存的設定');
+                }
+            };
+
+            request.onerror = function (event) {
+                console.error('載入設定失敗:', event.target.error);
+                showToast('載入設定失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
+            };
+        }
+
+        // 初始化資料庫
+        initializeIndexedDB();
+    </script>
+</body>
+</html>

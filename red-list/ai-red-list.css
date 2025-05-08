@@ -1,0 +1,21 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
+red-list {
+    display: block;
+    overflow: hidden !important;
+}
+
+red-head, red-tail {
+    display: block;
+    position: relative;
+    width: 100%;
+}
+
+red-head > ai-chinese-writing,
+red-tail > ai-chinese-writing {
+    height: 100%;
+    width: 100%;
+}

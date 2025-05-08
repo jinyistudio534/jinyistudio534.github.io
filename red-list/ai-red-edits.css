@@ -1,0 +1,233 @@
+body, html {
+    margin: 0;
+    padding: 0;
+    min-height: 100vh;
+    overflow-y: auto;
+}
+
+header {
+    z-index: 1000;
+    background-color: #fff;
+}
+
+.main-content {
+    margin-top: 88px;
+    padding-bottom: 50px;
+    min-height: 150vh;
+}
+
+.floating-btn {
+    z-index: 1000;
+}
+
+.custom-btn {
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    background-color: transparent;
+    transition: all 0.3s ease;
+}
+
+.custom-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+.btn-primary {
+    transition: all 0.3s ease;
+}
+
+.btn-primary:hover {
+    background-color: #0a58ca;
+    border-color: #0a58ca;
+    color: white;
+}
+
+.btn-danger {
+    transition: all 0.3s ease;
+}
+
+.btn-danger:hover {
+    background-color: #bb2d3b;
+    border-color: #bb2d3b;
+    color: white;
+}
+
+.button-group {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+}
+
+.field-list {
+    margin-top: 20px;
+}
+
+.field-list table {
+    font-size: 0.9rem;
+    margin-bottom: 20px;
+}
+
+.field-list th, .field-list td {
+    vertical-align: middle;
+}
+
+.field-list input, .field-list select {
+    font-size: 0.9rem;
+}
+
+#roster-table-container {
+    max-height: 100%;
+}
+
+.table {
+    font-size: 0.9rem;
+    table-layout: fixed;
+    width: 100%;
+}
+
+.table th, .table td {
+    vertical-align: middle;
+}
+
+#list-roster-table {
+    table-layout: fixed !important;
+    width: 100% !important;
+}
+
+#list-roster-table-header th:last-child,
+#list-roster-table-body td:last-child {
+    width: 144px !important;
+    min-width: 144px !important;
+    max-width: 144px !important;
+    text-align: center !important;
+}
+
+#list-roster-table-header th:not(:last-child),
+#list-roster-table-body td:not(:last-child) {
+    width: calc((100% - 144px) / 2) !important;
+    min-width: calc((100% - 144px) / 2) !important;
+    max-width: calc((100% - 144px) / 2) !important;
+}
+
+#list-roster-table-body .title-row td:first-child {
+    width: calc(100% - 144px) !important;
+    min-width: calc(100% - 144px) / 2) !important;
+    max-width: calc((100% - 144px) / 2) !important;
+    padding: 0 !important;
+}
+
+#list-roster-table-body .title-row td:first-child .input-group {
+    width: 100% !important;
+    margin: 0 !important;
+    padding-left: 3px !important;
+    padding-right: 3px !important;
+}
+
+.d-flex.gap-1 {
+    gap: 4px !important;
+    justify-content: center !important;
+}
+
+#list-roster-table-body td:last-child span {
+    display: inline-block;
+    width: 46px;
+}
+
+.toast .confirm-btn, .toast .cancel-btn {
+    width: 3rem; /* 調整為足以容納兩個中文字符 */
+    padding: 0.25rem 0; /* 調整內邊距 */
+    font-size: 0.9rem;
+    text-align: center;
+    line-height: 1.5;
+    white-space: nowrap; /* 防止文字換行 */
+}
+
+.add-title-btn {
+    border: 2px solid #dc3545;
+    color: #dc3545;
+    background-color: transparent;
+    transition: all 0.3s ease;
+    width: 50%;
+}
+
+.add-title-btn:hover {
+    background-color: #dc3545;
+    color: white;
+    border-color: #dc3545;
+}
+
+#list-roster .button-group .btn {
+    width: 50%;
+}
+
+@media (max-width: 768px) {
+    .main-content {
+        margin-top: 128px;
+        min-height: 200vh;
+    }
+
+    .button-group {
+        flex-direction: column;
+        align-items: center;
+        gap: 5px;
+    }
+
+    .button-group .btn {
+        width: 100%;
+    }
+
+    .field-list table, .table {
+        font-size: 0.8rem;
+    }
+
+    .field-list input, .field-list select {
+        font-size: 0.8rem;
+    }
+
+    #list-roster-table-header th:last-child,
+    #list-roster-table-body td:last-child {
+        width: 144px !important;
+        min-width: 144px !important;
+        max-width: 144px !important;
+    }
+
+    #list-roster-table-body .title-row td:first-child {
+        width: calc(100% - 144px) !important;
+        min-width: calc(100% - 144px) / 2) !important;
+        max-width: calc((100% - 144px) / 2) !important;
+        padding: 0 !important;
+    }
+
+    #list-roster-table-body .title-row td:first-child .input-group {
+        width: 100% !important;
+        margin: 0 !important;
+        padding-left: 3px !important;
+        padding-right: 3px !important;
+    }
+
+    #list-roster-table-header th:not(:last-child),
+    #list-roster-table-body td:not(:last-child) {
+        width: calc((100% - 144px) / 2) !important;
+        min-width: calc((100% - 144px) / 2) !important;
+        max-width: calc((100% - 144px) / 2) !important;
+    }
+
+    .d-flex.gap-1 {
+        gap: 4px !important;
+        justify-content: center !important;
+    }
+
+    #list-roster-table-body td:last-child span {
+        width: 46px;
+    }
+
+    .toast .confirm-btn, .toast .cancel-btn {
+        width: 3rem; /* 移動設備上也調整為足以容納兩個中文字符 */
+        padding: 0.25rem 0;
+        font-size: 0.8rem;
+        text-align: center;
+        line-height: 1.5;
+        white-space: nowrap; /* 防止文字換行 */
+    }
+}

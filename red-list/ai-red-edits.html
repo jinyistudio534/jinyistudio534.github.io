@@ -1,0 +1,184 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>紅榜名冊編輯</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons/font/bootstrap-icons.css" rel="stylesheet">
+    <link href="ai-red-edits.css" rel="stylesheet">
+</head>
+<body>
+    <header class="fixed-top bg-light border-bottom py-2">
+        <div class="container d-flex align-items-center justify-content-between">
+            <a href="ai-red-bulletin.html" class="btn btn-secondary">返回</a>
+            <h3 class="mb-0">紅榜名冊編輯</h3>
+            <button id="save-roster" class="btn btn-primary">儲存</button>
+        </div>
+    </header>
+
+    <div class="container main-content">
+        <!-- JSON 檔案上傳與從DB讀取 -->
+        <div class="mb-4">
+            <label for="json-file" class="form-label">選擇範本JSON檔案</label>
+            <div class="input-group">
+                <input type="file" id="json-file" accept=".json" class="form-control">
+                <button id="load-from-db" class="btn btn-outline-secondary">從DB讀取</button>
+            </div>
+            <div id="json-file-filename" class="mt-2"></div>
+        </div>
+
+        <!-- 欄位格式 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <label class="form-label mb-0">欄位格式</label>
+                    <ul class="nav nav-pills" id="fieldTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="head-fields-tab" data-bs-toggle="pill" data-bs-target="#head-fields" type="button" role="tab" aria-controls="head-fields" aria-selected="true">榜 首</button>
+                        </li>                    
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="list-fields-tab" data-bs-toggle="pill" data-bs-target="#list-fields" type="button" role="tab" aria-controls="list-fields" aria-selected="false">榜 單</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tail-fields-tab" data-bs-toggle="pill" data-bs-target="#tail-fields" type="button" role="tab" aria-controls="tail-fields" aria-selected="false">榜 尾</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="fieldTabContent">
+                    <!-- Head Fields -->
+                    <div class="tab-pane fade show active" id="head-fields" role="tabpanel" aria-labelledby="head-fields-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>欄位名稱</th>
+                                            <th>標籤</th>
+                                            <th>類型</th>
+                                            <th>列表項目</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="head-field-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tail Fields -->
+                    <div class="tab-pane fade" id="tail-fields" role="tabpanel" aria-labelledby="tail-fields-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>欄位名稱</th>
+                                            <th>標籤</th>
+                                            <th>類型</th>
+                                            <th>列表項目</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="tail-field-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- List Fields -->
+                    <div class="tab-pane fade" id="list-fields" role="tabpanel" aria-labelledby="list-fields-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr>
+                                            <th>欄位名稱</th>
+                                            <th>標籤</th>
+                                            <th>類型</th>
+                                            <th>列表項目</th>
+                                        </tr>
+                                    </thead>
+                                    <tbody id="list-field-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="mt-3 button-group">
+                    <button class="btn custom-btn" id="apply-format">套用欄位格式</button>
+                </div>                
+            </div>
+        </div>
+
+        <!-- 名冊表格 -->
+        <div class="card mb-4">
+            <div class="card-body">
+                <div class="mb-3">
+                    <label for="roster-description" class="form-label">名冊說明</label>
+                    <input type="text" id="roster-description" class="form-control" placeholder="輸入名冊說明">
+                </div>
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <label class="form-label mb-0">編輯名冊</label>
+                    <ul class="nav nav-pills" id="rosterTabs" role="tablist">
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link active" id="head-roster-tab" data-bs-toggle="pill" data-bs-target="#head-roster" type="button" role="tab" aria-controls="head-roster" aria-selected="true">榜 首</button>
+                        </li>                    
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="list-roster-tab" data-bs-toggle="pill" data-bs-target="#list-roster" type="button" role="tab" aria-controls="list-roster" aria-selected="false">榜 單</button>
+                        </li>
+                        <li class="nav-item" role="presentation">
+                            <button class="nav-link" id="tail-roster-tab" data-bs-toggle="pill" data-bs-target="#tail-roster" type="button" role="tab" aria-controls="tail-roster" aria-selected="false">榜 尾</button>
+                        </li>
+                    </ul>
+                </div>
+                <div class="tab-content" id="rosterTabContent">
+                    <!-- Head Roster -->
+                    <div class="tab-pane fade show active" id="head-roster" role="tabpanel" aria-labelledby="head-roster-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr id="head-roster-table-header"></tr>
+                                    </thead>
+                                    <tbody id="head-roster-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- Tail Roster -->
+                    <div class="tab-pane fade" id="tail-roster" role="tabpanel" aria-labelledby="tail-roster-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover">
+                                    <thead class="table-light">
+                                        <tr id="tail-roster-table-header"></tr>
+                                    </thead>
+                                    <tbody id="tail-roster-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>
+                    </div>
+                    <!-- List Roster -->
+                    <div class="tab-pane fade" id="list-roster" role="tabpanel" aria-labelledby="list-roster-tab">
+                        <div class="card">
+                            <div class="card-body">
+                                <table class="table table-bordered table-hover" id="list-roster-table">
+                                    <thead class="table-light">
+                                        <tr id="list-roster-table-header"></tr>
+                                    </thead>
+                                    <tbody id="list-roster-table-body"></tbody>
+                                </table>
+                            </div>
+                        </div>                        
+                    </div>
+                </div>
+                <div class="mt-3 button-group">                            
+                    <button id="import-roster" class="btn custom-btn">匯入名冊</button>
+                    <button id="export-roster" class="btn custom-btn">匯出名冊</button>
+                    <input type="file" id="import-roster-file" accept=".json" class="d-none">
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="toast-container position-fixed bottom-0 end-0 p-3"></div>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="ai-red-edits.js"></script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93bf0a8d29d7b0d9',t:'MTc0NjYwMzMzMi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c3bf871cb84532',t:'MTc0NjY1MjY4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script><script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93c705abcc2f071d',t:'MTc0NjY4NzAxOC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>

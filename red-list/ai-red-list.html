@@ -1,0 +1,32 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AI Red List Demo</title>
+    <script src="static/ai-chinese-writing.js" defer></script>
+    <script src="ai-red-list.js" defer></script>
+    <link rel="stylesheet" href="static/ai-chinese-writing.css">
+    <link rel="stylesheet" href="ai-red-list.css">
+</head>
+<body>
+    <!-- Test Case 1: 內尖, red-head=left, red-tail=center -->    
+    <div style="width: 200px; height: 600px; overflow: hidden; position: static; margin: 0; padding: 0;">
+        <red-list width="180" height="600" shape="outer" color="#00ff00">
+            <red-head spacing="10" height="250" align="center">
+                <ai-chinese-writing line-spacing="10">
+                    <chinese-writing color="white" size="30" spacing="end">副標題</chinese-writing>
+                    <chinese-writing color="black" size="40" spacing="20">榜單標題</chinese-writing>
+                    <chinese-writing color="white" size="30" spacing="end">副標題</chinese-writing>
+                </ai-chinese-writing>
+            </red-head>
+            <red-tail spacing="16" height="300" align="center">
+                <ai-chinese-writing line-spacing="10">
+                    <chinese-writing color="black" size="40" spacing="20">第一名：張三</chinese-writing>
+                    <chinese-writing color="blue" size="30" spacing="end">第二名：李四</chinese-writing>
+                </ai-chinese-writing>
+            </red-tail>
+        </red-list>
+    </div>
+</body>
+</html>

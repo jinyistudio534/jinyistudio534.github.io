@@ -1,0 +1,104 @@
+{
+  "settings": {},
+  "rosters": {
+    "headFields": [
+      {
+        "key": "year",
+        "label": "year",
+        "type": "text",
+        "list": ""
+      },
+      {
+        "key": "thing",
+        "label": "thing",
+        "type": "text",
+        "list": ""
+      }
+    ],
+    "tailFields": [
+      {
+        "key": "year1",
+        "label": "year1",
+        "type": "text",
+        "list": ""
+      }
+    ],
+    "listFields": [
+      {
+        "key": "name",
+        "label": "name",
+        "type": "text",
+        "list": ""
+      },
+      {
+        "key": "Tribute",
+        "label": "Tribute",
+        "type": "text",
+        "list": ""
+      }
+    ],
+    "headRoster": [
+      {
+        "year": "一三五",
+        "thing": "頂店里"
+      }
+    ],
+    "tailRoster": [
+      {
+        "year1": "二百五十"
+      }
+    ],
+    "listRoster": [
+      {
+        "isdivider": true,
+        "text": "中華民國"
+      },
+      {
+        "name": "台灣",
+        "Tribute": ""
+      },
+      {
+        "isdivider": true,
+        "text": "台中"
+      },
+      {
+        "name": "台北",
+        "Tribute": ""
+      },
+      {
+        "name": "大甲",
+        "Tribute": ""
+      },
+      {
+        "name": "台中",
+        "Tribute": ""
+      },
+      {
+        "name": "清水",
+        "Tribute": ""
+      },
+      {
+        "name": "新竹",
+        "Tribute": ""
+      },
+      {
+        "name": "南投",
+        "Tribute": ""
+      },
+      {
+        "name": "大安",
+        "Tribute": ""
+      },
+      {
+        "name": "外埔",
+        "Tribute": ""
+      },
+      {
+        "name": "日南",
+        "Tribute": ""
+      }
+    ],
+    "rosterDescription": "生日名冊",
+    "template": "bulletin-settings.json"
+  }
+}
