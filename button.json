@@ -3,7 +3,7 @@
         "caption":"登入",
         "size":24,
         "url":"https://jinyistudio534.github.io/ai-login/demo.html",
-        "tooltip":"login"
+        "tooltip":"可重覆使用的登入窗"
     },
     {
         "caption":"縮放\n選單",
@@ -20,7 +20,8 @@
     {
         "caption":"洞\nの\n樂",
         "size":24,
-        "url":"https://jinyistudio534.github.io/ai-blind-box/index.html"
+        "url":"https://jinyistudio534.github.io/ai-blind-box/index.html",
+        "tooltip":"你可以自行設定洞數,禮品的抽抽樂"
     },
     {
         "caption":"大甲\n里好",
