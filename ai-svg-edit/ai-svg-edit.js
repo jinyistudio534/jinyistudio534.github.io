@@ -429,7 +429,15 @@
         // 動態載入字型
         async function loadFonts() {
             try {
-                const response = await fetch('/fonts/list.json');
+                // 獲取當前 HTML 文件的路徑
+                const currentPath = window.location.pathname;
+                // 提取目錄部分，移除文件名
+                const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/')) || '.';
+                // 構建 fonts/list.json 的相對路徑
+                const fontListPath = `${baseDir}/fonts/list.json`;
+
+                console.log(`嘗試載入字型列表，路徑: ${fontListPath}`);
+                const response = await fetch(fontListPath);
                 if (!response.ok) {
                     throw new Error(`無法獲取字型列表，狀態碼: ${response.status}`);
                 }
@@ -448,11 +456,11 @@
                     fontStyle.textContent = `
                         @font-face {
                             font-family: "${fontName}";
-                            src: url("/fonts/${fontFile}") format("truetype");
+                            src: url("${baseDir}/fonts/${fontFile}") format("truetype");
                         }
                     `;
                     document.head.appendChild(fontStyle);
-                    console.log(`載入字型: ${fontName}, 路徑: /fonts/${fontFile}`);
+                    console.log(`載入字型: ${fontName}, 路徑: ${baseDir}/fonts/${fontFile}`);
 
                     const option = document.createElement('option');
                     option.value = fontName;
@@ -1110,7 +1118,6 @@
             const objects = canvas.getObjects().filter(obj => !obj.isGrid);
             if (objects.length > 0) {
                 if (confirm('是否清除畫布上的所有物件？')) {
-                    objects.forEach(obj => canvas.remove(obj));
                     canvas.discardActiveObject();
                     filename = '';
                     updateFilenameDisplay();
@@ -1210,7 +1217,7 @@
             applyTextOptions();
         });
         document.getElementById('fontBold').addEventListener('change', (e) => {
-            console.log('粗體切換:', e.target.checked);
+            console.log('粗413體切換:', e.target.checked);
             applyTextOptions();
         });
         document.getElementById('underline').addEventListener('change', (e) => {
@@ -1305,7 +1312,7 @@
 
         function showFillColorPanel() {
             try {
-                const rect = fillColorDisplay.getBoundingClientRect();
+                const rect = fillColorDisplay.getBoundingClientRects();
                 const scrollY = window.scrollY || window.pageYOffset;
                 const scrollX = window.scrollX || window.pageXOffset;
                 const controlsHeight = document.querySelector('.controls').offsetHeight;
@@ -1320,7 +1327,7 @@
                 const adjustedTop = Math.min(top, canvasContainerRect.height - panelHeight - 10);
 
                 fillColorPanel.style.top = `${adjustedTop}px`;
-                fillColorPanel.style.left = `${adjustedLeft}px`;
+            fillColorPanel.style.left = `${adjustedLeft}px`;
                 fillColorPanel.setAttribute('visible', 'true');
                 console.log('顯示填充顏色與透明度選擇面板', { top: adjustedTop, left: adjustedLeft, controlsHeight });
             } catch (error) {
