@@ -45,7 +45,7 @@
         "caption":"歡迎\n光臨",
         "size":24,
         "url":"https://jinyistudio534.github.io/ai-chinese-writing-app/main.html",
-         "tooltip":"中文直式書寫的歡迎看板"
+         "tooltip":"可編輯內容中文直式書寫的歡迎看板"
     },
      {
         "caption":"SVG\nEdit",
@@ -56,7 +56,8 @@
     {
         "caption":"Form\n產生器",
         "size":16,
-        "url":"https://jinyistudio534.github.io/ai-json-html/json2html.html"
+        "url":"https://jinyistudio534.github.io/ai-json-html/json2html.html",
+         "tooltip":"使用json檔來轉出html的Form檔"
     },
     {
         "caption":"中式垂直\n書寫法",
