@@ -100,11 +100,11 @@
         }
         .btn-color-1 { background-color: #ff4d4d; }
         .btn-color-1.caption { color: #ffffff; }
-        .btn-color-2 { background-color: #4da8ff; }
+ .btn-color-2 { background-color: #4da8ff; }
         .btn-color-2.caption { color: #ffffff; }
         .btn-color-3 { background-color: #4dff4d; }
         .btn-color-3.caption { color: #000000; }
-        .btn-color-4 Vivi Color { background-color: #ffcc4d; }
+        .btn-color-4 { background-color: #ffcc4d; }
         .btn-color-4.caption { color: #000000; }
         .btn-color-5 { background-color: #ff4dff; }
         .btn-color-5.caption { color: #ffffff; }
@@ -276,7 +276,7 @@
         }
 
         // 創建按鈕並返回按鈕類型
-        function createButton(x, y, colorClass, content, url = null, textSize = defaultTextSize) {
+        function createButton(x, y, colorClass, content, url = null, textSize = defaultTextSize, tooltip = '') {
             const button = document.createElement('button');
             button.className = `button ${colorClass}`;
             if (url) {
@@ -292,6 +292,9 @@
             button.style.left = `${x}px`;
             button.style.top = `${y}px`;
             button.innerHTML = content.replace(/\n/g, '<br>');
+            if (tooltip) {
+                button.title = tooltip; // 設置 tooltip 為 title 屬性
+            }
             document.body.appendChild(button);
             return button;
         }
@@ -381,9 +384,9 @@
 
                         let button;
                         if (jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
+                            const { caption, url, size, tooltip } = buttonData[jsonIndex];
                             const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
+                            button = createButton(x, y, color, caption, url, textSize, tooltip || '');
                             jsonIndex++;
                         } else {
                             const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
@@ -401,9 +404,9 @@
 
                         let button;
                         if (jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
+                            const { caption, url, size, tooltip } = buttonData[jsonIndex];
                             const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
+                            button = createButton(x, y, color, caption, url, textSize, tooltip || '');
                             jsonIndex++;
                         } else {
                             const icon = defaultIcons[(jsonIndex) % defaultIcons.length];
@@ -459,9 +462,9 @@
                         );
                         let button;
                         if (isJsonButton && jsonIndex < buttonData.length) {
-                            const { caption, url, size } = buttonData[jsonIndex];
+                            const { caption, url, size, tooltip } = buttonData[jsonIndex];
                             const textSize = size || defaultTextSize;
-                            button = createButton(x, y, color, caption, url, textSize);
+                            button = createButton(x, y, color, caption, url, textSize, tooltip || '');
                             jsonIndex++;
                         } else {
                             const icon = defaultIcons[(row * cols + col) % defaultIcons.length];
@@ -503,5 +506,5 @@
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ff1264ccf060c7',t:'MTc0NDU5MDM4OC4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
     <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'92ffb379af786732',t:'MTc0NDU5Njk4Ni4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 <script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9306421a7b75dae9',t:'MTc0NDY2NTc0Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93e50ef17d9ec009',t:'MTc0NzAwMTk3MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>

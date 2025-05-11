@@ -2,17 +2,20 @@
     {
         "caption":"登入",
         "size":24,
-        "url":"https://jinyistudio534.github.io/ai-login/demo.html"
+        "url":"https://jinyistudio534.github.io/ai-login/demo.html",
+        "tooltip":"login"
     },
     {
         "caption":"縮放\n選單",
         "size":16,
-        "url":"https://jinyistudio534.github.io/ai-side-menu/ai-side-menu.html"
+        "url":"https://jinyistudio534.github.io/ai-side-menu/ai-side-menu.html",
+        "tooltip":"會縮放顯示的選單"
     },
     {
         "caption":"紅\n榜",
         "size":24,
-        "url":"https://jinyistudio534.github.io/red-list/index.html"
+        "url":"https://jinyistudio534.github.io/red-list/index.html",
+        "tooltip":"顯示紅榜的工具"
     },
     {
         "caption":"洞\nの\n樂",
