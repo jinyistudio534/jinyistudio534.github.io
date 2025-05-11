@@ -26,27 +26,32 @@
     {
         "caption":"大甲\n里好",
         "size":28,
-        "url":"https://jinyistudio534.github.io/lihao/index.html"
+        "url":"https://jinyistudio534.github.io/lihao/index.html",
+         "tooltip":"讓你認識大甲有那些里方位如何"
     },
     {
         "caption":"LED\n按鈕",
         "size":21,
-        "url":"https://jinyistudio534.github.io/ai-led-button/led-button-demo.html"
+        "url":"https://jinyistudio534.github.io/ai-led-button/led-button-demo.html",
+         "tooltip":"含LED的按鈕庫"
     },
     {
         "caption":"LED",
         "size":21,
-        "url":"https://jinyistudio534.github.io/ai-led/ai-led.html"
+        "url":"https://jinyistudio534.github.io/ai-led/ai-led.html",
+         "tooltip":"LED庫"
     },
     {
         "caption":"歡迎\n光臨",
         "size":24,
-        "url":"https://jinyistudio534.github.io/ai-chinese-writing-app/main.html"
+        "url":"https://jinyistudio534.github.io/ai-chinese-writing-app/main.html",
+         "tooltip":"中文直式書寫的歡迎看板"
     },
      {
         "caption":"SVG\nEdit",
         "size":18,
-        "url":"https://jinyistudio534.github.io/ai-svg-edit/ai-svg-edit.html"
+        "url":"https://jinyistudio534.github.io/ai-svg-edit/ai-svg-edit.html",
+        "tooltip":"SVG編輯器"
     },
     {
         "caption":"Form\n產生器",
@@ -56,7 +61,8 @@
     {
         "caption":"中式垂直\n書寫法",
         "size":20,
-        "url":"https://jinyistudio534.github.io/ai-chinese-writing/ai-chinese-writing.html"
+        "url":"https://jinyistudio534.github.io/ai-chinese-writing/ai-chinese-writing.html",
+         "tooltip":"中文直式書寫庫"
     },
     {
         "caption":"看\n板",
