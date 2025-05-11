@@ -108,6 +108,18 @@
                 <button class="align-btn" onclick="window.aiSvgEditor.alignObjects('middle')" title="垂直居中"><i class="fas fa-arrows-alt-v"></i></button>
                 <button class="align-btn" onclick="window.aiSvgEditor.alignObjects('bottom')" title="底部對齊"><i class="fas fa-arrow-down"></i></button>
             </div>
+            <div class="column">
+                <h4 title="畫布大小"><i class="fas fa-expand"></i></h4>
+                <label title="畫布寬度">
+                    <i class="fas fa-arrows-alt-h"></i>
+                    <input type="number" id="canvasWidth" value="800" min="400" step="10" title="畫布寬度">
+                </label>
+                <label title="畫布高度">
+                    <i class="fas fa-arrows-alt-v"></i>
+                    <input type="number" id="canvasHeight" value="600" min="400" step="10" title="畫布高度">
+                </label>
+                <button onclick="window.aiSvgEditor.setCanvasSize()" title="應用畫布大小"><i class="fas fa-check"></i></button>
+            </div>
         `;
         container.appendChild(controls);
 
@@ -250,6 +262,22 @@
             .column input[type="color"]::-webkit-color-swatch {
                 border: none;
             }
+            .column input[type="number"] {
+                width: 60px;
+                height: 24px;
+                padding: 0 5px;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                font-size: 12px;
+                line-height: 1;
+                cursor: pointer;
+                border: 1px solid #ccc;
+                background-color: #f9f9f9;
+                box-sizing: border-box;
+                pointer-events: auto;
+            }
             .column button i, 
             .column label i { 
                 width: 24px; 
@@ -315,7 +343,6 @@
                 pointer-events: none;
                 display: none;
             }
-            /* 框線顏色選擇窗樣式 */
             .stroke-color-container, .fill-color-container {
                 width: auto;
                 display: flex;
@@ -399,11 +426,55 @@
         `;
         document.head.appendChild(style);
 
+        // 動態載入字型
+        async function loadFonts() {
+            try {
+                const response = await fetch('/fonts/list.json');
+                if (!response.ok) {
+                    throw new Error(`無法獲取字型列表，狀態碼: ${response.status}`);
+                }
+                const fontFiles = await response.json();
+                const fontSelect = document.getElementById('fontFamily');
+
+                fontSelect.innerHTML = `
+                    <option value="Arial">Arial</option>
+                    <option value="Times New Roman">Times New Roman</option>
+                    <option value="Courier New">Courier New</option>
+                `;
+
+                fontFiles.forEach(fontFile => {
+                    const fontName = fontFile.replace(/\.ttf$/i, '');
+                    const fontStyle = document.createElement('style');
+                    fontStyle.textContent = `
+                        @font-face {
+                            font-family: "${fontName}";
+                            src: url("/fonts/${fontFile}") format("truetype");
+                        }
+                    `;
+                    document.head.appendChild(fontStyle);
+                    console.log(`載入字型: ${fontName}, 路徑: /fonts/${fontFile}`);
+
+                    const option = document.createElement('option');
+                    option.value = fontName;
+                    option.textContent = fontName;
+                    fontSelect.appendChild(option);
+                });
+
+                console.log(`字型載入完成，共 ${fontFiles.length} 個字型`);
+            } catch (error) {
+                console.error('載入字型失敗:', error);
+                alert('無法載入字型，請檢查 fonts/list.json 是否存在且字型檔案可訪問。');
+            }
+        }
+
+        loadFonts();
+
         // 初始化 Fabric.js 畫布
         const canvas = new fabric.Canvas('canvas', {
             selection: true,
             preserveObjectStacking: true
         });
+        canvas.setDimensions({ width: 800, height: 600 });
 
         // 添加網格
         function addGrid() {
@@ -448,24 +519,25 @@
 
         // 設定畫布尺寸
         function resizeCanvas() {
-            const minHeight = 400; // 確保畫布有足夠空間顯示
-            let width = canvasContainer.offsetWidth;
-            let height = canvasContainer.offsetHeight;
+            const minHeight = 400;
+            let width = parseInt(document.getElementById('canvasWidth').value) || canvasContainer.offsetWidth;
+            let height = parseInt(document.getElementById('canvasHeight').value) || canvasContainer.offsetHeight;
 
             console.log('初始容器尺寸:', width, 'x', height);
-            canvasContainer.style.width = '100%';
-            canvasContainer.style.height = '100%';
-            canvasElement.style.width = '100%';
-            console.log('設置容器和畫布寬度為 100%');
+            canvasContainer.style.width = `${width}px`;
+            canvasContainer.style.height = `${height + controls.offsetHeight}px`;
+            canvasElement.style.width = `${width}px`;
+            console.log('設置容器和畫布寬度為:', width);
 
             const controlsHeight = controls.offsetHeight;
             canvasElement.style.marginTop = `${controlsHeight}px`;
             console.log('工具列高度:', controlsHeight, 'px，設置畫布 margin-top:', controlsHeight, 'px');
 
-            height = canvasContainer.offsetHeight - controlsHeight;
+            height = height - controlsHeight;
             if (height < minHeight) {
                 height = minHeight;
                 canvasContainer.style.height = `${minHeight + controlsHeight}px`;
+                document.getElementById('canvasHeight').value = minHeight;
                 console.log('高度低於最小值，強制設置容器高度為:', minHeight + controlsHeight);
             }
 
@@ -498,8 +570,8 @@
         let isDrawing = false;
         let startPoint = null;
         let currentObject = null;
-        let strokeTransparent = false; // 追蹤透明狀態
-        let filename = ''; // 檔案名稱變數
+        let strokeTransparent = false;
+        let filename = '';
 
         function updateFilenameDisplay() {
             const filenameDiv = document.getElementById('filename');
@@ -513,7 +585,8 @@
             }
         }
 
-        function setTool(tool) {
+        // 公開方法：setTool
+        this.setTool = function(tool) {
             currentTool = tool;
             canvas.isDrawingMode = false;
             canvas.selection = true;
@@ -543,7 +616,7 @@
             canvas.discardActiveObject();
             canvas.requestRenderAll();
             console.log('工具設為:', tool);
-        }
+        };
 
         function createPolygonPoints(centerX, centerY, radius, sides) {
             const points = [];
@@ -704,7 +777,8 @@
             canvas.requestRenderAll();
         });
 
-        function applyStyles() {
+        // 公開方法：applyStyles
+        this.applyStyles = function() {
             const fillColor = document.getElementById('fillColor').value;
             const opacity = parseInt(document.getElementById('opacity').value) / 100;
             const fillWithOpacity = fabric.Color.fromHex(fillColor).setAlpha(opacity).toRgba();
@@ -726,9 +800,10 @@
             });
             canvas.requestRenderAll();
             console.log('應用樣式:', { fillColor, opacity: opacity * 100 + '%', strokeColor: strokeTransparent ? 'transparent' : strokeColor, strokeWidth });
-        }
+        };
 
-        function deleteSelected() {
+        // 公開方法：deleteSelected
+        this.deleteSelected = function() {
             const activeObjects = canvas.getActiveObjects();
             if (activeObjects.length === 0) {
                 console.log('無選中物件可刪除');
@@ -738,9 +813,10 @@
             canvas.discardActiveObject();
             canvas.requestRenderAll();
             console.log('刪除選中物件:', activeObjects.map(obj => obj.type));
-        }
+        };
 
-        function duplicateSelected() {
+        // 公開方法：duplicateSelected
+        this.duplicateSelected = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可複製');
@@ -765,9 +841,10 @@
                 canvas.requestRenderAll();
                 console.log('複製物件:', activeObject.type, '新位置:', { left: cloned.left, top: cloned.top });
             }, ['left', 'top', 'scaleX', 'scaleY', 'angle', 'fill', 'stroke', 'strokeWidth', 'fontFamily', 'fontSize', 'fontWeight', 'underline']);
-        }
+        };
 
-        function groupSelected() {
+        // 公開方法：groupSelected
+        this.groupSelected = function() {
             const activeObjects = canvas.getActiveObjects();
             if (activeObjects.length < 2) {
                 console.log('群組需至少 2 個物件');
@@ -786,9 +863,10 @@
             canvas.setActiveObject(group);
             canvas.renderAll();
             console.log('群組物件:', activeObjects.map(obj => obj.type));
-        }
+        };
 
-        function ungroupSelected() {
+        // 公開方法：ungroupSelected
+        this.ungroupSelected = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject || activeObject.type !== 'group') {
                 console.log('無選中群組可解散');
@@ -804,9 +882,10 @@
             canvas.discardActiveObject();
             canvas.requestRenderAll();
             console.log('解散群組物件:', objects.map(obj => obj.type));
-        }
+        };
 
-        function bringForward() {
+        // 公開方法：bringForward
+        this.bringForward = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可上移');
@@ -820,9 +899,10 @@
             } else {
                 console.log('物件已在最上層');
             }
-        }
+        };
 
-        function sendBackward() {
+        // 公開方法：sendBackward
+        this.sendBackward = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可下移');
@@ -836,9 +916,10 @@
             } else {
                 console.log('物件已在最下層');
             }
-        }
+        };
 
-        function alignObjects(type) {
+        // 公開方法：alignObjects
+        this.alignObjects = function(type) {
             const activeObjects = canvas.getActiveObjects();
             if (activeObjects.length === 0) return;
 
@@ -894,19 +975,18 @@
 
             canvas.requestRenderAll();
             console.log('對齊物件:', type);
-        }
+        };
 
-        window.saveSVG = function() {
+        // 公開方法：saveSVG
+        this.saveSVG = function() {
             const activeObjects = canvas.getActiveObjects();
             let objectsToExport = [];
             let saveOption = 'all';
 
-            // 檢查是否有選中物件，並詢問用戶
             if (activeObjects.length > 0) {
                 saveOption = confirm('是否僅儲存選中的物件？\n點擊「確定」儲存選中物件，點擊「取消」儲存整個畫布（不含網格）。') ? 'selected' : 'all';
             }
 
-            // 根據選擇確定要導出的物件
             if (saveOption === 'selected') {
                 objectsToExport = activeObjects;
                 console.log('選擇儲存選中物件，數量:', activeObjects.length);
@@ -915,11 +995,9 @@
                 console.log('選擇儲存整個畫布，排除網格，物件數:', objectsToExport.length);
             }
 
-            // 臨時移除網格物件
             const gridObjects = canvas.getObjects().filter(obj => obj.isGrid);
             gridObjects.forEach(obj => canvas.remove(obj));
 
-            // 生成 SVG
             const svgData = canvas.toSVG({
                 suppressPreamble: false,
                 viewBox: {
@@ -931,14 +1009,11 @@
                 filter: (obj) => objectsToExport.includes(obj)
             });
 
-            // 恢復網格物件
             gridObjects.forEach(obj => canvas.add(obj));
             canvas.requestRenderAll();
 
-            // 確定檔案名稱
             let downloadName = filename ? `${filename}.svg` : (saveOption === 'selected' ? 'selected_drawing.svg' : 'drawing.svg');
 
-            // 創建並下載 SVG 檔案
             const blob = new Blob([svgData], { type: 'image/svg+xml' });
             const url = URL.createObjectURL(blob);
             const a = document.createElement('a');
@@ -950,14 +1025,14 @@
             console.log(`SVG 已儲存，範圍: ${saveOption === 'selected' ? '選中物件' : '整個畫布'}，物件數: ${objectsToExport.length}，檔案名稱: ${downloadName}`);
         };
 
-        function loadSVG() {
+        // 公開方法：loadSVG
+        this.loadSVG = function() {
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.svg';
             input.onchange = (e) => {
                 const file = e.target.files[0];
                 if (!file) return;
-                // 提取檔案名稱（去除副檔名）
                 filename = file.name.replace(/\.svg$/i, '');
                 updateFilenameDisplay();
                 console.log('載入 SVG，設定檔案名稱:', filename);
@@ -981,9 +1056,10 @@
                 reader.readAsText(file);
             };
             input.click();
-        }
+        };
 
-        function generateQRCode() {
+        // 公開方法：generateQRCode
+        this.generateQRCode = function() {
             const text = prompt('請輸入 QR 碼的文字或 URL：');
             if (!text || typeof text !== 'string' || text.trim() === '') {
                 console.log('QR 碼生成取消：無效或空文字');
@@ -1027,15 +1103,16 @@
                 console.error('生成 QR 碼錯誤:', error);
                 alert('生成 QR 碼時發生錯誤，請檢查控制台以獲取詳細信息。');
             }
-        }
+        };
 
-        function clearCanvas() {
+        // 公開方法：clearCanvas
+        this.clearCanvas = function() {
             const objects = canvas.getObjects().filter(obj => !obj.isGrid);
             if (objects.length > 0) {
                 if (confirm('是否清除畫布上的所有物件？')) {
                     objects.forEach(obj => canvas.remove(obj));
                     canvas.discardActiveObject();
-                    filename = ''; // 清除檔案名稱
+                    filename = '';
                     updateFilenameDisplay();
                     canvas.requestRenderAll();
                     console.log('畫布已清除，移除物件數:', objects.length, '檔案名稱已清除');
@@ -1045,9 +1122,10 @@
             } else {
                 console.log('畫布已無物件可清除');
             }
-        }
+        };
 
-        function rotateLeft() {
+        // 公開方法：rotateLeft
+        this.rotateLeft = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可旋轉');
@@ -1057,9 +1135,10 @@
             activeObject.setCoords();
             canvas.requestRenderAll();
             console.log('向左旋轉 90 度，當前角度:', activeObject.angle);
-        }
+        };
 
-        function rotateRight() {
+        // 公開方法：rotateRight
+        this.rotateRight = function() {
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可旋轉');
@@ -1069,22 +1148,37 @@
             activeObject.setCoords();
             canvas.requestRenderAll();
             console.log('向右旋轉 90 度，當前角度:', activeObject.angle);
-        }
+        };
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete') {
-                const activeObject = canvas.getActiveObject();
-                if (!activeObject) {
-                    console.log('無選中物件，忽略刪除鍵');
-                    return;
-                }
-                if (activeObject.isEditing) {
-                    console.log('文字編輯模式中按下刪除鍵，由 IText 處理');
-                    return;
-                }
-                deleteSelected();
+        // 公開方法：setCanvasSize
+        this.setCanvasSize = function() {
+            const widthInput = document.getElementById('canvasWidth');
+            const heightInput = document.getElementById('canvasHeight');
+            let width = parseInt(widthInput.value) || 800;
+            let height = parseInt(heightInput.value) || 600;
+
+            const minDimension = 400;
+            if (width < minDimension) {
+                width = minDimension;
+                widthInput.value = minDimension;
+                console.log('寬度低於最小值，設為:', minDimension);
             }
-        });
+            if (height < minDimension) {
+                height = minDimension;
+                heightInput.value = minDimension;
+                console.log('高度低於最小值，設為:', minDimension);
+            }
+
+            canvas.setDimensions({ width: width, height: height });
+            canvasContainer.style.width = `${width}px`;
+            canvasContainer.style.height = `${height + controls.offsetHeight}px`;
+            canvasElement.style.width = `${width}px`;
+            canvasElement.style.height = `${height}px`;
+
+            addGrid();
+            canvas.requestRenderAll();
+            console.log('畫布大小設為:', width, 'x', height);
+        };
 
         function applyTextOptions() {
             const fontFamily = document.getElementById('fontFamily').value;
@@ -1124,8 +1218,7 @@
             applyTextOptions();
         });
 
-        // 框線顏色選擇窗事件監聽
-        const strokeColorDisplay = bushes = document.getElementById('strokeColorDisplay');
+        const strokeColorDisplay = document.getElementById('strokeColorDisplay');
         const strokeColorInput = document.getElementById('strokeColor');
         const strokeTransparentBtn = document.getElementById('strokeTransparentBtn');
 
@@ -1136,14 +1229,12 @@
                 const scrollX = window.scrollX || window.pageXOffset;
                 const controlsHeight = document.querySelector('.controls').offsetHeight;
                 
-                // 計算相對於 #canvas-container 的位置
                 const canvasContainerRect = canvasContainer.getBoundingClientRect();
-                const top = rect.bottom - canvasContainerRect.top + 2; // 2px 間距
-                const left = rect.left - canvasContainerRect.left; // 水平對齊圖標左邊
+                const top = rect.bottom - canvasContainerRect.top + 2;
+                const left = rect.left - canvasContainerRect.left;
                 
-                // 確保面板不超出容器
-                const panelWidth = 100; // 框線面板寬度
-                const panelHeight = 60; // 框線面板高度
+                const panelWidth = 100;
+                const panelHeight = 60;
                 const adjustedLeft = Math.min(left, canvasContainerRect.width - panelWidth - 10);
                 const adjustedTop = Math.min(top, canvasContainerRect.height - panelHeight - 10);
 
@@ -1176,7 +1267,7 @@
                 canvas.freeDrawingBrush.color = e.target.value;
                 console.log('手繪筆刷顏色更新:', e.target.value);
             }
-            applyStyles();
+            this.applyStyles();
             console.log('框線顏色變更:', e.target.value);
         });
 
@@ -1188,26 +1279,24 @@
             strokeColorDisplay.setAttribute('transparent', 'true');
             if (canvas.isDrawingMode) {
                 canvas.isDrawingMode = false;
-                setTool('cursor');
+                this.setTool('cursor');
                 console.log('手繪模式因框線透明而禁用，切換至游標工具');
             }
-            applyStyles();
+            this.applyStyles();
             hideColorPanel();
             console.log('框線設為透明');
         });
 
-        // 框線寬度監聽
         document.getElementById('strokeWidth').addEventListener('input', (e) => {
             const width = parseInt(e.target.value) || 2;
             if (canvas.isDrawingMode) {
                 canvas.freeDrawingBrush.width = width;
                 console.log('手繪筆刷寬度更新:', width);
             }
-            applyStyles();
+            this.applyStyles();
             console.log('框線寬度變更:', width);
         });
 
-        // 填充顏色與透明度選擇窗事件監聽
         const fillColorDisplay = document.getElementById('fillColorDisplay');
         const fillColorInput = document.getElementById('fillColor');
         const opacityInput = document.getElementById('opacity');
@@ -1221,14 +1310,12 @@
                 const scrollX = window.scrollX || window.pageXOffset;
                 const controlsHeight = document.querySelector('.controls').offsetHeight;
                 
-                // 計算相對於 #canvas-container 的位置
                 const canvasContainerRect = canvasContainer.getBoundingClientRect();
-                const top = rect.bottom - canvasContainerRect.top + 2; // 2px 間距
-                const left = rect.left - canvasContainerRect.left; // 水平對齊圖標左邊
+                const top = rect.bottom - canvasContainerRect.top + 2;
+                const left = rect.left - canvasContainerRect.left;
                 
-                // 確保面板不超出容器
-                const panelWidth = 120; // 填充面板寬度
-                const panelHeight = 60; // 填充面板高度
+                const panelWidth = 120;
+                const panelHeight = 60;
                 const adjustedLeft = Math.min(left, canvasContainerRect.width - panelWidth - 10);
                 const adjustedTop = Math.min(top, canvasContainerRect.height - panelHeight - 10);
 
@@ -1255,7 +1342,7 @@
         fillColorInput.addEventListener('input', (e) => {
             fillColorDisplay.value = e.target.value;
             fillColorDisplay.style.backgroundColor = e.target.value;
-            applyStyles();
+            this.applyStyles();
             console.log('填充顏色變更:', e.target.value);
         });
 
@@ -1267,7 +1354,7 @@
                 value = 100;
             }
             e.target.value = value;
-            applyStyles();
+            this.applyStyles();
             console.log('透明度變更:', value + '%');
         });
 
@@ -1276,7 +1363,7 @@
             let value = parseInt(opacityInput.value);
             if (value < 100) {
                 opacityInput.value = value + 1;
-                applyStyles();
+                this.applyStyles();
                 console.log('透明度增加:', opacityInput.value + '%');
             }
         });
@@ -1286,7 +1373,7 @@
             let value = parseInt(opacityInput.value);
             if (value > 0) {
                 opacityInput.value = value - 1;
-                applyStyles();
+                this.applyStyles();
                 console.log('透明度減少:', opacityInput.value + '%');
             }
         });
@@ -1356,7 +1443,7 @@
                 coordsDiv.style.display = 'none';
                 console.log('無選中物件，隱藏座標顯示');
             }
-            updateFilenameDisplay(); // 確保檔案名稱顯示同步更新
+            updateFilenameDisplay();
         }
 
         canvas.on('selection:created', (e) => {
@@ -1385,26 +1472,23 @@
             updateCoordinates();
         });
 
-        setTool('cursor');
-        updateFilenameDisplay();
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Delete') {
+                const activeObject = canvas.getActiveObject();
+                if (!activeObject) {
+                    console.log('無選中物件，忽略刪除鍵');
+                    return;
+                }
+                if (activeObject.isEditing) {
+                    console.log('文字編輯模式中按下刪除鍵，由 IText 處理');
+                    return;
+                }
+                this.deleteSelected();
+            }
+        });
 
-        this.getCanvas = () => canvas;
-        this.resize = resizeCanvas;
-        this.setTool = setTool;
-        this.applyStyles = applyStyles;
-        this.deleteSelected = deleteSelected;
-        this.duplicateSelected = duplicateSelected;
-        this.groupSelected = groupSelected;
-        this.ungroupSelected = ungroupSelected;
-        this.bringForward = bringForward;
-        this.sendBackward = sendBackward;
-        this.alignObjects = alignObjects;
-        this.saveSVG = saveSVG;
-        this.loadSVG = loadSVG;
-        this.generateQRCode = generateQRCode;
-        this.clearCanvas = clearCanvas;
-        this.rotateLeft = rotateLeft;
-        this.rotateRight = rotateRight;
+        this.setTool('cursor');
+        updateFilenameDisplay();
     }
 
     global.AiSvgEdit = AiSvgEdit;
