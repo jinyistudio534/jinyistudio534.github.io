@@ -98,6 +98,7 @@
                 <button onclick="window.aiSvgEditor.clearCanvas()" title="清除畫布"><i class="fas fa-eraser"></i></button>
                 <button onclick="window.aiSvgEditor.rotateLeft()" title="向左轉 90 度"><i class="fas fa-undo"></i></button>
                 <button onclick="window.aiSvgEditor.rotateRight()" title="向右轉 90 度"><i class="fas fa-redo"></i></button>
+                <button onclick="window.aiSvgEditor.addFrame()" title="添加或移除圖框"><i class="fas fa-border-all"></i></button>
             </div>
             <div class="column">
                 <h4 title="對齊"><i class="fas fa-align-justify"></i></h4>
@@ -173,6 +174,7 @@
                 width: 100%; 
                 height: 100%; 
                 position: relative;
+                overflow: hidden;
             }
             #canvas { 
                 width: 100%; 
@@ -219,7 +221,6 @@
                 flex-direction: row;
                 align-items: center;
                 gap: 5px;
-                width: 54px;
                 height: 24px;
             }
             .column button, 
@@ -321,7 +322,7 @@
                 position: absolute;
                 bottom: 10px;
                 left: 10px;
-                z-index: 1000;
+                z-index: 900;
                 background: rgba(255, 255, 255, 0.8);
                 padding: 2px 5px;
                 border-radius: 3px;
@@ -329,12 +330,16 @@
                 color: #333;
                 pointer-events: none;
                 display: none;
+                max-width: calc(100% - 20px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             #filename {
                 position: absolute;
                 bottom: 30px;
                 left: 10px;
-                z-index: 1000;
+                z-index: 900;
                 background: rgba(255, 255, 255, 0.8);
                 padding: 2px 5px;
                 border-radius: 3px;
@@ -342,6 +347,10 @@
                 color: #333;
                 pointer-events: none;
                 display: none;
+                max-width: calc(100% - 20px);
+                overflow: hidden;
+                text-overflow: ellipsis;
+                white-space: nowrap;
             }
             .stroke-color-container, .fill-color-container {
                 width: auto;
@@ -398,6 +407,9 @@
                 width: 100%;
                 background: #fff;
                 border: 1px solid #ccc;
+                white-space: nowrap;
+                padding: 0 5px;
+                font-size: 12px;
                 text-align: center;
             }
             #strokeColorPanel button:hover {
@@ -429,11 +441,8 @@
         // 動態載入字型
         async function loadFonts() {
             try {
-                // 獲取當前 HTML 文件的路徑
                 const currentPath = window.location.pathname;
-                // 提取目錄部分，移除文件名
                 const baseDir = currentPath.substring(0, currentPath.lastIndexOf('/')) || '.';
-                // 構建 fonts/list.json 的相對路徑
                 const fontListPath = `${baseDir}/fonts/list.json`;
 
                 console.log(`嘗試載入字型列表，路徑: ${fontListPath}`);
@@ -519,10 +528,25 @@
                 lines.push(path);
             }
 
-            lines.forEach(line => canvas.add(line));
-            canvas.sendToBack(lines[0]);
+            lines.forEach(line => {
+                canvas.add(line);
+                canvas.sendToBack(line);
+            });
             canvas.requestRenderAll();
             console.log('網格添加: 8x8，顏色:', gridColor, '線寬: 1px');
+        }
+
+        // 確保網格在最底層
+        function ensureGridAtBottom() {
+            const gridObjects = canvas.getObjects().filter(obj => obj.isGrid);
+            if (gridObjects.length === 0) {
+                console.log('網格缺失，重新生成網格');
+                addGrid();
+            } else {
+                gridObjects.forEach(grid => canvas.sendToBack(grid));
+                canvas.requestRenderAll();
+                console.log('確保網格在最底層，網格物件數:', gridObjects.length);
+            }
         }
 
         // 設定畫布尺寸
@@ -645,7 +669,7 @@
             if (currentTool === 'cursor') {
                 if (e.target) {
                     canvas.setActiveObject(e.target);
-                    console.log('選中物件:', e.target.type);
+                    console.log('選中物件:', e.target.type, 'isFrame:', !!e.target.isFrame);
                 } else {
                     canvas.discardActiveObject();
                     console.log('無物件選中，清除選取');
@@ -795,16 +819,20 @@
             const activeObjects = canvas.getActiveObjects();
 
             activeObjects.forEach(obj => {
-                if (obj.type !== 'line') {
-                    obj.set({ fill: fillWithOpacity });
+                if (!obj.isFrame) {
+                    if (obj.type !== 'line') {
+                        obj.set({ fill: fillWithOpacity });
+                    }
+                    const scale = (obj.scaleX + obj.scaleY) / 2 || 1;
+                    const adjustedStrokeWidth = strokeWidth / scale;
+                    obj.set({ 
+                        stroke: strokeTransparent ? null : strokeColor,
+                        strokeWidth: strokeTransparent ? 0 : adjustedStrokeWidth
+                    });
+                    console.log('應用樣式:', { objType: obj.type, fill: obj.isFrame ? 'transparent' : fillWithOpacity, strokeWidth: adjustedStrokeWidth, scale, transparent: strokeTransparent });
+                } else {
+                    console.log('跳過圖框填充修改，保持透明');
                 }
-                const scale = (obj.scaleX + obj.scaleY) / 2 || 1;
-                const adjustedStrokeWidth = strokeWidth / scale;
-                obj.set({ 
-                    stroke: strokeTransparent ? null : strokeColor,
-                    strokeWidth: strokeTransparent ? 0 : adjustedStrokeWidth
-                });
-                console.log('應用邊框寬度:', strokeWidth, '調整後:', adjustedStrokeWidth, '縮放:', scale, '透明:', strokeTransparent);
             });
             canvas.requestRenderAll();
             console.log('應用樣式:', { fillColor, opacity: opacity * 100 + '%', strokeColor: strokeTransparent ? 'transparent' : strokeColor, strokeWidth });
@@ -817,10 +845,27 @@
                 console.log('無選中物件可刪除');
                 return;
             }
-            activeObjects.forEach(obj => canvas.remove(obj));
+            let deletedObjects = [];
+            let skippedFrames = 0;
+            activeObjects.forEach(obj => {
+                if (obj.isFrame) {
+                    console.log('跳過刪除圖框:', obj.type, 'isFrame:', true);
+                    skippedFrames++;
+                } else {
+                    console.log('刪除物件:', obj.type, 'isFrame:', !!obj.isFrame);
+                    canvas.remove(obj);
+                    deletedObjects.push(obj.type);
+                }
+            });
+            if (skippedFrames > 0 && deletedObjects.length === 0) {
+                console.log('僅選中圖框，未刪除任何物件');
+                alert('圖框無法被刪除，請使用「添加或移除圖框」按鈕來移除圖框。');
+            } else if (skippedFrames > 0) {
+                console.log('部分物件為圖框，已跳過:', skippedFrames);
+            }
             canvas.discardActiveObject();
             canvas.requestRenderAll();
-            console.log('刪除選中物件:', activeObjects.map(obj => obj.type));
+            console.log('刪除選中物件:', deletedObjects, '跳過圖框數:', skippedFrames);
         };
 
         // 公開方法：duplicateSelected
@@ -1035,12 +1080,29 @@
 
         // 公開方法：loadSVG
         this.loadSVG = function() {
+            const nonGridObjects = canvas.getObjects().filter(obj => !obj.isGrid);
+            if (nonGridObjects.length > 0) {
+                if (!confirm('畫布上有現有物件，是否清除畫布以載入新的 SVG？\n點擊「確定」清除並載入，點擊「取消」放棄載入。')) {
+                    console.log('用戶取消載入 SVG，未清除畫布');
+                    return;
+                }
+                nonGridObjects.forEach(obj => canvas.remove(obj));
+                canvas.discardActiveObject();
+                filename = '';
+                updateFilenameDisplay();
+                canvas.requestRenderAll();
+                console.log('畫布已清除，準備載入 SVG，移除物件數:', nonGridObjects.length);
+            }
+
             const input = document.createElement('input');
             input.type = 'file';
             input.accept = '.svg';
             input.onchange = (e) => {
                 const file = e.target.files[0];
-                if (!file) return;
+                if (!file) {
+                    console.log('未選擇檔案，取消載入 SVG');
+                    return;
+                }
                 filename = file.name.replace(/\.svg$/i, '');
                 updateFilenameDisplay();
                 console.log('載入 SVG，設定檔案名稱:', filename);
@@ -1048,17 +1110,35 @@
                 reader.onload = (event) => {
                     const svgString = event.target.result;
                     fabric.loadSVGFromString(svgString, (objects, options) => {
-                        const group = fabric.util.groupSVGElements(objects, options);
-                        group.set({
-                            left: 100,
-                            top: 100,
-                            selectable: true,
-                            evented: true
+                        if (!objects || objects.length === 0) {
+                            console.error('無法解析 SVG 檔案');
+                            alert('載入 SVG 失敗，請檢查檔案格式。');
+                            return;
+                        }
+                        objects.forEach(obj => {
+                            if (obj.type === 'i-text') {
+                                const boundingRect = obj.getBoundingRect();
+                                obj.set({
+                                    left: boundingRect.left,
+                                    top: boundingRect.top,
+                                    selectable: true,
+                                    evented: true
+                                });
+                                obj.setCoords();
+                                console.log('校正文字物件座標:', { type: obj.type, left: obj.left, top: obj.top });
+                            } else {
+                                obj.set({
+                                    selectable: true,
+                                    evented: true
+                                });
+                                obj.setCoords();
+                                console.log('添加物件:', { type: obj.type, left: obj.left, top: obj.top });
+                            }
+                            canvas.add(obj);
                         });
-                        canvas.add(group);
-                        canvas.setActiveObject(group);
+                        canvas.discardActiveObject();
                         canvas.renderAll();
-                        console.log('載入 SVG，物件:', objects.map(obj => obj.type));
+                        console.log('載入 SVG，物件數:', objects.length, '類型:', objects.map(obj => obj.type));
                     });
                 };
                 reader.readAsText(file);
@@ -1118,6 +1198,7 @@
             const objects = canvas.getObjects().filter(obj => !obj.isGrid);
             if (objects.length > 0) {
                 if (confirm('是否清除畫布上的所有物件？')) {
+                    objects.forEach(obj => canvas.remove(obj));
                     canvas.discardActiveObject();
                     filename = '';
                     updateFilenameDisplay();
@@ -1187,6 +1268,49 @@
             console.log('畫布大小設為:', width, 'x', height);
         };
 
+        // 公開方法：addFrame
+        this.addFrame = function() {
+            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            if (existingFrame) {
+                canvas.remove(existingFrame);
+                canvas.discardActiveObject();
+                canvas.requestRenderAll();
+                console.log('圖框已移除');
+                return;
+            }
+
+            const width = canvas.width;
+            const height = canvas.height;
+            const strokeColor = document.getElementById('strokeColor').value;
+            const strokeWidth = parseInt(document.getElementById('strokeWidth').value) || 2;
+
+            const frame = new fabric.Rect({
+                left: 0,
+                top: 0,
+                width: width - strokeWidth,
+                height: height - strokeWidth,
+                fill: 'transparent',
+                stroke: strokeTransparent ? null : strokeColor,
+                strokeWidth: strokeTransparent ? 0 : strokeWidth,
+                selectable: true,
+                evented: true,
+                lockMovementX: true,
+                lockMovementY: true,
+                lockScalingX: true,
+                lockScalingY: true,
+                lockRotation: true,
+                hasControls: false,
+                isFrame: true
+            });
+
+            canvas.add(frame);
+            canvas.sendToBack(frame);
+            canvas.getObjects().filter(obj => obj.isGrid).forEach(grid => canvas.sendToBack(grid));
+            canvas.setActiveObject(frame);
+            canvas.requestRenderAll();
+            console.log('圖框已添加:', { width: width - strokeWidth, height: height - strokeWidth, strokeColor, strokeWidth, fill: frame.fill });
+        };
+
         function applyTextOptions() {
             const fontFamily = document.getElementById('fontFamily').value;
             const fontSize = parseInt(document.getElementById('fontSize').value);
@@ -1208,6 +1332,7 @@
             console.log('應用文字選項:', { fontFamily, fontSize, fontWeight, underline });
         }
 
+        // 文字選項事件監聽器
         document.getElementById('fontFamily').addEventListener('change', (e) => {
             console.log('字型變更:', e.target.value);
             applyTextOptions();
@@ -1217,7 +1342,7 @@
             applyTextOptions();
         });
         document.getElementById('fontBold').addEventListener('change', (e) => {
-            console.log('粗413體切換:', e.target.checked);
+            console.log('粗體切換:', e.target.checked);
             applyTextOptions();
         });
         document.getElementById('underline').addEventListener('change', (e) => {
@@ -1225,278 +1350,175 @@
             applyTextOptions();
         });
 
-        const strokeColorDisplay = document.getElementById('strokeColorDisplay');
-        const strokeColorInput = document.getElementById('strokeColor');
-        const strokeTransparentBtn = document.getElementById('strokeTransparentBtn');
-
-        function showColorPanel() {
-            try {
-                const rect = strokeColorDisplay.getBoundingClientRect();
-                const scrollY = window.scrollY || window.pageYOffset;
-                const scrollX = window.scrollX || window.pageXOffset;
-                const controlsHeight = document.querySelector('.controls').offsetHeight;
-                
-                const canvasContainerRect = canvasContainer.getBoundingClientRect();
-                const top = rect.bottom - canvasContainerRect.top + 2;
-                const left = rect.left - canvasContainerRect.left;
-                
-                const panelWidth = 100;
-                const panelHeight = 60;
-                const adjustedLeft = Math.min(left, canvasContainerRect.width - panelWidth - 10);
-                const adjustedTop = Math.min(top, canvasContainerRect.height - panelHeight - 10);
-
-                strokeColorPanel.style.top = `${adjustedTop}px`;
-                strokeColorPanel.style.left = `${adjustedLeft}px`;
-                strokeColorPanel.setAttribute('visible', 'true');
-                console.log('顯示框線顏色選擇面板', { top: adjustedTop, left: adjustedLeft, controlsHeight });
-            } catch (error) {
-                console.error('顯示框線顏色選擇面板失敗:', error);
-            }
-        }
-
-        function hideColorPanel() {
-            strokeColorPanel.removeAttribute('visible');
-            console.log('隱藏框線顏色選擇面板');
-        }
-
-        strokeColorDisplay.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            showColorPanel();
-        });
-
-        strokeColorInput.addEventListener('input', (e) => {
-            strokeTransparent = false;
-            strokeColorDisplay.value = e.target.value;
-            strokeColorDisplay.style.backgroundColor = e.target.value;
-            strokeColorDisplay.removeAttribute('transparent');
-            if (canvas.isDrawingMode) {
-                canvas.freeDrawingBrush.color = e.target.value;
-                console.log('手繪筆刷顏色更新:', e.target.value);
-            }
-            this.applyStyles();
-            console.log('框線顏色變更:', e.target.value);
-        });
-
-        strokeTransparentBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            strokeTransparent = true;
-            strokeColorDisplay.value = 'transparent';
-            strokeColorDisplay.style.backgroundColor = 'transparent';
-            strokeColorDisplay.setAttribute('transparent', 'true');
-            if (canvas.isDrawingMode) {
-                canvas.isDrawingMode = false;
-                this.setTool('cursor');
-                console.log('手繪模式因框線透明而禁用，切換至游標工具');
-            }
-            this.applyStyles();
-            hideColorPanel();
-            console.log('框線設為透明');
-        });
-
+        // 邊框寬度輸入事件
         document.getElementById('strokeWidth').addEventListener('input', (e) => {
-            const width = parseInt(e.target.value) || 2;
-            if (canvas.isDrawingMode) {
-                canvas.freeDrawingBrush.width = width;
-                console.log('手繪筆刷寬度更新:', width);
+            const value = parseInt(e.target.value) || 2;
+            const strokeColor = document.getElementById('strokeColor').value;
+            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            if (existingFrame) {
+                existingFrame.set({
+                    strokeWidth: strokeTransparent ? 0 : value,
+                    stroke: strokeTransparent ? null : strokeColor,
+                    width: canvas.width - value,
+                    height: canvas.height - value,
+                    fill: 'transparent'
+                });
+                canvas.requestRenderAll();
+                console.log('圖框邊框寬度更新:', { strokeWidth: value, strokeColor, fill: existingFrame.fill });
             }
             this.applyStyles();
-            console.log('框線寬度變更:', width);
         });
 
-        const fillColorDisplay = document.getElementById('fillColorDisplay');
-        const fillColorInput = document.getElementById('fillColor');
-        const opacityInput = document.getElementById('opacity');
-        const opacityUpBtn = document.getElementById('opacityUpBtn');
-        const opacityDownBtn = document.getElementById('opacityDownBtn');
-
-        function showFillColorPanel() {
-            try {
-                const rect = fillColorDisplay.getBoundingClientRects();
-                const scrollY = window.scrollY || window.pageYOffset;
-                const scrollX = window.scrollX || window.pageXOffset;
-                const controlsHeight = document.querySelector('.controls').offsetHeight;
-                
-                const canvasContainerRect = canvasContainer.getBoundingClientRect();
-                const top = rect.bottom - canvasContainerRect.top + 2;
-                const left = rect.left - canvasContainerRect.left;
-                
-                const panelWidth = 120;
-                const panelHeight = 60;
-                const adjustedLeft = Math.min(left, canvasContainerRect.width - panelWidth - 10);
-                const adjustedTop = Math.min(top, canvasContainerRect.height - panelHeight - 10);
-
-                fillColorPanel.style.top = `${adjustedTop}px`;
-            fillColorPanel.style.left = `${adjustedLeft}px`;
-                fillColorPanel.setAttribute('visible', 'true');
-                console.log('顯示填充顏色與透明度選擇面板', { top: adjustedTop, left: adjustedLeft, controlsHeight });
-            } catch (error) {
-                console.error('顯示填充顏色與透明度選擇面板失敗:', error);
+        // 邊框顏色選擇事件
+        document.getElementById('strokeColor').addEventListener('input', (e) => {
+            const color = e.target.value;
+            document.getElementById('strokeColorDisplay').style.backgroundColor = color;
+            document.getElementById('strokeColorDisplay').removeAttribute('transparent');
+            strokeTransparent = false;
+            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            if (existingFrame) {
+                const strokeWidth = parseInt(document.getElementById('strokeWidth').value) || 2;
+                existingFrame.set({
+                    stroke: color,
+                    strokeWidth: strokeWidth,
+                    fill: 'transparent'
+                });
+                canvas.requestRenderAll();
+                console.log('圖框邊框顏色更新:', { strokeColor: color, strokeWidth, fill: existingFrame.fill });
             }
-        }
-
-        function hideFillColorPanel() {
-            fillColorPanel.removeAttribute('visible');
-            console.log('隱藏填充顏色與透明度選擇面板');
-        }
-
-        fillColorDisplay.addEventListener('click', (e) => {
-            e.preventDefault();
-            e.stopPropagation();
-            showFillColorPanel();
-        });
-
-        fillColorInput.addEventListener('input', (e) => {
-            fillColorDisplay.value = e.target.value;
-            fillColorDisplay.style.backgroundColor = e.target.value;
             this.applyStyles();
-            console.log('填充顏色變更:', e.target.value);
         });
 
-        opacityInput.addEventListener('input', (e) => {
+        // 透明邊框按鈕
+        document.getElementById('strokeTransparentBtn').addEventListener('click', () => {
+            strokeTransparent = true;
+            document.getElementById('strokeColorDisplay').style.backgroundColor = 'transparent';
+            document.getElementById('strokeColorDisplay').setAttribute('transparent', 'true');
+            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            if (existingFrame) {
+                existingFrame.set({
+                    stroke: null,
+                    strokeWidth: 0,
+                    fill: 'transparent'
+                });
+                canvas.requestRenderAll();
+                console.log('圖框設為透明邊框:', { stroke: null, strokeWidth: 0, fill: existingFrame.fill });
+            }
+            this.applyStyles();
+        });
+
+        // 填充顏色選擇事件
+        document.getElementById('fillColor').addEventListener('input', (e) => {
+            const color = e.target.value;
+            document.getElementById('fillColorDisplay').style.backgroundColor = color;
+            this.applyStyles();
+            console.log('填充顏色更新:', color);
+        });
+
+        // 透明度控制
+        document.getElementById('opacity').addEventListener('input', (e) => {
             let value = parseInt(e.target.value);
-            if (isNaN(value) || value < 0) {
-                value = 0;
-            } else if (value > 100) {
-                value = 100;
-            }
+            if (value < 0) value = 0;
+            if (value > 100) value = 100;
             e.target.value = value;
             this.applyStyles();
-            console.log('透明度變更:', value + '%');
+            console.log('透明度更新:', value + '%');
         });
 
-        opacityUpBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            let value = parseInt(opacityInput.value);
-            if (value < 100) {
-                opacityInput.value = value + 1;
-                this.applyStyles();
-                console.log('透明度增加:', opacityInput.value + '%');
+        document.getElementById('opacityUpBtn').addEventListener('click', () => {
+            const opacityInput = document.getElementById('opacity');
+            let value = parseInt(opacityInput.value) + 1;
+            if (value > 100) value = 100;
+            opacityInput.value = value;
+            this.applyStyles();
+            console.log('透明度增加至:', value + '%');
+        });
+
+        document.getElementById('opacityDownBtn').addEventListener('click', () => {
+            const opacityInput = document.getElementById('opacity');
+            let value = parseInt(opacityInput.value) - 1;
+            if (value < 0) value = 0;
+            opacityInput.value = value;
+            this.applyStyles();
+            console.log('透明度減少至:', value + '%');
+        });
+
+        // 顯示/隱藏顏色面板
+        document.getElementById('strokeColorDisplay').addEventListener('click', (e) => {
+            const panel = document.getElementById('strokeColorPanel');
+            const isVisible = panel.getAttribute('visible') === 'true';
+            panel.setAttribute('visible', !isVisible);
+            if (!isVisible) {
+                const rect = e.target.getBoundingRect();
+                panel.style.left = `${rect.left}px`;
+                panel.style.top = `${rect.bottom + 5}px`;
             }
+            document.getElementById('fillColorPanel').setAttribute('visible', 'false');
+            console.log('切換邊框顏色面板顯示:', !isVisible);
         });
 
-        opacityDownBtn.addEventListener('click', (e) => {
-            e.stopPropagation();
-            let value = parseInt(opacityInput.value);
-            if (value > 0) {
-                opacityInput.value = value - 1;
-                this.applyStyles();
-                console.log('透明度減少:', opacityInput.value + '%');
+        document.getElementById('fillColorDisplay').addEventListener('click', (e) => {
+            const panel = document.getElementById('fillColorPanel');
+            const isVisible = panel.getAttribute('visible') === 'true';
+            panel.setAttribute('visible', !isVisible);
+            if (!isVisible) {
+                const rect = e.target.getBoundingRect();
+                panel.style.left = `${rect.left}px`;
+                panel.style.top = `${rect.bottom + 5}px`;
             }
+            document.getElementById('strokeColorPanel').setAttribute('visible', 'false');
+            console.log('切換填充顏色面板顯示:', !isVisible);
         });
 
+        // 點擊其他地方隱藏面板
         document.addEventListener('click', (e) => {
-            if (!strokeColorPanel.contains(e.target) && e.target !== strokeColorDisplay) {
-                hideColorPanel();
+            if (!e.target.closest('#strokeColorPanel') && !e.target.closest('#strokeColorDisplay')) {
+                document.getElementById('strokeColorPanel').setAttribute('visible', 'false');
             }
-            if (!fillColorPanel.contains(e.target) && e.target !== fillColorDisplay) {
-                hideFillColorPanel();
+            if (!e.target.closest('#fillColorPanel') && !e.target.closest('#fillColorDisplay')) {
+                document.getElementById('fillColorPanel').setAttribute('visible', 'false');
             }
         });
 
-        canvas.on('text:editing:entered', () => {
-            console.log('進入文字編輯');
-        });
-        canvas.on('text:editing:exited', () => {
-            console.log('退出文字編輯');
-        });
-
-        function updateButtonStates() {
-            const groupBtn = document.getElementById('groupBtn');
-            const ungroupBtn = document.getElementById('ungroupBtn');
-            const bringForwardBtn = document.getElementById('bringForwardBtn');
-            const sendBackwardBtn = document.getElementById('sendBackwardBtn');
-            const duplicateBtn = document.getElementById('duplicateBtn');
-            const activeObjects = canvas.getActiveObjects();
+        // 監聽物件選擇事件以啟用/禁用按鈕
+        canvas.on('selection:created selection:updated', () => {
             const activeObject = canvas.getActiveObject();
-
-            if (activeObjects.length > 1) {
-                groupBtn.disabled = false;
-                ungroupBtn.disabled = true;
-                bringForwardBtn.disabled = true;
-                sendBackwardBtn.disabled = true;
-                duplicateBtn.disabled = true;
-            } else if (activeObject && activeObject.type === 'group') {
-                groupBtn.disabled = true;
-                ungroupBtn.disabled = false;
-                bringForwardBtn.disabled = canvas.getObjects().indexOf(activeObject) >= canvas.getObjects().length - 1;
-                sendBackwardBtn.disabled = canvas.getObjects().indexOf(activeObject) <= 0;
-                duplicateBtn.disabled = false;
-            } else if (activeObject) {
-                groupBtn.disabled = true;
-                ungroupBtn.disabled = true;
-                bringForwardBtn.disabled = canvas.getObjects().indexOf(activeObject) >= canvas.getObjects().length - 1;
-                sendBackwardBtn.disabled = canvas.getObjects().indexOf(activeObject) <= 0;
-                duplicateBtn.disabled = false;
-            } else {
-                groupBtn.disabled = true;
-                ungroupBtn.disabled = true;
-                bringForwardBtn.disabled = true;
-                sendBackwardBtn.disabled = true;
-                duplicateBtn.disabled = true;
-            }
-        }
-
-        function updateCoordinates() {
-            const activeObject = canvas.getActiveObject();
-            const coordsDiv = document.getElementById('coordinates');
-            if (activeObject) {
-                const left = Math.round(activeObject.left);
-                const top = Math.round(activeObject.top);
-                coordsDiv.style.display = 'block';
-                coordsDiv.textContent = `${left},${top}`;
-                console.log('更新座標顯示:', { left, top });
-            } else {
-                coordsDiv.style.display = 'none';
-                console.log('無選中物件，隱藏座標顯示');
-            }
-            updateFilenameDisplay();
-        }
-
-        canvas.on('selection:created', (e) => {
-            if (e.target) {
-                console.log('物件選中:', e.target.type);
-            } else {
-                console.log('選取創建但無目標');
-            }
-            updateButtonStates();
-            updateCoordinates();
-        });
-
-        canvas.on('selection:updated', (e) => {
-            console.log('選取更新:', e.target ? e.target.type : '無目標');
-            updateButtonStates();
-            updateCoordinates();
+            document.getElementById('duplicateBtn').disabled = !activeObject;
+            document.getElementById('bringForwardBtn').disabled = !activeObject;
+            document.getElementById('sendBackwardBtn').disabled = !activeObject;
+            document.getElementById('groupBtn').disabled = canvas.getActiveObjects().length < 2;
+            document.getElementById('ungroupBtn').disabled = !activeObject || activeObject.type !== 'group';
+            console.log('物件選擇更新:', activeObject ? activeObject.type : '無選中物件');
         });
 
         canvas.on('selection:cleared', () => {
-            console.log('選取清除，畫布物件數:', canvas.getObjects().length);
-            updateButtonStates();
-            updateCoordinates();
+            document.getElementById('duplicateBtn').disabled = true;
+            document.getElementById('bringForwardBtn').disabled = true;
+            document.getElementById('sendBackwardBtn').disabled = true;
+            document.getElementById('groupBtn').disabled = true;
+            document.getElementById('ungroupBtn').disabled = true;
+            console.log('清除物件選擇');
         });
 
-        canvas.on('object:moving', () => {
-            updateCoordinates();
+        // 顯示滑鼠座標
+        canvas.on('mouse:move', (e) => {
+            const pointer = canvas.getPointer(e.e);
+            const coordinatesDiv = document.getElementById('coordinates');
+            coordinatesDiv.style.display = 'block';
+            coordinatesDiv.textContent = `X: ${Math.round(pointer.x)}, Y: ${Math.round(pointer.y)}`;
         });
 
-        document.addEventListener('keydown', (e) => {
-            if (e.key === 'Delete') {
-                const activeObject = canvas.getActiveObject();
-                if (!activeObject) {
-                    console.log('無選中物件，忽略刪除鍵');
-                    return;
-                }
-                if (activeObject.isEditing) {
-                    console.log('文字編輯模式中按下刪除鍵，由 IText 處理');
-                    return;
-                }
-                this.deleteSelected();
-            }
+        canvas.on('mouse:out', () => {
+            document.getElementById('coordinates').style.display = 'none';
         });
 
+        // 初始化
+        addGrid();
         this.setTool('cursor');
-        updateFilenameDisplay();
+        window.aiSvgEditor = this;
+        console.log('AiSvgEdit 初始化完成');
     }
 
+    // 將 AiSvgEdit 暴露到全域
     global.AiSvgEdit = AiSvgEdit;
-})(window, window.fabric, window.QRCode);
+})(window, fabric, QRCode);
