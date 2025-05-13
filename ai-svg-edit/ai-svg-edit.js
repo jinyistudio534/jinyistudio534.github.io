@@ -573,7 +573,7 @@
                 console.log('高度低於最小值，強制設置容器高度為:', minHeight + controlsHeight);
             }
 
-            canvas.setDimensions({ width: width, height: height });
+            canvas.setDimensions({ width: width, height: minHeight });
             addGrid();
             canvas.requestRenderAll();
             console.log('畫布調整尺寸至:', width, 'x', height);
@@ -621,7 +621,7 @@
         this.setTool = function(tool) {
             currentTool = tool;
             canvas.isDrawingMode = false;
-            canvas.selection = true;
+            canvas.selection = true; // 確保多選功能啟用
             document.querySelectorAll('.tool-btn').forEach(btn => {
                 btn.classList.remove('active');
                 if (btn.dataset.tool === tool) {
@@ -647,7 +647,7 @@
             }
             canvas.discardActiveObject();
             canvas.requestRenderAll();
-            console.log('工具設為:', tool);
+            console.log('工具設為:', tool, 'canvas.selection:', canvas.selection);
         };
 
         function createPolygonPoints(centerX, centerY, radius, sides) {
@@ -669,7 +669,7 @@
             if (currentTool === 'cursor') {
                 if (e.target) {
                     canvas.setActiveObject(e.target);
-                    console.log('選中物件:', e.target.type, 'isFrame:', !!e.target.isFrame);
+                    console.log('選中物件:', e.target.type, 'isFrame:', !!e.target.isFrame, 'selectable:', e.target.selectable, 'evented:', e.target.evented);
                 } else {
                     canvas.discardActiveObject();
                     console.log('無物件選中，清除選取');
@@ -764,7 +764,7 @@
             if (currentObject) {
                 canvas.add(currentObject);
                 canvas.requestRenderAll();
-                console.log('物件添加:', tool, '邊框寬度:', currentObject.strokeWidth);
+                console.log('物件添加:', tool, '邊框寬度:', currentObject.strokeWidth, 'selectable:', currentObject.selectable, 'evented:', currentObject.evented);
             }
         });
 
@@ -801,7 +801,7 @@
         canvas.on('mouse:up', () => {
             if (currentObject) {
                 currentObject.setCoords();
-                console.log('物件完成:', currentTool, '可選中:', currentObject.selectable);
+                console.log('物件完成:', currentTool, '可選中:', currentObject.selectable, '事件響應:', currentObject.evented);
             }
             isDrawing = false;
             currentObject = null;
@@ -829,9 +829,9 @@
                         stroke: strokeTransparent ? null : strokeColor,
                         strokeWidth: strokeTransparent ? 0 : adjustedStrokeWidth
                     });
-                    console.log('應用樣式:', { objType: obj.type, fill: obj.isFrame ? 'transparent' : fillWithOpacity, strokeWidth: adjustedStrokeWidth, scale, transparent: strokeTransparent });
+                    console.log('應用樣式:', { objType: obj.type, fill: fillWithOpacity, strokeWidth: adjustedStrokeWidth, scale, transparent: strokeTransparent });
                 } else {
-                    console.log('跳過圖框填充修改，保持透明');
+                    console.log('跳過圖框樣式修改，保持不變');
                 }
             });
             canvas.requestRenderAll();
@@ -900,22 +900,27 @@
         this.groupSelected = function() {
             const activeObjects = canvas.getActiveObjects();
             if (activeObjects.length < 2) {
-                console.log('群組需至少 2 個物件');
+                console.log('群組需至少 2 個物件，當前選擇數:', activeObjects.length);
+                alert('請選擇至少兩個物件進行群組！');
                 return;
             }
-            canvas.discardActiveObject();
-            const group = new fabric.Group(activeObjects, {
-                selectable: true,
-                evented: true
-            });
-            group.addWithUpdate();
-            group.setCoords();
-            canvas.add(group);
-            canvas.renderAll();
-            activeObjects.forEach(obj => canvas.remove(obj));
-            canvas.setActiveObject(group);
-            canvas.renderAll();
-            console.log('群組物件:', activeObjects.map(obj => obj.type));
+            try {
+                canvas.discardActiveObject();
+                const group = new fabric.Group(activeObjects, {
+                    selectable: true,
+                    evented: true
+                });
+                group.addWithUpdate();
+                group.setCoords();
+                canvas.add(group);
+                activeObjects.forEach(obj => canvas.remove(obj));
+                canvas.setActiveObject(group);
+                canvas.renderAll();
+                console.log('群組物件:', activeObjects.map(obj => obj.type));
+            } catch (error) {
+                console.error('群組失敗:', error);
+                alert('群組操作失敗，請檢查控制台以獲取詳細信息。');
+            }
         };
 
         // 公開方法：ungroupSelected
@@ -923,18 +928,25 @@
             const activeObject = canvas.getActiveObject();
             if (!activeObject || activeObject.type !== 'group') {
                 console.log('無選中群組可解散');
+                alert('請選擇一個群組物件進行解散！');
                 return;
             }
-            const objects = activeObject.getObjects();
-            activeObject._restoreObjectsState();
-            canvas.remove(activeObject);
-            objects.forEach(obj => {
-                canvas.add(obj);
-                obj.setCoords();
-            });
-            canvas.discardActiveObject();
-            canvas.requestRenderAll();
-            console.log('解散群組物件:', objects.map(obj => obj.type));
+            try {
+                const objects = activeObject.getObjects();
+                activeObject._restoreObjectsState();
+                canvas.remove(activeObject);
+                objects.forEach(obj => {
+                    canvas.add(obj);
+                    obj.setCoords();
+                    obj.set({ selectable: true, evented: true }); // 確保解除群組後物件可選中
+                });
+                canvas.discardActiveObject();
+                canvas.requestRenderAll();
+                console.log('解散群組物件:', objects.map(obj => obj.type));
+            } catch (error) {
+                console.error('解除群組失敗:', error);
+                alert('解除群組操作失敗，請檢查控制台以獲取詳細信息。');
+            }
         };
 
         // 公開方法：bringForward
@@ -942,15 +954,19 @@
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可上移');
+                alert('請選擇一個物件進行上移操作！');
                 return;
             }
-            const currentIndex = canvas.getObjects().indexOf(activeObject);
-            if (currentIndex < canvas.getObjects().length - 1) {
+            const objects = canvas.getObjects();
+            const currentIndex = objects.indexOf(activeObject);
+            if (currentIndex < objects.length - 1) {
                 activeObject.moveTo(currentIndex + 1);
-                canvas.requestRenderAll();
-                console.log('移至圖層:', currentIndex + 1, '類型:', activeObject.type);
+                canvas.renderAll();
+                ensureGridAtBottom();
+                console.log('上移一層，物件:', activeObject.type, '新層次:', currentIndex + 1);
             } else {
                 console.log('物件已在最上層');
+                alert('物件已在最上層！');
             }
         };
 
@@ -959,15 +975,20 @@
             const activeObject = canvas.getActiveObject();
             if (!activeObject) {
                 console.log('無選中物件可下移');
+                alert('請選擇一個物件進行下移操作！');
                 return;
             }
-            const currentIndex = canvas.getObjects().indexOf(activeObject);
-            if (currentIndex > 0) {
+            const objects = canvas.getObjects();
+            const currentIndex = objects.indexOf(activeObject);
+            const gridCount = objects.filter(obj => obj.isGrid).length;
+            if (currentIndex > gridCount) {
                 activeObject.moveTo(currentIndex - 1);
-                canvas.requestRenderAll();
-                console.log('移至圖層:', currentIndex - 1, '類型:', activeObject.type);
+                canvas.renderAll();
+                ensureGridAtBottom();
+                console.log('下移一層，物件:', activeObject.type, '新層次:', currentIndex - 1);
             } else {
-                console.log('物件已在最下層');
+                console.log('物件已在最下層（網格上方）');
+                alert('物件已在最下層！');
             }
         };
 
@@ -1354,7 +1375,8 @@
         document.getElementById('strokeWidth').addEventListener('input', (e) => {
             const value = parseInt(e.target.value) || 2;
             const strokeColor = document.getElementById('strokeColor').value;
-            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            const activeObjects = canvas.getActiveObjects();
+            const existingFrame = activeObjects.find(obj => obj.isFrame);
             if (existingFrame) {
                 existingFrame.set({
                     strokeWidth: strokeTransparent ? 0 : value,
@@ -1375,7 +1397,8 @@
             document.getElementById('strokeColorDisplay').style.backgroundColor = color;
             document.getElementById('strokeColorDisplay').removeAttribute('transparent');
             strokeTransparent = false;
-            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            const activeObjects = canvas.getActiveObjects();
+            const existingFrame = activeObjects.find(obj => obj.isFrame);
             if (existingFrame) {
                 const strokeWidth = parseInt(document.getElementById('strokeWidth').value) || 2;
                 existingFrame.set({
@@ -1394,7 +1417,8 @@
             strokeTransparent = true;
             document.getElementById('strokeColorDisplay').style.backgroundColor = 'transparent';
             document.getElementById('strokeColorDisplay').setAttribute('transparent', 'true');
-            const existingFrame = canvas.getObjects().find(obj => obj.isFrame);
+            const activeObjects = canvas.getActiveObjects();
+            const existingFrame = activeObjects.find(obj => obj.isFrame);
             if (existingFrame) {
                 existingFrame.set({
                     stroke: null,
@@ -1449,9 +1473,18 @@
             const isVisible = panel.getAttribute('visible') === 'true';
             panel.setAttribute('visible', !isVisible);
             if (!isVisible) {
-                const rect = e.target.getBoundingRect();
-                panel.style.left = `${rect.left}px`;
-                panel.style.top = `${rect.bottom + 5}px`;
+                const rect = e.target.getBoundingClientRect();
+                const canvasRect = canvasContainer.getBoundingClientRect();
+                let left = rect.left - canvasRect.left;
+                let top = rect.bottom - canvasRect.top + 2;
+                if (left + panel.offsetWidth > canvasRect.width) {
+                    left = rect.left - canvasRect.left - panel.offsetWidth + rect.width;
+                }
+                if (top + panel.offsetHeight > canvasRect.height) {
+                    top = rect.top - canvasRect.top - panel.offsetHeight - 2;
+                }
+                panel.style.left = `${left}px`;
+                panel.style.top = `${top}px`;
             }
             document.getElementById('fillColorPanel').setAttribute('visible', 'false');
             console.log('切換邊框顏色面板顯示:', !isVisible);
@@ -1462,9 +1495,18 @@
             const isVisible = panel.getAttribute('visible') === 'true';
             panel.setAttribute('visible', !isVisible);
             if (!isVisible) {
-                const rect = e.target.getBoundingRect();
-                panel.style.left = `${rect.left}px`;
-                panel.style.top = `${rect.bottom + 5}px`;
+                const rect = e.target.getBoundingClientRect();
+                const canvasRect = canvasContainer.getBoundingClientRect();
+                let left = rect.left - canvasRect.left;
+                let top = rect.bottom - canvasRect.top + 2;
+                if (left + panel.offsetWidth > canvasRect.width) {
+                    left = rect.left - canvasRect.left - panel.offsetWidth + rect.width;
+                }
+                if (top + panel.offsetHeight > canvasRect.height) {
+                    top = rect.top - canvasRect.top - panel.offsetHeight - 2;
+                }
+                panel.style.left = `${left}px`;
+                panel.style.top = `${top}px`;
             }
             document.getElementById('strokeColorPanel').setAttribute('visible', 'false');
             console.log('切換填充顏色面板顯示:', !isVisible);
@@ -1480,24 +1522,98 @@
             }
         });
 
+        // *** 修復：增強選擇事件處理 ***
         // 監聽物件選擇事件以啟用/禁用按鈕
-        canvas.on('selection:created selection:updated', () => {
+        function updateButtonStates() {
             const activeObject = canvas.getActiveObject();
-            document.getElementById('duplicateBtn').disabled = !activeObject;
-            document.getElementById('bringForwardBtn').disabled = !activeObject;
-            document.getElementById('sendBackwardBtn').disabled = !activeObject;
-            document.getElementById('groupBtn').disabled = canvas.getActiveObjects().length < 2;
-            document.getElementById('ungroupBtn').disabled = !activeObject || activeObject.type !== 'group';
-            console.log('物件選擇更新:', activeObject ? activeObject.type : '無選中物件');
+            const activeObjects = canvas.getActiveObjects();
+            const logDetails = {
+                activeObjectType: activeObject ? activeObject.type : '無',
+                activeObjectsCount: activeObjects.length,
+                canvasSelection: canvas.selection,
+                selectedObjects: activeObjects.map(obj => ({
+                    type: obj.type,
+                    selectable: obj.selectable,
+                    evented: obj.evented
+                }))
+            };
+            console.log('更新按鈕狀態:', logDetails);
+
+            // 更新按鈕狀態
+            const duplicateBtn = document.getElementById('duplicateBtn');
+            const bringForwardBtn = document.getElementById('bringForwardBtn');
+            const sendBackwardBtn = document.getElementById('sendBackwardBtn');
+            const groupBtn = document.getElementById('groupBtn');
+            const ungroupBtn = document.getElementById('ungroupBtn');
+
+            if (!duplicateBtn || !bringForwardBtn || !sendBackwardBtn || !groupBtn || !ungroupBtn) {
+                console.error('按鈕 DOM 元素未找到:', {
+                    duplicateBtn: !!duplicateBtn,
+                    bringForwardBtn: !!bringForwardBtn,
+                    sendBackwardBtn: !!sendBackwardBtn,
+                    groupBtn: !!groupBtn,
+                    ungroupBtn: !!ungroupBtn
+                });
+                alert('按鈕元素未正確載入，請檢查 HTML 結構！');
+                return;
+            }
+
+            duplicateBtn.disabled = !activeObject;
+            bringForwardBtn.disabled = !activeObject;
+            sendBackwardBtn.disabled = !activeObject;
+            groupBtn.disabled = activeObjects.length < 2;
+            ungroupBtn.disabled = !activeObject || activeObject.type !== 'group';
+
+            // 檢查是否有不可選中物件
+            const nonSelectableObjects = activeObjects.filter(obj => !obj.selectable || !obj.evented);
+            if (nonSelectableObjects.length > 0) {
+                console.warn('檢測到不可選中或無事件響應的物件:', nonSelectableObjects.map(obj => ({
+                    type: obj.type,
+                    selectable: obj.selectable,
+                    evented: obj.evented
+                })));
+                alert('部分選中物件不可選中或無事件響應，請檢查物件屬性！');
+            }
+
+            // 強制檢查 groupBtn 狀態
+            if (activeObjects.length >= 2 && groupBtn.disabled) {
+                console.error('群組按鈕應啟用但處於禁用狀態，強制啟用');
+                groupBtn.disabled = false;
+                alert('群組按鈕未正確啟用，已強制修正，請檢查控制台日誌！');
+            }
+        }
+
+        canvas.on('selection:created', () => {
+            console.log('選擇事件：selection:created');
+            if (!canvas.selection) {
+                console.warn('canvas.selection 為 false，啟用多選功能');
+                canvas.selection = true;
+            }
+            setTimeout(updateButtonStates, 0); // 確保 DOM 更新完成
+        });
+
+        canvas.on('selection:updated', () => {
+            console.log('選擇事件：selection:updated');
+            if (!canvas.selection) {
+                console.warn('canvas.selection 為 false，啟用多選功能');
+                canvas.selection = true;
+            }
+            setTimeout(updateButtonStates, 0); // 確保 DOM 更新完成
         });
 
         canvas.on('selection:cleared', () => {
-            document.getElementById('duplicateBtn').disabled = true;
-            document.getElementById('bringForwardBtn').disabled = true;
-            document.getElementById('sendBackwardBtn').disabled = true;
-            document.getElementById('groupBtn').disabled = true;
-            document.getElementById('ungroupBtn').disabled = true;
             console.log('清除物件選擇');
+            const duplicateBtn = document.getElementById('duplicateBtn');
+            const bringForwardBtn = document.getElementById('bringForwardBtn');
+            const sendBackwardBtn = document.getElementById('sendBackwardBtn');
+            const groupBtn = document.getElementById('groupBtn');
+            const ungroupBtn = document.getElementById('ungroupBtn');
+
+            if (duplicateBtn) duplicateBtn.disabled = true;
+            if (bringForwardBtn) bringForwardBtn.disabled = true;
+            if (sendBackwardBtn) sendBackwardBtn.disabled = true;
+            if (groupBtn) groupBtn.disabled = true;
+            if (ungroupBtn) ungroupBtn.disabled = true;
         });
 
         // 顯示滑鼠座標
