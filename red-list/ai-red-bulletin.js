@@ -1,6 +1,7 @@
 let db;
 const dbName = 'BulletinDB';
 const storeName = 'settings';
+console.log('ai-red-bulletin.js loaded');
 
 // Initialize Bootstrap Toast
 const messageToastEl = document.getElementById('messageToast');
@@ -12,7 +13,7 @@ const showMessageToast = (message, isSuccess = true) => {
     if (!messageToast) return;
     messageTitleEl.textContent = isSuccess ? '成功' : '錯誤';
     messageBodyEl.textContent = message;
-    messageToastEl.classList.remove('bg-success', 'bg-danger', 'text-white');
+    messageToastEl.classList.remove('bg-success', 'bg-danger', conductivity);
     messageToastEl.classList.add(isSuccess ? 'bg-success' : 'bg-danger', 'text-white');
     messageToast.show();
 };
@@ -88,7 +89,7 @@ const populateTemplateSubmenu = async () => {
     try {
         const response = await fetch('template/lists.json');
         if (!response.ok) {
-            throw new Error('Failed to fetch lists.json');
+            throw new Error(`Failed to fetch lists.json, status: ${response.status}`);
         }
         const templates = await response.json();
         console.log('Loaded templates from lists.json:', templates);
@@ -115,7 +116,7 @@ const handleTemplateImport = async (jsonFile) => {
     try {
         const response = await fetch(`template/${jsonFile}`);
         if (!response.ok) {
-            throw new Error(`Failed to fetch ${jsonFile}`);
+            throw new Error(`Failed to fetch ${jsonFile}, status: ${response.status}`);
         }
         const templateData = await response.json();
         console.log(`Loaded template data from ${jsonFile}:`, templateData);
@@ -321,6 +322,134 @@ const handleLocalExport = async () => {
     }
 };
 
+// Setup carousel indicators
+const setupCarouselIndicators = async () => {
+    try {
+        const panelData = await getFromIndexedDB('panelData');
+        console.log('Retrieved panelData for carousel:', panelData);
+
+        if (!panelData || !panelData.carouselEnabled || !Array.isArray(panelData.carouselData) || panelData.carouselData.length < 1) {
+            console.log('Carousel disabled, no data, or invalid carouselData, skipping setup');
+            return;
+        }
+
+        const carouselData = panelData.carouselData;
+        const indicatorContainer = document.getElementById('carousel-indicator');
+        const iframe = document.querySelector('.list-section iframe');
+
+        if (!indicatorContainer || !iframe) {
+            console.error('Carousel indicator container or iframe not found');
+            showMessageToast('找不到輪播指示器容器或iframe', false);
+            return;
+        }
+
+        let currentIndex = 0;
+        let intervalId = null;
+
+        // Determine mode based on duration
+        const hasZeroDuration = carouselData.some(item => parseInt(item.duration) === 0 || item.duration === '0');
+        indicatorContainer.classList.add(hasZeroDuration ? 'manual' : 'auto');
+
+        // Create dots
+        indicatorContainer.innerHTML = '';
+        carouselData.forEach((item, index) => {
+            if (!item || typeof item.resourceName !== 'string' || !item.resourceName) {
+                console.warn(`Invalid carousel item at index ${index}:`, item);
+                return;
+            }
+            const dot = document.createElement('div');
+            dot.classList.add('carousel-dot');
+            if (index === 0) dot.classList.add('active');
+            indicatorContainer.appendChild(dot);
+        });
+
+        const dots = indicatorContainer.querySelectorAll('.carousel-dot');
+        if (dots.length === 0) {
+            console.warn('No valid carousel items to display');
+            return;
+        }
+
+        // Function to load resource
+        const loadResource = (index) => {
+            if (index < 0 || index >= carouselData.length) {
+                console.error(`Invalid carousel index: ${index}`);
+                return;
+            }
+            const resourceName = carouselData[index].resourceName;
+            console.log(`Loading resource: ${resourceName} at index ${index}`);
+            if (resourceName) {
+                try {
+                    iframe.src = resourceName;
+                    dots.forEach(dot => dot.classList.remove('active'));
+                    dots[index].classList.add('active');
+                    currentIndex = index;
+                } catch (error) {
+                    console.error(`Error loading resource ${resourceName}:`, error);
+                    showMessageToast(`載入資源 ${resourceName} 失敗: ${error.message}`, false);
+                }
+            } else {
+                console.warn(`No valid resourceName at index ${index}`);
+                showMessageToast(`無效的資源名稱於索引 ${index}`, false);
+            }
+        };
+
+        // Click handler for manual and auto mode
+        const handleDotClick = (index) => {
+            clearInterval(intervalId);
+            loadResource(index);
+            if (!hasZeroDuration) {
+                // Restart auto mode after manual click
+                const duration = parseInt(carouselData[currentIndex].duration) * 1000;
+                if (!isNaN(duration) && duration > 0) {
+                    intervalId = setInterval(() => {
+                        currentIndex = (currentIndex + 1) % carouselData.length;
+                        loadResource(currentIndex);
+                        const nextDuration = parseInt(carouselData[currentIndex].duration) * 1000;
+                        if (!isNaN(nextDuration) && nextDuration > 0) {
+                            clearInterval(intervalId);
+                            intervalId = setInterval(() => {
+                                currentIndex = (currentIndex + 1) % carouselData.length;
+                                handleDotClick(currentIndex);
+                            }, nextDuration);
+                        }
+                    }, duration);
+                }
+            }
+        };
+
+        // Attach click events to dots
+        dots.forEach((dot, index) => {
+            dot.addEventListener('click', () => handleDotClick(index));
+        });
+
+        // Auto mode: switch based on duration
+        if (!hasZeroDuration) {
+            const switchResource = () => {
+                loadResource(currentIndex);
+                const duration = parseInt(carouselData[currentIndex].duration) * 1000;
+                if (isNaN(duration) || duration <= 0) {
+                    console.warn(`Invalid duration at index ${currentIndex}:`, carouselData[currentIndex].duration);
+                    return;
+                }
+                clearInterval(intervalId);
+                intervalId = setInterval(() => {
+                    currentIndex = (currentIndex + 1) % carouselData.length;
+                    switchResource();
+                }, duration);
+            };
+            if (carouselData[0]?.resourceName) {
+                switchResource();
+            }
+        } else if (carouselData[0]?.resourceName) {
+            // Manual mode: load first resource
+            loadResource(0);
+        }
+    } catch (error) {
+        console.error('Error setting up carousel indicators:', error);
+        showMessageToast(`設置輪播指示器失敗: ${error.message}`, false);
+    }
+};
+
 // Setup dropdown menu
 const setupDropdownMenu = async () => {
     await populateTemplateSubmenu();
@@ -356,5 +485,6 @@ const setupDropdownMenu = async () => {
     });
 };
 
-// Export setup function
+// Export setup functions
 window.setupDropdownMenu = setupDropdownMenu;
+window.setupCarouselIndicators = setupCarouselIndicators;

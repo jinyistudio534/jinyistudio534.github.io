@@ -5,6 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>固定標頭與紅榜設定</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css" rel="stylesheet">
     <style>
         body {
             margin: 0;
@@ -16,7 +17,7 @@
             top: 0;
             left: 0;
             right: 0;
-            background-color: #e6e6e6; /* 淡灰色 */
+            background-color: #e6e6e6;
             padding: 10px 20px;
             display: flex;
             justify-content: space-between;
@@ -35,10 +36,14 @@
             cursor: pointer;
         }
         .content {
-            margin-top: 80px; /* 確保內容不會被固定標頭覆蓋 */
+            margin-top: 80px;
+            margin-left: auto;
+            margin-right: auto;
             padding: 20px;
-            background-color: #ffffff; /* 白色 */
+            background-color: #ffffff;
             min-height: 100vh;
+            width: 80vw; /* 80% of viewport width */
+            min-width: 800px; /* Minimum width of 800px */
         }
         .toast-container {
             position: fixed;
@@ -46,9 +51,33 @@
             right: 1rem;
             z-index: 1050;
         }
-        /* 隱藏原始檔案輸入框 */
         #list-panel-source {
             display: none;
+        }
+        .carousel-table {
+            width: 100%;
+        }
+        .carousel-table th:nth-child(1), .carousel-table td:nth-child(1) {
+            width: 65%;
+        }
+        .carousel-table th:nth-child(2), .carousel-table td:nth-child(2) {
+            width: 15%;
+        }
+        .carousel-table th:nth-child(3), .carousel-table td:nth-child(3) {
+            width: 20%;
+        }
+        .carousel-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        .action-btn {
+            margin-right: 3px;
+            padding-left: 9px;
+            padding-right: 9px;
+        }
+        .action-btn:last-child {
+            margin-right: 0;
         }
     </style>
 </head>
@@ -59,44 +88,152 @@
         <button class="btn btn-primary save-btn" onclick="saveSettings()">儲存</button>
     </div>
     <div class="content">
-        <div class="col-6">
-            <h3 class="mb-3">red-panel 設定</h3>
-            <div class="panel-divider-container">
-                <label for="list-panel-source-filename" class="form-label">紅榜顯示來源:</label>
-                <div class="input-group">
-                    <input type="text" class="form-control" id="list-panel-source-filename" placeholder="尚未選擇檔案">
-                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('list-panel-source').click()">選擇檔案</button>
+        <div class="col-12">
+            <div class="card mb-3">
+                <div class="card-body">
+                    <h3 class="mb-3">red-panel 設定</h3>
+                    <div class="panel-divider-container">
+                        <label for="list-panel-source-filename" class="form-label">紅榜顯示來源:</label>
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="list-panel-source-filename" placeholder="尚未選擇檔案">
+                            <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('list-panel-source').click()">選擇檔案</button>
+                        </div>
+                        <input type="file" id="list-panel-source" accept=".json">
+                    </div>
                 </div>
-                <input type="file" id="list-panel-source" accept=".json">
+            </div>
+            <div class="mb-3">
+                <input type="checkbox" id="carousel-checkbox" class="form-check-input" onchange="toggleCarouselCard()">
+                <label for="carousel-checkbox" class="form-check-label">輪播設定</label>
+            </div>
+            <div id="carousel-card" class="card mb-3" style="display: none;">
+                <div class="card-body">
+                    <div class="carousel-header">
+                        <h3 class="mb-3">輪播設定</h3>
+                        <button class="btn btn-primary" onclick="addContentRow()">新增內容</button>
+                    </div>
+                    <table class="table carousel-table">
+                        <thead>
+                            <tr>
+                                <th>資源名稱</th>
+                                <th>停留時間</th>
+                                <th>動作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="carousel-table-body">
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
     </div>
 
-    <!-- Toast 容器 -->
     <div class="toast-container">
         <div id="appToast" class="toast bg-success text-white" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="true" data-bs-delay="2000">
+            <div class="toast-body"></div>
+        </div>
+        <div id="confirmToast" class="toast bg-warning text-dark" role="alert" aria-live="assertive" aria-atomic="true" data-bs-autohide="false">
             <div class="toast-body">
-                <!-- 訊息內容將動態插入 -->
+                確定要移除此列嗎？
+                <div class="mt-2">
+                    <button class="btn btn-danger btn-sm me-2" onclick="confirmDelete()">確認</button>
+                    <button class="btn btn-secondary btn-sm" onclick="cancelDelete()">取消</button>
+                </div>
             </div>
         </div>
     </div>
 
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        // 初始化 Toast
         const toastElement = document.getElementById('appToast');
         const toast = new bootstrap.Toast(toastElement);
+        const confirmToastElement = document.getElementById('confirmToast');
+        const confirmToast = new bootstrap.Toast(confirmToastElement);
+        let rowToDelete = null;
 
-        // 顯示 Toast 訊息
         function showToast(message) {
             toastElement.querySelector('.toast-body').textContent = message;
             toast.show();
         }
 
-        // 初始化 IndexedDB
+        function toggleCarouselCard() {
+            const checkbox = document.getElementById('carousel-checkbox');
+            const card = document.getElementById('carousel-card');
+            card.style.display = checkbox.checked ? 'block' : 'none';
+        }
+
+        function addContentRow() {
+            const tableBody = document.getElementById('carousel-table-body');
+            const row = document.createElement('tr');
+            row.innerHTML = `
+                <td><input type="text" class="form-control resource-name" placeholder="輸入資源名稱"></td>
+                <td><input type="number" class="form-control duration" placeholder="秒" min="0" value="0"></td>
+                <td>
+                    <button class="btn btn-danger btn-sm action-btn delete-btn" onclick="promptDelete(this)"><i class="bi bi-trash"></i></button>
+                    <button class="btn btn-secondary btn-sm action-btn up-btn" onclick="moveRowUp(this)"><i class="bi bi-arrow-up"></i></button>
+                    <button class="btn btn-secondary btn-sm action-btn down-btn" onclick="moveRowDown(this)"><i class="bi bi-arrow-down"></i></button>
+                </td>
+            `;
+            tableBody.appendChild(row);
+            updateButtonStates();
+        }
+
+        function promptDelete(button) {
+            rowToDelete = button.closest('tr');
+            confirmToast.show();
+        }
+
+        function confirmDelete() {
+            if (rowToDelete) {
+                rowToDelete.remove();
+                rowToDelete = null;
+                confirmToast.hide();
+                updateButtonStates();
+            }
+        }
+
+        function cancelDelete() {
+            rowToDelete = null;
+            confirmToast.hide();
+        }
+
+        function moveRowUp(button) {
+            const row = button.closest('tr');
+            const prevRow = row.previousElementSibling;
+            if (prevRow) {
+                const rowInputs = row.querySelectorAll('input');
+                const prevInputs = prevRow.querySelectorAll('input');
+                [rowInputs[0].value, prevInputs[0].value] = [prevInputs[0].value, rowInputs[0].value];
+                [rowInputs[1].value, prevInputs[1].value] = [prevInputs[1].value, rowInputs[1].value];
+                updateButtonStates();
+            }
+        }
+
+        function moveRowDown(button) {
+            const row = button.closest('tr');
+            const nextRow = row.nextElementSibling;
+            if (nextRow) {
+                const rowInputs = row.querySelectorAll('input');
+                const nextInputs = nextRow.querySelectorAll('input');
+                [rowInputs[0].value, nextInputs[0].value] = [nextInputs[0].value, rowInputs[0].value];
+                [rowInputs[1].value, nextInputs[1].value] = [nextInputs[1].value, rowInputs[1].value];
+                updateButtonStates();
+            }
+        }
+
+        function updateButtonStates() {
+            const rows = document.querySelectorAll('#carousel-table-body tr');
+            rows.forEach((row, index) => {
+                const upBtn = row.querySelector('.up-btn');
+                const downBtn = row.querySelector('.down-btn');
+                upBtn.disabled = index === 0;
+                downBtn.disabled = index === rows.length - 1;
+            });
+        }
+
         let db;
         const dbName = 'BulletinDB';
-        const dbVersion = 15; // 與現有資料庫版本一致
+        const dbVersion = 15;
 
         function initializeIndexedDB() {
             if (!window.indexedDB) {
@@ -122,7 +259,7 @@
             request.onsuccess = function (event) {
                 db = event.target.result;
                 console.log('IndexedDB 初始化成功，版本:', db.version);
-                loadSettings(); // 頁面載入時讀取設定
+                loadSettings();
             };
 
             request.onerror = function (event) {
@@ -137,18 +274,15 @@
             };
         }
 
-        // 當選擇檔案時更新檔名顯示
         document.getElementById('list-panel-source').addEventListener('change', function (event) {
             const file = event.target.files[0];
             if (file) {
-                // 預設顯示檔案名稱，允許用戶編輯
                 document.getElementById('list-panel-source-filename').value = file.name;
             } else {
                 document.getElementById('list-panel-source-filename').value = '';
             }
         });
 
-        // 儲存設定到 IndexedDB
         function saveSettings() {
             if (!db) {
                 console.error('資料庫尚未初始化');
@@ -159,33 +293,46 @@
             const fileInput = document.getElementById('list-panel-source');
             const file = fileInput.files[0];
             const filenameInput = document.getElementById('list-panel-source-filename').value.trim();
+            const carouselEnabled = document.getElementById('carousel-checkbox').checked;
+            const carouselRows = Array.from(document.querySelectorAll('#carousel-table-body tr')).map(row => ({
+                resourceName: row.querySelector('.resource-name').value,
+                duration: row.querySelector('.duration').value
+            }));
 
             if (!file && !filenameInput) {
                 showToast('請選擇一個 JSON 檔案或輸入檔案路徑！');
                 return;
             }
 
+            const saveData = (panelData) => {
+                const transaction = db.transaction(['settings'], 'readwrite');
+                const store = transaction.objectStore('settings');
+                const data = {
+                    id: 'panelData',
+                    data: {
+                        filename: filenameInput || (file ? file.name : ''),
+                        carouselEnabled,
+                        carouselData: carouselRows
+                    }
+                };
+
+                const request = store.put(data);
+                request.onsuccess = function () {
+                    console.log('設定已儲存:', data.data);
+                    showToast('設定已儲存！');
+                };
+                request.onerror = function (event) {
+                    console.error('儲存失敗:', event.target.error);
+                    showToast('儲存失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
+                };
+            };
+
             if (file) {
                 const reader = new FileReader();
                 reader.onload = function (event) {
                     try {
-                        const panelData = JSON.parse(event.target.result); // 解析 JSON 內容
-                        const transaction = db.transaction(['settings'], 'readwrite');
-                        const store = transaction.objectStore('settings');
-                        const data = {
-                            id: 'panelData',                    
-                            data:{filename: filenameInput || file.name} // 優先使用輸入框中的路徑+名稱
-                        };
-
-                        const request = store.put(data);
-                        request.onsuccess = function () {
-                            console.log('設定已儲存:', data.filename);
-                            showToast('設定已儲存！');
-                        };
-                        request.onerror = function (event) {
-                            console.error('儲存失敗:', event.target.error);
-                            showToast('儲存失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
-                        };
+                        const panelData = JSON.parse(event.target.result);
+                        saveData(panelData);
                     } catch (e) {
                         console.error('JSON 解析失敗:', e);
                         showToast('無效的 JSON 檔案！');
@@ -197,36 +344,10 @@
                 };
                 reader.readAsText(file);
             } else {
-                // 若無新檔案但有輸入路徑，僅更新檔案路徑
-                const transaction = db.transaction(['settings'], 'readwrite');
-                const store = transaction.objectStore('settings');
-                const request = store.get('panelData');
-
-                request.onsuccess = function (event) {
-                    const existingData = event.target.result || { id: 'panelData', data: { } };
-                    const data = {
-                        id: 'panelData',                        
-                        data:{filename: filenameInput}
-                    };
-
-                    const putRequest = store.put(data);
-                    putRequest.onsuccess = function () {
-                        console.log('檔案路徑已儲存:', filenameInput);
-                        showToast('檔案路徑已儲存！');
-                    };
-                    putRequest.onerror = function (event) {
-                        console.error('儲存失敗:', event.target.error);
-                        showToast('儲存失敗: ' + (event.target.error ? event.target.error.message : '未知錯誤'));
-                    };
-                };
-                request.onerror = function (event) {
-                    console.error('載入現有設定失敗:', event.target.error);
-                    showToast('載入現有設定失敗！');
-                };
+                saveData(null);
             }
         }
 
-        // 從 IndexedDB 載入設定
         function loadSettings() {
             if (!db) {
                 console.error('資料庫尚未初始化');
@@ -238,10 +359,29 @@
             const request = store.get('panelData');
 
             request.onsuccess = function (event) {
-                const data = event.target.result.data;
-                if (data && data.filename) {
-                    document.getElementById('list-panel-source-filename').value = data.filename;
-                    console.log('設定已載入:', data.filename);
+                const data = event.target.result?.data;
+                if (data) {
+                    document.getElementById('list-panel-source-filename').value = data.filename || '';
+                    document.getElementById('carousel-checkbox').checked = data.carouselEnabled || false;
+                    toggleCarouselCard();
+                    if (data.carouselData?.length) {
+                        const tableBody = document.getElementById('carousel-table-body');
+                        data.carouselData.forEach(item => {
+                            const row = document.createElement('tr');
+                            row.innerHTML = `
+                                <td><input type="text" class="form-control resource-name" placeholder="輸入資源名稱" value="${item.resourceName || ''}"></td>
+                                <td><input type="number" class="form-control duration" placeholder="秒" min="0" value="${item.duration || '0'}"></td>
+                                <td>
+                                    <button class="btn btn-danger btn-sm action-btn delete-btn" onclick="promptDelete(this)"><i class="bi bi-trash"></i></button>
+                                    <button class="btn btn-secondary btn-sm action-btn up-btn" onclick="moveRowUp(this)"><i class="bi bi-arrow-up"></i></button>
+                                    <button class="btn btn-secondary btn-sm action-btn down-btn" onclick="moveRowDown(this)"><i class="bi bi-arrow-down"></i></button>
+                                </td>
+                            `;
+                            tableBody.appendChild(row);
+                        });
+                        updateButtonStates();
+                    }
+                    console.log('設定已載入:', data);
                 } else {
                     console.log('無儲存的設定');
                 }
@@ -253,8 +393,8 @@
             };
         }
 
-        // 初始化資料庫
         initializeIndexedDB();
     </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93d7511cec857bcc',t:'MTc0Njg1Nzg4MS4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script>
 </body>
 </html>

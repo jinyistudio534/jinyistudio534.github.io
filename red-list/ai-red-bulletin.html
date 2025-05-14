@@ -15,6 +15,38 @@
     <script src="static/ai-chinese-writing.js" defer></script>
     <script src="ai-red-list.js" defer></script>
     <script src="ai-red-bulletin.js" defer></script>
+    <style>
+        .carousel-indicator {
+            position: fixed;
+            bottom: 20px;
+            left: 50%;
+            transform: translateX(-50%);
+            display: flex;
+            gap: 10px;
+            z-index: 1000;
+        }
+        .carousel-dot {
+            width: 32px;
+            height: 32px;
+            border-radius: 50%;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        /* 手動模式（有 duration = 0）：淡紅 */
+        .carousel-indicator.manual .carousel-dot {
+            background-color: rgba(255, 99, 71, 0.5);
+        }
+        .carousel-indicator.manual .carousel-dot.active {
+            background-color: rgba(255, 99, 71, 0.8);
+        }
+        /* 計時模式（所有 duration > 0）：淡綠 */
+        .carousel-indicator.auto .carousel-dot {
+            background-color: rgba(144, 238, 144, 0.5);
+        }
+        .carousel-indicator.auto .carousel-dot.active {
+            background-color: rgba(144, 238, 144, 0.8);
+        }
+    </style>
 </head>
 <body>
     <div class="app-container">
@@ -26,6 +58,7 @@
                 </button>
                 <ul class="dropdown-menu">
                     <li><a class="dropdown-item popup-menu-item" href="ai-red-edits.html">紅榜名冊</a></li>
+                    <li><a class="dropdown-item popup-menu-item" href="./tools/ai-svg-edit/ai-svg-edit.html">紅榜公告</a></li>
                     <li><hr class="dropdown-divider"></li>
                     <li><a class="dropdown-item popup-menu-item" href="ai-red-head.html">榜首設計</a></li>
                     <li><a class="dropdown-item popup-menu-item" href="ai-red-body.html">榜單設計</a></li>
@@ -81,6 +114,7 @@
                     <div id="head-roster-container"></div>
                 </div>
             </div>
+            <div class="carousel-indicator" id="carousel-indicator"></div>
         </div>
     </div>
     <script>
@@ -179,7 +213,7 @@
                     try {
                         const response = await fetch(listData.filename);
                         if (!response.ok) {
-                            throw new Error(`Failed to fetch JSON file: ${listData.filename}`);
+                            throw new Error(`Failed to fetch JSON file: ${listData.filename}, status: ${response.status}`);
                         }
                         rosterData = await response.json();
                         console.log(`Parsed roster data from ${listData.filename} for ${sectionType}:`, rosterData);
@@ -291,22 +325,33 @@
                 };
 
                 // Initialize dropdown menu
-                await setupDropdownMenu();
+                if (typeof window.setupDropdownMenu === 'function') {
+                    await window.setupDropdownMenu();
+                } else {
+                    console.error('window.setupDropdownMenu is not a function');
+                    showMessageToast('無法初始化下拉選單：setupDropdownMenu 未定義', false);
+                }
 
                 // Wait for custom elements
                 await Promise.all([
-                    customElements.whenDefined('chinese-writing'),
-                    customElements.whenDefined('ai-chinese-writing'),
-                    customElements.whenDefined('red-list'),
-                    customElements.whenDefined('red-head'),
-                    customElements.whenDefined('red-tail')
-                ]);
+                    customElements.whenDefined('chinese-writing').catch(err => console.error('Error defining chinese-writing:', err)),
+                    customElements.whenDefined('ai-chinese-writing').catch(err => console.error('Error defining ai-chinese-writing:', err)),
+                    customElements.whenDefined('red-list').catch(err => console.error('Error defining red-list:', err)),
+                    customElements.whenDefined('red-head').catch(err => console.error('Error defining red-head:', err)),
+                    customElements.whenDefined('red-tail').catch(err => console.error('Error defining red-tail:', err))
+                ]).catch(err => {
+                    console.error('Error waiting for custom elements:', err);
+                    showMessageToast(`自訂元素載入失敗: ${err.message}`, false);
+                });
                 console.log('All custom elements are ready');
 
                 // Render head section
                 const headSection = document.querySelector('.head-section');
                 if (headSection) {
-                    await renderSection(headSection, headData, 'head-section');
+                    await renderSection(headSection, headData, 'head-section').catch(err => {
+                        console.error('Error rendering head section:', err);
+                        showMessageToast(`渲染頭部區域失敗: ${err.message}`, false);
+                    });
                 } else {
                     console.warn('head-section element not found');
                     showMessageToast('找不到頭部區域元素', false);
@@ -315,16 +360,25 @@
                 // Render tail section
                 const tailSection = document.querySelector('.tail-section');
                 if (tailSection) {
-                    await renderSection(tailSection, tailData, 'tail-section');
+                    await renderSection(tailSection, tailData, 'tail-section').catch(err => {
+                        console.error('Error rendering tail section:', err);
+                        showMessageToast(`渲染尾部區域失敗: ${err.message}`, false);
+                    });
                 } else {
                     console.warn('tail-section element not found');
                     showMessageToast('找不到尾部區域元素', false);
                 }
+
+                // Setup carousel indicators
+                await window.setupCarouselIndicators().catch(err => {
+                    console.error('Error setting up carousel indicators:', err);
+                    showMessageToast(`設置輪播指示器失敗: ${err.message}`, false);
+                });
             } catch (error) {
-                console.error('Error processing data:', error);
-                showMessageToast(`處理資料時出錯: ${error.message}`, false);
+                console.error('Detailed error processing data:', error);
+                showMessageToast(`處理資料時出錯: ${error.message || error}`, false);
             }
         })();
     </script>
-</body>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'93d80555280ead5e',t:'MTc0Njg2NTI2Mi4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
 </html>
