@@ -55,30 +55,30 @@
       "name": "台灣",
       "Tribute": ""
     },
-    {
-      "isdivider": true,
-      "text": "台中"
-    },
-    {
+     {
       "name": "台北",
       "Tribute": ""
     },
-    {
-      "name": "大甲",
-      "Tribute": ""
-    },
-    {
+     {
       "name": "台中",
-      "Tribute": ""
-    },
-    {
-      "name": "清水",
       "Tribute": ""
     },
     {
       "name": "新竹",
       "Tribute": ""
     },
+    {
+      "isdivider": true,
+      "text": "台中"
+    },   
+    {
+      "name": "大甲",
+      "Tribute": ""
+    },   
+    {
+      "name": "清水",
+      "Tribute": ""
+    },    
     {
       "name": "南投",
       "Tribute": ""
