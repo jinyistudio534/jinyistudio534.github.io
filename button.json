@@ -6,6 +6,12 @@
         "tooltip":"可重覆使用的登入窗"
     },
     {
+        "caption":"PICO\n腳位圖",
+        "size":18,
+        "url":"https://pico.pinout.xyz/",
+        "tooltip":"顯示PICO系列產品的GPIO圖"
+    },
+    {
         "caption":"縮放\n選單",
         "size":16,
         "url":"https://jinyistudio534.github.io/ai-side-menu/ai-side-menu.html",
