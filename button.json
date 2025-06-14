@@ -18,6 +18,12 @@
         "tooltip":"會縮放顯示的選單"
     },
     {
+        "caption":"NODE-RED\n與\nPICOW",
+        "size":14,
+        "url":"https://github.com/futureshocked/node-red-rpi-picow?tab=readme-ov-file",
+        "tooltip":"Node-RED and Raspberry Pi Pico W"
+    },    
+    {
         "caption":"紅\n榜",
         "size":24,
         "url":"https://jinyistudio534.github.io/red-list/index.html",
